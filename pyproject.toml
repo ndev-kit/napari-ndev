@@ -127,6 +127,8 @@ all = [
     "napari-ndev[qtpy-backend]",
     "napari-ndev[extras]",
     "napari-ndev[gpl_extras]",
+    "ndev-sampledata",
+    "ndev-themes",
 ]
 
 [tool.setuptools.packages.find]
