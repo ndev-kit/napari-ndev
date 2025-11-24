@@ -1,25 +1,25 @@
 !!python/object:napari_workflows._workflow.Workflow
 _tasks:
   Result of add_images (clesperanto): !!python/tuple
-  - !!python/name:pyclesperanto_prototype.add_images ''
+  - !!python/name:pyclesperanto.add_images ''
   - Result of median_sphere (clesperanto)
   - 'cells3d2ch :: C:0'
   Result of gaussian_blur (clesperanto): !!python/tuple
-  - !!python/name:pyclesperanto_prototype.gaussian_blur ''
+  - !!python/name:pyclesperanto.gaussian_blur ''
   - 'cells3d2ch :: C:0'
   - null
   - 5.0
   - 5.0
   - 0.0
   Result of median_sphere (clesperanto): !!python/tuple
-  - !!python/name:pyclesperanto_prototype.median_sphere ''
+  - !!python/name:pyclesperanto.median_sphere ''
   - 'cells3d2ch :: C:1'
   - null
   - 3.0
   - 3.0
   - 0.0
   Result of voronoi_otsu_labeling (clesperanto): !!python/tuple
-  - !!python/name:pyclesperanto_prototype.voronoi_otsu_labeling ''
+  - !!python/name:pyclesperanto.voronoi_otsu_labeling ''
   - Result of add_images (clesperanto)
   - null
   - 10.0

@@ -29,18 +29,17 @@ def test_skeletonize_labels():
 
 @pytest.mark.notox
 def test_connect_breaks_between_labels():
-    import pyclesperanto_prototype as cle
     """Test the connect_breaks_between_labels function."""
     connect_distance = 1.5
     connected_labels = morphology.connect_breaks_between_labels(label_2d, connect_distance)
 
     assert connected_labels.shape == label_2d.shape
     assert connected_labels.dtype == np.uint16
-    assert np.all(cle.pull(connected_labels) == connected_label_2d)
+    assert np.all(connected_labels == connected_label_2d)
 
 @pytest.mark.notox
 def test_label_voronoi_based_on_intensity():
-    import pyclesperanto_prototype as cle
+    import pyclesperanto as cle
     """Test the label_voronoi_based_on_intensity function."""
     image = np.array([[10, 0, 1, 1], [0, 0, 1, 1], [1, 2, 1, 1], [2, 2, 10, 1]])
     labels = np.array([[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]])

@@ -506,7 +506,7 @@ class ApocContainer(Container):
         return channel_img
 
     def batch_train(self):
-        from pyclesperanto_prototype import set_wait_for_kernel_finish
+        from pyclesperanto import wait_for_kernel_to_finish
 
         from napari_ndev import nImage
 
@@ -537,7 +537,7 @@ class ApocContainer(Container):
         )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
-        set_wait_for_kernel_finish(True)
+        wait_for_kernel_to_finish()
 
         self._progress_bar.label = f'Training on {len(image_files)} Images'
         self._progress_bar.value = 0
@@ -605,7 +605,7 @@ class ApocContainer(Container):
 
     def batch_predict(self):
         from bioio.writers import OmeTiffWriter
-        from pyclesperanto_prototype import set_wait_for_kernel_finish
+        from pyclesperanto import wait_for_kernel_to_finish
 
         from napari_ndev import nImage
 
@@ -632,7 +632,7 @@ class ApocContainer(Container):
         )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
-        set_wait_for_kernel_finish(True)
+        wait_for_kernel_to_finish()
 
         self._progress_bar.label = f'Predicting {len(image_files)} Images'
         self._progress_bar.value = 0
@@ -684,7 +684,7 @@ class ApocContainer(Container):
         logger.removeHandler(handler)
 
     def image_train(self):
-        from pyclesperanto_prototype import set_wait_for_kernel_finish
+        from pyclesperanto import wait_for_kernel_to_finish
         image_names = [image.name for image in self._image_layers.value]
         label_name = self._label_layer.value.name
         self._single_result_label.value = (
@@ -696,7 +696,7 @@ class ApocContainer(Container):
         label = self._label_layer.value.data
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
-        set_wait_for_kernel_finish(True)
+        wait_for_kernel_to_finish()
 
         if not self._continue_training:
             self.apoc.erase_classifier(self._classifier_file.value)
@@ -716,10 +716,9 @@ class ApocContainer(Container):
         )
 
     def image_predict(self):
-        from pyclesperanto_prototype import set_wait_for_kernel_finish
-        set_wait_for_kernel_finish(
-            True
-        )  # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
+        from pyclesperanto import wait_for_kernel_to_finish
+        # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
+        wait_for_kernel_to_finish()
 
         image_names = [image.name for image in self._image_layers.value]
         self._single_result_label.value = f'Predicting {image_names}'

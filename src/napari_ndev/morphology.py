@@ -58,7 +58,7 @@ def skeletonize_labels(label: ArrayLike) -> np.ndarray:
         Skeletonized label image.
 
     """
-    import pyclesperanto_prototype as cle
+    import pyclesperanto as cle
     from skimage.morphology import skeletonize
 
     skeleton = skeletonize(cle.pull(label))
@@ -87,12 +87,14 @@ def connect_breaks_between_labels(label: ArrayLike, connect_distance: float) -> 
         Label image with new labels connecting breaks between original labels.
 
     """
-    import pyclesperanto_prototype as cle
+    import pyclesperanto as cle
 
     label_dilated = cle.dilate_labels(label, radius=connect_distance/2)
     label_merged = cle.merge_touching_labels(label_dilated)
     # relabel original labels based on the merged labels
-    return (label_merged * (label > 0)).astype(np.uint16)
+    # Convert boolean to numeric to avoid dtype issues
+    label_mask = np.where(label > 0, 1, 0).astype(np.uint16)
+    return (cle.pull(label_merged) * label_mask).astype(np.uint16)
 
 def label_voronoi_based_on_intensity(label: ArrayLike, intensity_image: ArrayLike) -> ArrayLike: # pragma: no cover
     """
@@ -116,9 +118,9 @@ def label_voronoi_based_on_intensity(label: ArrayLike, intensity_image: ArrayLik
         Label image with Voronoi regions based on the intensity image.
 
     """
-    import pyclesperanto_prototype as cle
+    import pyclesperanto as cle
 
-    label_binary = cle.greater_constant(label, constant=0) # binarize
+    label_binary = cle.greater_constant(label, scalar=0) # binarize
     intensity_blur = cle.gaussian_blur(intensity_image, sigma_x=1, sigma_y=1)
     intensity_peaks = cle.detect_maxima_box(intensity_blur, radius_x=0, radius_y=0)
     select_peaks_on_binary = cle.binary_and(intensity_peaks, label_binary)

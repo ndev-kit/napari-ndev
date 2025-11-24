@@ -38,11 +38,11 @@ dependencies = [
     "magic-class",
     "napari[optional]>=0.4.19",
     "apoc",
-    "pyclesperanto-prototype",
     "pyclesperanto",
+    "mako",  # should be a transitive dependency of pyclesperanto, but might not be
     "dask",
     "napari-workflows",
-    "napari-pyclesperanto-assistant",
+    "napari-assistant",
     "napari-segment-blobs-and-things-with-membranes",
     "natsort",
     "seaborn",
@@ -235,7 +235,7 @@ multiline-quotes = "double"
 [tool.ruff.lint.flake8-tidy-imports]
 # Disallow all relative imports.
 ban-relative-imports = "all"
-banned-module-level-imports = ["pyclesperanto", "pyclesperanto_prototype", "apoc"]
+banned-module-level-imports = ["pyclesperanto", "apoc"]
 
 
 [tool.ruff.lint.isort]
