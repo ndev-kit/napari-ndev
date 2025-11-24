@@ -82,6 +82,7 @@ all = [
     "napari-ndev[extras]",
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "napari-ndev[gpl_extras]",
 =======
     "napari-ndev[gpl-extras]",
@@ -89,6 +90,9 @@ all = [
 =======
     "napari-ndev[gpl-extras]",
 >>>>>>> 37c92d4 (small fixes after copilot review)
+=======
+    "napari-ndev[gpl-extras]",
+>>>>>>> 15567bd969b035b0a3f9f685295718a4200c338b
     "ndev-sampledata",
     "ndev-themes",
 ]
@@ -289,6 +293,7 @@ testing = { features = ["testing"], solve-group = "default" }
 [tool.pixi.tasks]
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 napari = { cmd = "napari"}
 =======
 napari = { cmd = "napari" }
@@ -296,5 +301,8 @@ napari = { cmd = "napari" }
 =======
 napari = { cmd = "napari" }
 >>>>>>> 37c92d4 (small fixes after copilot review)
+=======
+napari = { cmd = "napari" }
+>>>>>>> 15567bd969b035b0a3f9f685295718a4200c338b
 napari-ndev = { cmd = 'napari -w napari-ndev "nDev App"' }
 test = { cmd = "pytest" }
