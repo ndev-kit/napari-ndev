@@ -154,7 +154,7 @@ def trained_classifier_file(
 
 @pytest.mark.notox
 def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
-    import pyclesperanto_prototype as cle
+    import pyclesperanto as cle
     viewer = make_napari_viewer()
     test_image, _, _, _ = test_data
     viewer.add_image(test_image)
@@ -169,8 +169,8 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
 
     assert wdg._single_result_label.value == "Predicted ['test_image']"
     assert wdg._viewer.layers[expected_layer_name].visible
-    assert cle.pull(result).any() > 0
-    assert cle.pull(wdg._viewer.layers[expected_layer_name].data).any() > 0
+    assert np.asarray(cle.pull(result)).any()
+    assert np.asarray(cle.pull(wdg._viewer.layers[expected_layer_name].data)).any()
 
 
 @pytest.mark.notox
