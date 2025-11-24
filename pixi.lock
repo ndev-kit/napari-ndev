@@ -13359,7 +13359,7 @@ packages:
 - pypi: ./
   name: napari-ndev
   version: 0.11.8.dev2+g5ae1dd4cf.d20251124
-  sha256: c39d329f793792a19d087d5e51d574390a557ec854c99a4f29eeae8fb699ee5c
+  sha256: 10b7b613137892564bf5a0d588f184a34d124c02e2d6d00d5487404a37d3f30f
   requires_dist:
   - numpy>=1.26,<2.0
   - siphash24>=1.6
