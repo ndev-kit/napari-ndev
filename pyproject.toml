@@ -80,7 +80,7 @@ qtpy-backend = [
 all = [
     "napari-ndev[qtpy-backend]",
     "napari-ndev[extras]",
-    "napari-ndev[gpl_extras]",
+    "napari-ndev[gpl-extras]",
     "ndev-sampledata",
     "ndev-themes",
 ]
@@ -116,7 +116,7 @@ dev = [
 extras = [
     "napari-simpleitk-image-processing"
 ]
-gpl_extras = [
+gpl-extras = [
     "bioio-czi>=1.0.1",
     "bioio-lif>=1"
 ]
@@ -279,6 +279,6 @@ qtpy-backend = { features = ["qtpy-backend"], solve-group = "default" }
 testing = { features = ["testing"], solve-group = "default" }
 
 [tool.pixi.tasks]
-napari = { cmd = "napari"}
+napari = { cmd = "napari" }
 napari-ndev = { cmd = 'napari -w napari-ndev "nDev App"' }
 test = { cmd = "pytest" }

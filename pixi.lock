@@ -13358,8 +13358,8 @@ packages:
   requires_python: '>=3.10'
 - pypi: ./
   name: napari-ndev
-  version: 0.11.8.dev1+g2290166fa.d20251124
-  sha256: 72a7c746809933ec1fd77e859cfed6ed8a9b09bfb8b02caaa5aa8c6755598e69
+  version: 0.11.8.dev2+g5ae1dd4cf.d20251124
+  sha256: c39d329f793792a19d087d5e51d574390a557ec854c99a4f29eeae8fb699ee5c
   requires_dist:
   - numpy>=1.26,<2.0
   - siphash24>=1.6
