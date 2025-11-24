@@ -33,17 +33,13 @@ classifiers = [
 requires-python = ">=3.9, <3.13"
 dependencies = [
     "numpy>=1.26,<2.0",
-    "siphash24>=1.6",
     "magicgui>=0.8.3",
     "magic-class",
     "napari[optional]>=0.4.19",
     "apoc",  # dependes on pyclesperanto_prototype still
     "pyclesperanto",
-    "mako",  # should be a transitive dependency of pyclesperanto, but might not be
     "dask",
     "napari-workflows",
-    "napari-assistant",
-    "napari-segment-blobs-and-things-with-membranes",
     "natsort",
     "seaborn",
     "stackview",
@@ -114,7 +110,9 @@ dev = [
     "napari-ndev[docs]",
 ]
 extras = [
-    "napari-simpleitk-image-processing"
+    "napari-assistant",
+    "napari-simpleitk-image-processing",
+    "napari-segment-blobs-and-things-with-membranes",
 ]
 gpl-extras = [
     "bioio-czi>=1.0.1",
