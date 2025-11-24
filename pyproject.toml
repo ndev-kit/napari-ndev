@@ -30,7 +30,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Utilities"
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.9, <3.13"
 dependencies = [
     "numpy>=1.26,<2.0",
     "siphash24>=1.6",
@@ -74,16 +74,25 @@ napari-ndev = "napari_ndev:napari.yaml"
 napari-ndev = "napari_ndev.__main__:main"
 
 [project.optional-dependencies]
+qtpy-backend = [
+    "napari[pyqt6]",
+]
+all = [
+    "napari-ndev[qtpy-backend]",
+    "napari-ndev[extras]",
+    "napari-ndev[gpl_extras]",
+    "ndev-sampledata",
+    "ndev-themes",
+]
 testing = [
     "pytest",
     "pytest-cov",
     "tox",
     "tox-uv",
     "pytest-qt",
-    "napari[all]",
-    "pyqt5",
+    "napari[optional]",
     "bioio-czi>=1.0.1",
-    "napari-ndev[extras]",
+    "napari-ndev[qtpy-backend,extras]",
 ]
 docs = [
     "mkdocs",
@@ -104,31 +113,12 @@ dev = [
     "napari-ndev[testing]",
     "napari-ndev[docs]",
 ]
-qtpy-backend = [
-    "napari-ndev[pyqt6]"
-]
-pyqt6 = [
-    "napari[pyqt6]"
-]
-pyqt5 = [
-    "napari[pyqt5]",
-]
-pyside = [
-    "napari[pyside]"
-]
 extras = [
     "napari-simpleitk-image-processing"
 ]
 gpl_extras = [
     "bioio-czi>=1.0.1",
     "bioio-lif>=1"
-]
-all = [
-    "napari-ndev[qtpy-backend]",
-    "napari-ndev[extras]",
-    "napari-ndev[gpl_extras]",
-    "ndev-sampledata",
-    "ndev-themes",
 ]
 
 [tool.setuptools.packages.find]
@@ -270,3 +260,25 @@ omit = [
 
 [tool.pytest.ini_options]
 markers = ["notox: mark a test to be excluded from tox"]
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+[tool.pixi.pypi-dependencies]
+napari-ndev = { path = ".", editable = true }
+
+[tool.pixi.environments]
+default = { features = ["qtpy-backend"], solve-group = "default" }
+all = { features = ["all"], solve-group = "default" }
+dev = { features = ["dev"], solve-group = "default" }
+docs = { features = ["docs"], solve-group = "default" }
+extras = { features = ["extras"], solve-group = "default" }
+gpl-extras = { features = ["gpl-extras"], solve-group = "default" }
+qtpy-backend = { features = ["qtpy-backend"], solve-group = "default" }
+testing = { features = ["testing"], solve-group = "default" }
+
+[tool.pixi.tasks]
+napari = { cmd = "napari"}
+napari-ndev = { cmd = 'napari -w napari-ndev "nDev App"' }
+test = { cmd = "pytest" }

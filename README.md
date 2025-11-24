@@ -68,6 +68,31 @@ In addition, you may need to install specific [`bioio` readers](https://github.c
 
 For development use the `[dev]` optional libraries to verify your changes, which includes the `[docs]` and `[testing]` optional groups. However, the Github-CI will test pull requests with `[testing]` only.
 
+## Pixi Usage
+
+You may locally clone this repo and use [Pixi](https://pixi.sh) to create a reproducible environment:
+
+```bash
+git clone https://github.com/ndev-kit/napari-ndev.git
+cd napari-ndev
+```
+
+Then launch napari with the nDev plugin:
+
+```bash
+pixi run napari-ndev
+```
+
+Or install the package in editable/development mode and activate the local environment:
+
+```bash
+pixi install  # can also use `-e dev` to install development dependencies
+pixi shell  # activates the default pixi environment, which includes qtpy-backend
+napari  # or whatever CLI command you want
+```
+
+To test: `pixi run -e testing test`
+
 ----------------------------------
 
 The wide breadth of this plugin's scope is only made possible by the amazing libraries and plugins from the python and napari community, especially [Robert Haase](https://github.com/haesleinhuepf).
