@@ -81,8 +81,6 @@ all = [
     "napari-ndev[qtpy-backend]",
     "napari-ndev[extras]",
     "napari-ndev[gpl-extras]",
-    "napari-ndev[gpl-extras]",
-    "napari-ndev[gpl-extras]",
     "ndev-sampledata",
     "ndev-themes",
 ]
