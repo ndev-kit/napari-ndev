@@ -84,3 +84,6 @@ venv/
 **/_version.py
 /docs/tutorial/DownloadArchive
 src/napari_ndev/widgets/multithreading_testing.ipynb
+# pixi environments
+.pixi/*
+!.pixi/config.toml
