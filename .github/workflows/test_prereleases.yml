@@ -23,7 +23,7 @@ jobs:
     if: ${{ needs.test.outputs.test_outcome == 'failure' && github.event_name == 'schedule' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Report Pre-release Failures
         uses: JasonEtco/create-an-issue@v2
