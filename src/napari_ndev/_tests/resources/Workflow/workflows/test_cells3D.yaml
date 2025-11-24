@@ -1,13 +1,13 @@
 !!python/object:napari_workflows._workflow.Workflow
 _tasks:
   Result of eroded_otsu_labeling (clesperanto): !!python/tuple
-  - !!python/name:pyclesperanto_prototype.eroded_otsu_labeling ''
+  - !!python/name:pyclesperanto.eroded_otsu_labeling ''
   - Result of gaussian_blur (clesperanto) [1]
   - null
   - 5.0
   - 1.0
   Result of gaussian_blur (clesperanto): !!python/tuple
-  - &id001 !!python/name:pyclesperanto_prototype.gaussian_blur ''
+  - &id001 !!python/name:pyclesperanto.gaussian_blur ''
   - membrane
   - null
   - 1.0
