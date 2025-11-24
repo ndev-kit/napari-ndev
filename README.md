@@ -86,7 +86,7 @@ pixi run napari-ndev
 Or install the package in editable/development mode and activate the local environment:
 
 ```bash
-pixi install  # can also use `-e dev` to install development dependencies
+pixi install  # can also use `pixi install -e dev` to install development dependencies
 pixi shell  # activates the default pixi environment, which includes qtpy-backend
 napari  # or whatever CLI command you want
 ```
