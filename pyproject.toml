@@ -37,7 +37,7 @@ dependencies = [
     "magicgui>=0.8.3",
     "magic-class",
     "napari[optional]>=0.4.19",
-    "apoc",
+    "apoc",  # dependes on pyclesperanto_prototype still
     "pyclesperanto",
     "mako",  # should be a transitive dependency of pyclesperanto, but might not be
     "dask",
@@ -80,19 +80,9 @@ qtpy-backend = [
 all = [
     "napari-ndev[qtpy-backend]",
     "napari-ndev[extras]",
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    "napari-ndev[gpl_extras]",
-=======
     "napari-ndev[gpl-extras]",
->>>>>>> 9bce87e83d59f8d275507b4678fdb849afd7c2fe
-=======
     "napari-ndev[gpl-extras]",
->>>>>>> 37c92d4 (small fixes after copilot review)
-=======
     "napari-ndev[gpl-extras]",
->>>>>>> 15567bd969b035b0a3f9f685295718a4200c338b
     "ndev-sampledata",
     "ndev-themes",
 ]
@@ -291,18 +281,6 @@ qtpy-backend = { features = ["qtpy-backend"], solve-group = "default" }
 testing = { features = ["testing"], solve-group = "default" }
 
 [tool.pixi.tasks]
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-napari = { cmd = "napari"}
-=======
 napari = { cmd = "napari" }
->>>>>>> 9bce87e83d59f8d275507b4678fdb849afd7c2fe
-=======
-napari = { cmd = "napari" }
->>>>>>> 37c92d4 (small fixes after copilot review)
-=======
-napari = { cmd = "napari" }
->>>>>>> 15567bd969b035b0a3f9f685295718a4200c338b
 napari-ndev = { cmd = 'napari -w napari-ndev "nDev App"' }
 test = { cmd = "pytest" }

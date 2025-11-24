@@ -13352,8 +13352,8 @@ packages:
   requires_python: '>=3.10'
 - pypi: ./
   name: napari-ndev
-  version: 0.11.8.dev4+g36cdbd988.d20251124
-  sha256: ab6c9843ce44901bc47c27a865b91cbb26cfd5bf0135968cfe7fcbb3929ea787
+  version: 0.11.8.dev12+g7f89eea6d.d20251124
+  sha256: 4950040fb03ac6bebb8c4a52704877fd990473cb65a2e1c98187f8d3d3b1646d
   requires_dist:
   - numpy>=1.26,<2.0
   - siphash24>=1.6
@@ -13385,6 +13385,8 @@ packages:
   - napari[pyqt6] ; extra == 'qtpy-backend'
   - napari-ndev[qtpy-backend] ; extra == 'all'
   - napari-ndev[extras] ; extra == 'all'
+  - napari-ndev[gpl-extras] ; extra == 'all'
+  - napari-ndev[gpl-extras] ; extra == 'all'
   - napari-ndev[gpl-extras] ; extra == 'all'
   - ndev-sampledata ; extra == 'all'
   - ndev-themes ; extra == 'all'
