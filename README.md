@@ -10,7 +10,7 @@
 ![Static Badge](https://img.shields.io/badge/plugin-npe2-brightgreen?style=flat-square&label=plugin)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14787853.svg)](https://doi.org/10.5281/zenodo.14787853)
 
-<img src="./resources/nDev-logo-large.png" alt="logo" width="400" style="display: block; margin: auto;">
+<img src="https://github.com/ndev-kit/napari-ndev/raw/main/resources/nDev-logo-large.png" alt="logo" width="400" style="display: block; margin: auto;">
 
 A collection of widgets intended to serve any person seeking to process microscopy images from start to finish, *with no coding necessary*. `napari-ndev` was designed to address the **gap between the napari viewer and batch python scripting**.
 
