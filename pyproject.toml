@@ -36,6 +36,7 @@ dependencies = [
     "magicgui>=0.8.3",
     "magic-class",
     "napari>=0.4.19",
+    "matplotlib",
     "apoc",  # dependes on pyclesperanto_prototype still
     "pyclesperanto",
     "dask",
