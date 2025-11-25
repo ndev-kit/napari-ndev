@@ -31,7 +31,7 @@ def test_napari_viewer_open(resources_dir: Path, make_napari_viewer) -> None:
     is shimmed to DirectoryStore with a compatibility patch in nImage.
     """
     viewer = make_napari_viewer()
-    viewer.open(str(resources_dir / OME_TIFF), plugin='napari-ndev')
+    viewer.open(str(resources_dir / OME_TIFF), plugin='ndevio')
 
     assert viewer.layers[0].data.shape == (60, 66, 85)
 

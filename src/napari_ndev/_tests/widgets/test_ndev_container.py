@@ -24,7 +24,7 @@ def test_ndev_container_init_no_viewer():
 
     with patch('webbrowser.open') as mock_open:
         ndev._open_bug_report_link()
-        mock_open.assert_called_once_with('https://github.com/TimMonko/napari-ndev/issues')
+        mock_open.assert_called_once_with('https://github.com/ndev-kit/napari-ndev/issues')
 
 @pytest.fixture
 def test_cells3d2ch_image(resources_dir: Path):

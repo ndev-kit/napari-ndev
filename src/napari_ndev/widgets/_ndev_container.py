@@ -129,4 +129,4 @@ class nDevContainer(ScrollableContainer):
     def _open_bug_report_link(self):
         """Open the bug report link."""
         import webbrowser
-        webbrowser.open('https://github.com/TimMonko/napari-ndev/issues')
+        webbrowser.open('https://github.com/ndev-kit/napari-ndev/issues')

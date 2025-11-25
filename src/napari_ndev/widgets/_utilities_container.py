@@ -503,7 +503,7 @@ class UtilitiesContainer(ScrollableContainer):
         """
         Update metadata from the selected layer.
 
-        Expects images to be opened with napari-ndev reader.
+        Expects images to be opened with ndevio reader.
 
         Note:
         ----
@@ -534,8 +534,8 @@ class UtilitiesContainer(ScrollableContainer):
             )
 
     def open_images(self):
-        """Open the selected images in the napari viewer with napari-ndev."""
-        self._viewer.open(self._files.value, plugin='napari-ndev')
+        """Open the selected images in the napari viewer with ndevio."""
+        self._viewer.open(self._files.value, plugin='ndevio')
 
     # Converted
     def select_next_images(self):
