@@ -64,10 +64,15 @@ napari-ndev = "napari_ndev.__main__:main"
 qtpy-backend = [
     "napari[pyqt6]",
 ]
+extras = [
+    "napari[optional]",
+    "napari-assistant",
+    "napari-simpleitk-image-processing",
+    "napari-segment-blobs-and-things-with-membranes",
+]
 all = [
     "napari-ndev[qtpy-backend]",
     "napari-ndev[extras]",
-    "napari-ndev[gpl-extras]",
     "ndev-sampledata",
     "ndev-themes",
 ]
@@ -98,16 +103,6 @@ dev = [
     "pre-commit",
     "napari-ndev[testing]",
     "napari-ndev[docs]",
-]
-extras = [
-    "napari[optional]",
-    "napari-assistant",
-    "napari-simpleitk-image-processing",
-    "napari-segment-blobs-and-things-with-membranes",
-]
-gpl-extras = [
-    "bioio-czi>=1.0.1",
-    "bioio-lif>=1"
 ]
 
 [tool.setuptools.packages.find]
@@ -263,7 +258,6 @@ all = { features = ["all"], solve-group = "default" }
 dev = { features = ["dev"], solve-group = "default" }
 docs = { features = ["docs"], solve-group = "default" }
 extras = { features = ["extras"], solve-group = "default" }
-gpl-extras = { features = ["gpl-extras"], solve-group = "default" }
 qtpy-backend = { features = ["qtpy-backend"], solve-group = "default" }
 testing = { features = ["testing"], solve-group = "default" }
 
