@@ -32,7 +32,7 @@ classifiers = [
 ]
 requires-python = ">=3.10, <3.14"
 dependencies = [
-    "numpy>=1.26,<2.0",
+    "numpy>=1.26",
     "magicgui>=0.8.3",
     "magic-class",
     "napari>=0.4.19",
@@ -249,6 +249,10 @@ markers = ["notox: mark a test to be excluded from tox"]
 [tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+[tool.pixi.dependencies]
+# Pin Python to 3.12 until NumPy 2.0+ is widely supported
+python = ">=3.10,<3.13"
 
 [tool.pixi.pypi-dependencies]
 napari-ndev = { path = ".", editable = true }
