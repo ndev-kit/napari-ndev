@@ -12306,13 +12306,14 @@ packages:
   requires_python: '>=3.10'
 - pypi: ./
   name: napari-ndev
-  version: 0.11.8.dev7+g94f4dbb29.d20251125
-  sha256: e14c6020156c012cb1cc1463c3131849a4258c5359dbbe338d9311ee30d40851
+  version: 0.11.8.dev9+g5ddd32c6d
+  sha256: 6a1f073c0e2706211f57b79a86dac608ec7838e73ef01715e20a381931ecf5d5
   requires_dist:
   - numpy>=1.26,<2.0
   - magicgui>=0.8.3
   - magic-class
   - napari>=0.4.19
+  - matplotlib
   - apoc
   - pyclesperanto
   - dask
