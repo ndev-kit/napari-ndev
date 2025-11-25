@@ -84,7 +84,6 @@ testing = [
     "pytest-qt",
     "napari[optional]",
     "napari-ndev[qtpy-backend,extras]",
-    "bioio-tifffile",
     "bioio-czi",
 ]
 docs = [
