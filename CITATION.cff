@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: If you use this plugin, please cite it using these metadata
 title: 'napari-ndev: napari widgets to (batch) process images from start to finish.'
-url: https://github.com/TimMonko/napari-ndev.git
+url: https://github.com/ndev-kit/napari-ndev.git
 authors:
 - given-names: Tim
   family-names: Monko

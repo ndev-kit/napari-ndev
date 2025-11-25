@@ -50,9 +50,9 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-"Bug Tracker" = "https://github.com/TimMonko/napari-ndev/issues"
+"Bug Tracker" = "https://github.com/ndev-kit/napari-ndev/issues"
 "Documentation" = "https://ndev-kit.github.io/"
-"Source Code" = "https://github.com/TimMonko/napari-ndev"
+"Source Code" = "https://github.com/ndev-kit/napari-ndev"
 
 [project.entry-points."napari.manifest"]
 napari-ndev = "napari_ndev:napari.yaml"
@@ -84,6 +84,8 @@ testing = [
     "pytest-qt",
     "napari[optional]",
     "napari-ndev[qtpy-backend,extras]",
+    "bioio-tifffile",
+    "bioio-czi",
 ]
 docs = [
     "mkdocs",
