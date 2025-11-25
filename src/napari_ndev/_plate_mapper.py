@@ -180,9 +180,9 @@ class PlateMapper:
         treatment : str
             The column name of the treatment variable in the plate map DataFrame.
         palette : str or list, optional
-            The qualitative matplotlib colormap name to use for styling. 
+            The qualitative matplotlib colormap name to use for styling.
             Defaults to 'tab10'.
-            Can be any qualitative matplotlib colormap name 
+            Can be any qualitative matplotlib colormap name
             (e.g., 'tab10', 'tab20', 'Set1', 'Set2', 'Set3').
 
         Returns
@@ -202,7 +202,7 @@ class PlateMapper:
         cmap = colormaps[palette]
         # Get discrete colors from the colormap (works for qualitative palettes)
         colors_hex = [to_hex(cmap(i)) for i in range(cmap.N)]
-        
+
         # Create an infinite iterator that cycles through the palette
         palette_cycle = itertools.cycle(colors_hex)
         color_dict = {value: next(palette_cycle) for value in unique_values}

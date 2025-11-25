@@ -9,7 +9,6 @@ import dask.array as da
 # import npe2
 import numpy as np
 import pytest
-
 from ndevio import napari_get_reader
 
 ###############################################################################

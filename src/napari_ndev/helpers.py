@@ -20,8 +20,7 @@ from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from bioio import BioImage
-
-    from napari_ndev import nImage
+    from ndevio import nImage
 
 __all__ = [
     'check_for_missing_files',

@@ -217,8 +217,8 @@ def test_update_metadata_from_file():
             ['/path/to/file.tif'],
         )
 
-        # Mock the BioImage class to return sample channel names
-        with patch('napari_ndev.nImage') as nImage:
+        # Mock the nImage class to return sample channel names
+        with patch('ndevio.nImage') as nImage:
             nImage.return_value.channel_names = ['C0', 'C1', 'C2']
 
             # Call the _update_metadata_from_file method

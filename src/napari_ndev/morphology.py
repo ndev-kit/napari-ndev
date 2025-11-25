@@ -21,9 +21,9 @@ if TYPE_CHECKING:
     from bioio_base.types import ArrayLike
 
 __all__ = [
-    'skeletonize_labels',
     'connect_breaks_between_labels',
-    'label_voronoi_based_on_intensity'
+    'label_voronoi_based_on_intensity',
+    'skeletonize_labels'
 ]
 
 def convert_float_to_int(img: ArrayLike) -> ArrayLike:

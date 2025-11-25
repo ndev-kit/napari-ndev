@@ -21,13 +21,14 @@ from magicgui.widgets import (
     TextEdit,
     TupleEdit,
 )
+from ndevio import nImage
 
 from napari.layers import (
     Image as ImageLayer,
     Labels as LabelsLayer,
     Shapes as ShapesLayer,
 )
-from napari_ndev import get_settings, helpers, nImage
+from napari_ndev import get_settings, helpers
 
 if TYPE_CHECKING:
     from bioio import BioImage

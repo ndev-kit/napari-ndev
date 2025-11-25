@@ -383,7 +383,7 @@ class ApocContainer(Container):
         self._image_layers.choices = self._filter_layers(layers.Image)
 
     def _update_metadata_from_file(self):
-        from napari_ndev import nImage
+        from ndevio import nImage
 
         _, files = helpers.get_directory_and_files(self._image_directory.value)
         img = nImage(files[0])
@@ -506,9 +506,8 @@ class ApocContainer(Container):
         return channel_img
 
     def batch_train(self):
+        from ndevio import nImage
         from pyclesperanto import wait_for_kernel_to_finish
-
-        from napari_ndev import nImage
 
         image_directory, image_files = helpers.get_directory_and_files(
             self._image_directory.value
@@ -605,9 +604,8 @@ class ApocContainer(Container):
 
     def batch_predict(self):
         from bioio.writers import OmeTiffWriter
+        from ndevio import nImage
         from pyclesperanto import wait_for_kernel_to_finish
-
-        from napari_ndev import nImage
 
         image_directory, image_files = helpers.get_directory_and_files(
             dir_path=self._image_directory.value,

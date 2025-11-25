@@ -2,8 +2,9 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+from ndevio import nImage
 
-from napari_ndev import __version__, nImage
+from napari_ndev import __version__
 from napari_ndev.widgets._ndev_container import nDevContainer
 
 

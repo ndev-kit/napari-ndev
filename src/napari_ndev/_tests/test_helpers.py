@@ -5,8 +5,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 from bioio.writers import OmeTiffWriter
+from ndevio import nImage
 
-from napari_ndev import nImage
 from napari_ndev.helpers import (
     check_for_missing_files,
     create_id_string,

@@ -3,8 +3,8 @@ from pathlib import Path
 import natsort
 import numpy as np
 import pytest
+from ndevio import nImage
 
-from napari_ndev import nImage
 from napari_ndev.widgets._utilities_container import UtilitiesContainer
 
 image_2d = np.asarray([[0, 0, 1, 1], [0, 0, 1, 1], [2, 2, 1, 1], [2, 2, 1, 1]])
