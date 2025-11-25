@@ -10,7 +10,7 @@ import dask.array as da
 import numpy as np
 import pytest
 
-from napari_ndev._napari_reader import napari_get_reader
+from ndevio import napari_get_reader
 
 ###############################################################################
 
@@ -186,18 +186,17 @@ def test_napari_get_reader_unsupported(resources_dir: Path) -> None:
     assert reader is None
 
 def test_napari_get_reader_general_exception(caplog):
-    """Test that general exceptions in get_preferred_reader are handled correctly."""
+    """Test that general exceptions in determine_reader_plugin are handled correctly."""
     test_path = "non_existent_file.xyz"
 
-    # Mock get_preferred_reader to raise an exception
-    with patch('napari_ndev._napari_reader.get_preferred_reader') as mock_reader:
+    # Mock determine_reader_plugin to raise an exception
+    with patch('ndevio._napari_reader.determine_reader_plugin') as mock_reader:
         mock_reader.side_effect = Exception("Test exception")
 
         reader = napari_get_reader(test_path)
         assert reader is None
 
-        assert "Bioio: Error reading file" in caplog.text
-        assert "Test exception" in caplog.text
+        assert "Error reading file" in caplog.text
 
 def test_napari_get_reader_png(resources_dir: Path) -> None:
     reader = napari_get_reader(
