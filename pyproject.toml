@@ -45,15 +45,7 @@ dependencies = [
     "stackview",
     "tifffile>=2023.3.15,<2025.2.18", # https://github.com/cgohlke/tifffile/releases/tag/v2025.2.18
     "scikit-image>=0.18.0",
-    "ngff-zarr>0.10.0",
-    "zarr<3",
-    "bioio>=1.1.0",
-    "bioio-base==1.0.4",
-    "bioio-imageio>=1",
-    "bioio-tifffile>=1",
-    "bioio-ome-tiff>=1",
-    "bioio-ome-zarr>=1",
-    "bioio-nd2>=1",
+    "ndevio",
     "matplotlib-scalebar>=0.8.1",
 ]
 dynamic = ["version"]
@@ -87,7 +79,6 @@ testing = [
     "tox-uv",
     "pytest-qt",
     "napari[optional]",
-    "bioio-czi>=1.0.1",
     "napari-ndev[qtpy-backend,extras]",
 ]
 docs = [
