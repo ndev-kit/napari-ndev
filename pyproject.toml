@@ -35,13 +35,13 @@ dependencies = [
     "numpy>=1.26,<2.0",
     "magicgui>=0.8.3",
     "magic-class",
-    "napari[optional]>=0.4.19",
+    "napari>=0.4.19",
+    "matplotlib",
     "apoc",  # dependes on pyclesperanto_prototype still
     "pyclesperanto",
     "dask",
     "napari-workflows",
     "natsort",
-    "seaborn",
     "stackview",
     "tifffile>=2023.3.15,<2025.2.18", # https://github.com/cgohlke/tifffile/releases/tag/v2025.2.18
     "scikit-image>=0.18.0",
@@ -110,6 +110,7 @@ dev = [
     "napari-ndev[docs]",
 ]
 extras = [
+    "napari[optional]",
     "napari-assistant",
     "napari-simpleitk-image-processing",
     "napari-segment-blobs-and-things-with-membranes",

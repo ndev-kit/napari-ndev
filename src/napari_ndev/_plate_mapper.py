@@ -171,7 +171,7 @@ class PlateMapper:
         self.pivoted_plate_map = plate_map_pivot
         return plate_map_pivot
 
-    def get_styled_plate_map(self, treatment, palette='colorblind'):
+    def get_styled_plate_map(self, treatment, palette='tab10'):
         """
         Style a plate map with background colors for each unique value.
 
@@ -180,7 +180,10 @@ class PlateMapper:
         treatment : str
             The column name of the treatment variable in the plate map DataFrame.
         palette : str or list, optional
-            The color palette to use for styling. Defaults to 'colorblind'.
+            The qualitative matplotlib colormap name to use for styling. 
+            Defaults to 'tab10'.
+            Can be any qualitative matplotlib colormap name 
+            (e.g., 'tab10', 'tab20', 'Set1', 'Set2', 'Set3').
 
         Returns
         -------
@@ -188,17 +191,20 @@ class PlateMapper:
             The styled plate map DataFrame with different background colors for each unique value.
 
         """
-        from seaborn import color_palette
+        from matplotlib import colormaps
+        from matplotlib.colors import to_hex
 
         self.pivoted_plate_map = self.get_pivoted_plate_map(treatment)
 
         unique_values = pd.unique(self.pivoted_plate_map.values.flatten())
         unique_values = unique_values[pd.notna(unique_values)]
 
-        color_palette_hex = color_palette(palette).as_hex()
+        cmap = colormaps[palette]
+        # Get discrete colors from the colormap (works for qualitative palettes)
+        colors_hex = [to_hex(cmap(i)) for i in range(cmap.N)]
+        
         # Create an infinite iterator that cycles through the palette
-        palette_cycle = itertools.cycle(color_palette_hex)
-        # Use next() to get the next color
+        palette_cycle = itertools.cycle(colors_hex)
         color_dict = {value: next(palette_cycle) for value in unique_values}
 
         def get_background_color(value): # pragma: no cover
