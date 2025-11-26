@@ -70,6 +70,8 @@ jobs:
         uses: aganders3/headless-gui@v2
         with:
           run: uv run pytest -v --color=yes --cov=napari_ndev --cov-report=xml -m "not notox"
+        env:
+          PYVISTA_OFF_SCREEN: true
 
       - name: Coverage
         if: ${{ inputs.coverage }}
