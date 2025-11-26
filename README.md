@@ -89,7 +89,13 @@ cd napari-ndev
 pip install -e . --dev
 ```
 
-This includes pytest, pytest-cov, pytest-qt, tox, ruff, pre-commit, and all optional dependencies.
+This includes pytest, pytest-cov, pytest-qt, ruff, pre-commit, and all optional dependencies.
+
+Run tests:
+
+```bash
+pytest -v --cov=napari_ndev
+```
 
 ## Pixi Usage
 

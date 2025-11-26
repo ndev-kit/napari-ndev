@@ -46,11 +46,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: ${{ matrix.python-version }}
-          cache-dependency-path: pyproject.toml
+          enable-cache: true
 
       - name: Enable Qt on Linux
         uses: tlambert03/setup-qt-libs@v1
@@ -64,16 +63,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install setuptools tox tox-uv tox-gh-actions codecov
+          uv venv --python ${{ matrix.python-version }}
+          uv pip install -e . --dev ${{ inputs.pre_release && '--prerelease=allow' || '' }}
 
       - name: Run tests
         uses: aganders3/headless-gui@v2
         with:
-          run: python -m tox ${{ inputs.pre_release && '-v --pre' || '' }}
-        env:
-          PLATFORM: ${{ matrix.platform }}
-          PYTHON_VERSION: ${{ matrix.python-version }}
+          run: uv run pytest -v --color=yes --cov=napari_ndev --cov-report=xml -m "not notox"
 
       - name: Coverage
         if: ${{ inputs.coverage }}

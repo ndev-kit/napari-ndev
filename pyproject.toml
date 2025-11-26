@@ -77,14 +77,21 @@ all = [
     "napari-ndev[qtpy-backend]",
     "napari-ndev[extras]",
 ]
+testing = [
+    "pytest",
+    "pytest-cov",
+    "pytest-qt",
+    "tox",
+    "tox-uv",
+    "napari-ndev[all]",
+    "bioio-czi",  # For testing czi files
+]
 
 [dependency-groups]
 dev = [
     "pytest",
     "pytest-cov",
     "pytest-qt",
-    "tox",
-    "tox-uv",
     "ruff",
     "pre-commit",
     "napari-ndev[all]",
