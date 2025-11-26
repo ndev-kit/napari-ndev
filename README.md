@@ -86,7 +86,7 @@ For development, clone the repository and install with the dev dependency group:
 ```bash
 git clone https://github.com/ndev-kit/napari-ndev.git
 cd napari-ndev
-pip install -e . --dev
+pip install -e . --group dev
 ```
 
 This includes pytest, pytest-cov, pytest-qt, ruff, pre-commit, and all optional dependencies.
