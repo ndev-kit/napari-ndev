@@ -7,7 +7,6 @@ from napari_ndev import helpers, measure, morphology
 from napari_ndev._plate_mapper import PlateMapper
 from napari_ndev._settings import get_settings
 from napari_ndev.image_overview import ImageOverview, ImageSet, image_overview
-from napari_ndev.nimage import nImage
 from napari_ndev.widgets import (
     ApocContainer,
     ApocFeatureStack,
@@ -32,5 +31,4 @@ __all__ = [
     'measure',
     'morphology',
     'nDevContainer',
-    'nImage',
 ]

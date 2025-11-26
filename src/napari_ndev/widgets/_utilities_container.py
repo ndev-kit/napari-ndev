@@ -21,13 +21,14 @@ from magicgui.widgets import (
     TextEdit,
     TupleEdit,
 )
+from ndevio import nImage
 
 from napari.layers import (
     Image as ImageLayer,
     Labels as LabelsLayer,
     Shapes as ShapesLayer,
 )
-from napari_ndev import get_settings, helpers, nImage
+from napari_ndev import get_settings, helpers
 
 if TYPE_CHECKING:
     from bioio import BioImage
@@ -456,7 +457,8 @@ class UtilitiesContainer(ScrollableContainer):
         self._squeezed_dims = img.dims[dims_tuple]
 
         if update_channel_names:
-            self._channel_names.value = helpers.get_channel_names(img)
+            # Convert list to string representation that can be parsed by ast.literal_eval
+            self._channel_names.value = repr(helpers.get_channel_names(img))
         if update_scale:
             self._scale_tuple.value = (
                 img.physical_pixel_sizes.Z or 1,
@@ -502,7 +504,7 @@ class UtilitiesContainer(ScrollableContainer):
         """
         Update metadata from the selected layer.
 
-        Expects images to be opened with napari-ndev reader.
+        Expects images to be opened with ndevio reader.
 
         Note:
         ----
@@ -533,8 +535,8 @@ class UtilitiesContainer(ScrollableContainer):
             )
 
     def open_images(self):
-        """Open the selected images in the napari viewer with napari-ndev."""
-        self._viewer.open(self._files.value, plugin='napari-ndev')
+        """Open the selected images in the napari viewer with ndevio."""
+        self._viewer.open(self._files.value, plugin='ndevio')
 
     # Converted
     def select_next_images(self):

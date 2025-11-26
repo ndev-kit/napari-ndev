@@ -1,8 +1,8 @@
 import pathlib
 
 import numpy as np
+from ndevio import nImage
 
-from napari_ndev import nImage
 from napari_ndev.widgets._measure_container import MeasureContainer
 
 

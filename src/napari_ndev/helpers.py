@@ -20,8 +20,7 @@ from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from bioio import BioImage
-
-    from napari_ndev import nImage
+    from ndevio import nImage
 
 __all__ = [
     'check_for_missing_files',
@@ -115,7 +114,8 @@ def get_channel_names(img: nImage | BioImage) -> list[str]:
     """
     if 'S' in img.dims.order:
         return ['red', 'green', 'blue']
-    return img.channel_names
+    # Ensure we have plain Python strings, not numpy string types
+    return [str(c) for c in img.channel_names]
 
 
 def get_squeezed_dim_order(

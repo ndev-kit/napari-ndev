@@ -24,15 +24,16 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Image Processing",
     "Topic :: Scientific/Engineering :: Visualization",
     "Topic :: Software Development :: User Interfaces",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Utilities"
 ]
-requires-python = ">=3.9, <3.13"
+requires-python = ">=3.10"
 dependencies = [
-    "numpy>=1.26,<2.0",
+    "numpy>=1.26",
     "magicgui>=0.8.3",
     "magic-class",
     "napari>=0.4.19",
@@ -43,25 +44,16 @@ dependencies = [
     "napari-workflows",
     "natsort",
     "stackview",
-    "tifffile>=2023.3.15,<2025.2.18", # https://github.com/cgohlke/tifffile/releases/tag/v2025.2.18
     "scikit-image>=0.18.0",
-    "ngff-zarr>0.10.0",
-    "zarr<3",
-    "bioio>=1.1.0",
-    "bioio-base==1.0.4",
-    "bioio-imageio>=1",
-    "bioio-tifffile>=1",
-    "bioio-ome-tiff>=1",
-    "bioio-ome-zarr>=1",
-    "bioio-nd2>=1",
+    "ndevio>=0.3.3",  # for min pins on bioio for writers
     "matplotlib-scalebar>=0.8.1",
 ]
 dynamic = ["version"]
 
 [project.urls]
-"Bug Tracker" = "https://github.com/TimMonko/napari-ndev/issues"
+"Bug Tracker" = "https://github.com/ndev-kit/napari-ndev/issues"
 "Documentation" = "https://ndev-kit.github.io/"
-"Source Code" = "https://github.com/TimMonko/napari-ndev"
+"Source Code" = "https://github.com/ndev-kit/napari-ndev"
 
 [project.entry-points."napari.manifest"]
 napari-ndev = "napari_ndev:napari.yaml"
@@ -73,10 +65,15 @@ napari-ndev = "napari_ndev.__main__:main"
 qtpy-backend = [
     "napari[pyqt6]",
 ]
+extras = [
+    "napari[optional]",
+    "napari-assistant",
+    "napari-simpleitk-image-processing",
+    "napari-segment-blobs-and-things-with-membranes",
+]
 all = [
     "napari-ndev[qtpy-backend]",
     "napari-ndev[extras]",
-    "napari-ndev[gpl-extras]",
     "ndev-sampledata",
     "ndev-themes",
 ]
@@ -87,8 +84,8 @@ testing = [
     "tox-uv",
     "pytest-qt",
     "napari[optional]",
-    "bioio-czi>=1.0.1",
-    "napari-ndev[qtpy-backend,extras]",
+    "napari-ndev[all]",
+    "bioio-czi",
 ]
 docs = [
     "mkdocs",
@@ -108,16 +105,6 @@ dev = [
     "pre-commit",
     "napari-ndev[testing]",
     "napari-ndev[docs]",
-]
-extras = [
-    "napari[optional]",
-    "napari-assistant",
-    "napari-simpleitk-image-processing",
-    "napari-segment-blobs-and-things-with-membranes",
-]
-gpl-extras = [
-    "bioio-czi>=1.0.1",
-    "bioio-lif>=1"
 ]
 
 [tool.setuptools.packages.find]
@@ -264,6 +251,9 @@ markers = ["notox: mark a test to be excluded from tox"]
 channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
+[tool.pixi.dependencies]
+python = ">=3.10,<3.14"
+
 [tool.pixi.pypi-dependencies]
 napari-ndev = { path = ".", editable = true }
 
@@ -273,7 +263,6 @@ all = { features = ["all"], solve-group = "default" }
 dev = { features = ["dev"], solve-group = "default" }
 docs = { features = ["docs"], solve-group = "default" }
 extras = { features = ["extras"], solve-group = "default" }
-gpl-extras = { features = ["gpl-extras"], solve-group = "default" }
 qtpy-backend = { features = ["qtpy-backend"], solve-group = "default" }
 testing = { features = ["testing"], solve-group = "default" }
 

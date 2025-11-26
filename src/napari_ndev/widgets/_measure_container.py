@@ -397,7 +397,7 @@ class MeasureContainer(Container):
         self, directory: str | None = None
     ) -> tuple[BioImage, pathlib.Path]:
         """Get the first image from a directory."""
-        from napari_ndev import nImage
+        from ndevio import nImage
 
         _, files = helpers.get_directory_and_files(directory)
         return nImage(files[0]), files[0]
@@ -469,7 +469,9 @@ class MeasureContainer(Container):
             The measurement results as a DataFrame.
 
         """
-        from napari_ndev import measure as ndev_measure, nImage
+        from ndevio import nImage
+
+        from napari_ndev import measure as ndev_measure
 
         # get all the files in the label directory
         label_dir, label_files = helpers.get_directory_and_files(

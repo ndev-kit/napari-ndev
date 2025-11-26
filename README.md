@@ -1,11 +1,11 @@
 # napari-ndev
 
-[![License BSD-3](https://img.shields.io/pypi/l/napari-ndev.svg?color=green)](https://github.com/TimMonko/napari-ndev/raw/main/LICENSE)
+[![License BSD-3](https://img.shields.io/pypi/l/napari-ndev.svg?color=green)](https://github.com/ndev-kit/napari-ndev/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-ndev.svg?color=green)](https://pypi.org/project/napari-ndev)
 [![Python package index download statistics](https://img.shields.io/pypi/dm/napari-ndev.svg)](https://pypistats.org/packages/napari-ndev)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-ndev.svg?color=green)](https://python.org)
-[![tests](https://github.com/TimMonko/napari-ndev/workflows/tests/badge.svg)](https://github.com/TimMonko/napari-ndev/actions)
-[![codecov](https://codecov.io/gh/TimMonko/napari-ndev/branch/main/graph/badge.svg)](https://codecov.io/gh/TimMonko/napari-ndev)
+[![tests](https://github.com/ndev-kit/napari-ndev/workflows/tests/badge.svg)](https://github.com/ndev-kit/napari-ndev/actions)
+[![codecov](https://codecov.io/gh/ndev-kit/napari-ndev/branch/main/graph/badge.svg)](https://codecov.io/gh/ndev-kit/napari-ndev)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-ndev)](https://napari-hub.org/plugins/napari-ndev)
 ![Static Badge](https://img.shields.io/badge/plugin-npe2-brightgreen?style=flat-square&label=plugin)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14787853.svg)](https://doi.org/10.5281/zenodo.14787853)

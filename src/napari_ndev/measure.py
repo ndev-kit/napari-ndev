@@ -201,7 +201,7 @@ def group_and_agg_measurements(
 
     # get aggregated data
     agg_cols = df[agg_cols]
-    agg_dict = {col: agg_funcs for col in agg_cols}
+    agg_dict = dict.fromkeys(agg_cols, agg_funcs)
     df_agg = (
             df.copy()
             .groupby(grouping_cols)  # sw

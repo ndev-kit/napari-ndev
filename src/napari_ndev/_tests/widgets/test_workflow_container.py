@@ -1,8 +1,8 @@
 import pathlib
 
 import numpy as np
+from ndevio import nImage
 
-from napari_ndev import nImage
 from napari_ndev.widgets._workflow_container import WorkflowContainer
 
 # from napari_workflows._io_yaml_v1 import load_workflow

@@ -14,8 +14,9 @@ from magicgui.widgets import (
     PushButton,
     Select,
 )
+from ndevio import nImage
 
-from napari_ndev import helpers, nImage
+from napari_ndev import helpers
 
 if TYPE_CHECKING:
     import napari
