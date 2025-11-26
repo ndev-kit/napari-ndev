@@ -45,7 +45,7 @@ dependencies = [
     "natsort",
     "stackview",
     "scikit-image>=0.18.0",
-    "ndevio>=0.3.0",
+    "ndevio>=0.3.3",  # for min pins on bioio for writers
     "matplotlib-scalebar>=0.8.1",
 ]
 dynamic = ["version"]
