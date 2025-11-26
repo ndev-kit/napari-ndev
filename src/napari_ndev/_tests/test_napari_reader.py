@@ -93,12 +93,7 @@ def test_reader(
         assert meta == expected_meta
 
     # now check open all scenes
-    partial_napari_reader_function = napari_get_reader(
-        path,
-        in_memory=in_memory,
-        open_first_scene_only=False,
-        open_all_scenes=True
-    )
+    partial_napari_reader_function = napari_get_reader(path, in_memory=in_memory, open_all_scenes=True)
     assert callable(partial_napari_reader_function)
 
     layer_data = partial_napari_reader_function(path)
@@ -140,8 +135,6 @@ def test_for_multiscene_widget(
     reader = napari_get_reader(
         path,
         in_memory=in_memory,
-        open_first_scene_only=False,
-        open_all_scenes=False
     )
 
     if reader is not None:
