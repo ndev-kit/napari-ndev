@@ -10,7 +10,7 @@ on:
       python-versions:
         description: 'JSON array of Python versions to test. e.g. ["3.10", "3.11"]'
         type: string
-        default: '["3.10", "3.11", "3.12", "3.13"]'
+        default: '["3.10", "3.11", "3.12", "3.13", "3.14"]'
       pre_release:
         description: 'Whether to run tests with --pre flag for pip install'
         type: boolean
