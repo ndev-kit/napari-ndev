@@ -47,6 +47,8 @@ dependencies = [
     "scikit-image>=0.18.0",
     "ndevio>=0.3.3",  # for min pins on bioio for writers
     "matplotlib-scalebar>=0.8.1",
+    "ndev-sampledata",
+    "ndev-themes",
 ]
 dynamic = ["version"]
 
@@ -74,37 +76,19 @@ extras = [
 all = [
     "napari-ndev[qtpy-backend]",
     "napari-ndev[extras]",
-    "ndev-sampledata",
-    "ndev-themes",
 ]
-testing = [
+
+[dependency-groups]
+dev = [
     "pytest",
     "pytest-cov",
+    "pytest-qt",
     "tox",
     "tox-uv",
-    "pytest-qt",
-    "napari[optional]",
-    "napari-ndev[all]",
-    "bioio-czi",
-]
-docs = [
-    "mkdocs",
-    "mkdocs-autorefs",
-    "mkdocs-material",
-    "mkdocstrings",
-    "mkdocstrings-python",
-    "mkdocs-jupyter",
-    "mkdocs-pdf",
-    "mkdocs-spellcheck[all]",
-    "mkdocs-literate-nav",
-    "mkdocs-table-reader-plugin",
-    "black"
-]
-dev = [
     "ruff",
     "pre-commit",
-    "napari-ndev[testing]",
-    "napari-ndev[docs]",
+    "napari-ndev[all]",
+    "bioio-czi",  # For testing czi files
 ]
 
 [tool.setuptools.packages.find]
@@ -260,11 +244,9 @@ napari-ndev = { path = ".", editable = true }
 [tool.pixi.environments]
 default = { features = ["qtpy-backend"], solve-group = "default" }
 all = { features = ["all"], solve-group = "default" }
-dev = { features = ["dev"], solve-group = "default" }
-docs = { features = ["docs"], solve-group = "default" }
 extras = { features = ["extras"], solve-group = "default" }
 qtpy-backend = { features = ["qtpy-backend"], solve-group = "default" }
-testing = { features = ["testing"], solve-group = "default" }
+dev = { features = ["dev"], solve-group = "default" }
 
 [tool.pixi.tasks]
 napari = { cmd = "napari" }

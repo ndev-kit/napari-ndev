@@ -28,45 +28,68 @@ A collection of widgets intended to serve any person seeking to process microsco
 
 ## Installation
 
-**napari-ndev** is a pure Python package, and can be installed with [pip]:
+**See the [full installation guide](https://ndev-kit.github.io/installation/) for more options including uv and Pixi.**
+
+**napari-ndev** is a pure Python package and can be installed with [pip]:
 
 ```bash
 pip install napari-ndev
 ```
 
-If napari is currently not installed in your environment, you will also need to include a QtPy backend:
-
-```bash
-pip install napari-ndev[qtpy-backend]
-```
-
-The easiest way to get started with **napari-ndev** is to install all the optional dependencies (see note below) with:
+The easiest way to get started is to install the opinionated optional dependencies, which includes napari and PyQt6 (the Qt backend) and additional napari plugins:
 
 ```bash
 pip install napari-ndev[all]
 ```
 
+After installation, launch napari with the nDev App widget open:
+
+```bash
+napari-ndev
+```
+
+This is equivalent to running `napari -w napari-ndev "nDev App"`.
+
 ----------------------------------
 
-### Optional Libraries
+### Optional Dependencies
 
-**napari-ndev** is most useful when interacting with some other napari plugins (e.g. napari-assistant) and can read additional filetypes. A few extra BSD3 compatible napari-plugins may be installed with [pip]:
+**napari-ndev** provides several optional dependency groups:
+
+* **`[qtpy-backend]`** - Includes `napari[pyqt6]` for the Qt GUI
+* **`[extras]`** - Additional napari plugins like napari-assistant for enhanced workflows
+* **`[all]`** - Everything above plus sample data and themes (recommended)
+
+### Additional Image Format Support
+
+**napari-ndev** uses [ndevio](https://github.com/ndev-kit/ndevio) for image I/O, which relies on [bioio](https://github.com/bioio-devs/bioio) readers. Basic formats (TIFF, OME-TIFF, OME-Zarr, PNG, etc.) work out of the box.
+
+For additional formats, install the appropriate bioio reader:
 
 ```bash
-pip install napari-ndev[extras]
+# CZI files (GPL-3 licensed)
+pip install bioio-czi
+
+# LIF files (GPL-3 licensed)
+pip install bioio-lif
+
+# Bio-Formats for many proprietary formats
+pip install bioio-bioformats
 ```
 
-**napari-ndev** can optionally use GPL-3 licensed libraries to enhance its functionality, but are not required. If you choose to install and use these optional dependencies, you must comply with the GPL-3 license terms. The main functional improvement is from some `bioio` libraries to support extra image formats, including `czi` and `lif` files. These libraries can be installed with [pip]:
+**Note:** Some bioio readers are GPL-3 licensed. If you install and use these, you must comply with GPL-3 license terms.
+
+### Development
+
+For development, clone the repository and install with the dev dependency group:
 
 ```bash
-pip install napari-ndev[gpl-extras]
+git clone https://github.com/ndev-kit/napari-ndev.git
+cd napari-ndev
+pip install -e . --dev
 ```
 
-In addition, you may need to install specific [`bioio` readers](https://github.com/bioio-devs/bioio) to support your specific image, such as `bioio-czi` and `bioio-lif` (included in `[gpl-extras]`) or `bioio-bioformats`.
-
-### Development Libraries
-
-For development use the `[dev]` optional libraries to verify your changes, which includes the `[docs]` and `[testing]` optional groups. However, the Github-CI will test pull requests with `[testing]` only.
+This includes pytest, pytest-cov, pytest-qt, tox, ruff, pre-commit, and all optional dependencies.
 
 ## Pixi Usage
 
@@ -86,12 +109,13 @@ pixi run napari-ndev
 Or install the package in editable/development mode and activate the local environment:
 
 ```bash
-pixi install  # can also use `pixi install -e dev` to install development dependencies
-pixi shell  # activates the default pixi environment, which includes qtpy-backend
-napari  # or whatever CLI command you want
+pixi install           # Default environment with qtpy-backend
+pixi install -e dev    # Development environment with testing tools
+pixi shell             # Activate the environment
+napari                 # Run napari or any command
 ```
 
-To test: `pixi run -e testing test`
+To run tests: `pixi run -e dev test`
 
 ----------------------------------
 
