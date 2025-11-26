@@ -457,7 +457,8 @@ class UtilitiesContainer(ScrollableContainer):
         self._squeezed_dims = img.dims[dims_tuple]
 
         if update_channel_names:
-            self._channel_names.value = helpers.get_channel_names(img)
+            # Convert list to string representation that can be parsed by ast.literal_eval
+            self._channel_names.value = repr(helpers.get_channel_names(img))
         if update_scale:
             self._scale_tuple.value = (
                 img.physical_pixel_sizes.Z or 1,
