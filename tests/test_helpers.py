@@ -75,7 +75,7 @@ def test_create_id_string_no_id():
 
 def test_create_id_string_ome_metadata_no_name(resources_dir: Path):
     file = Path(
-        # './src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
+        # './tests/resources/Workflow/Images/cells3d2ch.tiff'
         resources_dir / 'Workflow/Images/cells3d2ch.tiff'
     )
     img = nImage(file)
@@ -105,29 +105,29 @@ def test_create_id_string_ometiffwriter_name(tmp_path):
 
 def test_get_channel_names_CYX():
     file = Path(
-        r'./src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
+        r'./tests/resources/Workflow/Images/cells3d2ch.tiff'
     )
     img = nImage(file)
     assert get_channel_names(img) == img.channel_names
 
 
 def test_get_channel_names_RGB():
-    file = Path(r'./src/napari_ndev/_tests/resources/RGB.tiff')
+    file = Path(r'./tests/resources/RGB.tiff')
     img = nImage(file)
     assert get_channel_names(img) == ['red', 'green', 'blue']
 
 
 def test_get_directory_and_files_default_pattern():
-    directory = Path(r'./src/napari_ndev/_tests/resources/test_czis')
+    directory = Path(r'./tests/resources/test_czis')
     directory, files = get_directory_and_files(directory)
-    assert directory == Path(r'./src/napari_ndev/_tests/resources/test_czis')
+    assert directory == Path(r'./tests/resources/test_czis')
     assert files == list(directory.glob('*'))
 
 
 def test_get_directory_and_files_custom_pattern():
-    directory = Path(r'./src/napari_ndev/_tests/resources/test_czis')
+    directory = Path(r'./tests/resources/test_czis')
     directory, files = get_directory_and_files(directory, pattern='.czi')
-    assert directory == Path(r'./src/napari_ndev/_tests/resources/test_czis')
+    assert directory == Path(r'./tests/resources/test_czis')
     assert files == list(directory.glob('*.czi'))
 
 
@@ -139,7 +139,7 @@ def test_get_directory_and_files_none_dir():
 
 def test_get_directory_and_files_dir_not_exists():
     directory = Path(
-        r'./src/napari_ndev/_tests/resources/test_czis_not_exists'
+        r'./tests/resources/test_czis_not_exists'
     )
     with pytest.raises(FileNotFoundError):
         get_directory_and_files(directory)
@@ -147,14 +147,14 @@ def test_get_directory_and_files_dir_not_exists():
 
 def test_get_squeezed_dim_order_ZYX():
     file = Path(
-        r'./src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
+        r'./tests/resources/Workflow/Images/cells3d2ch.tiff'
     )
     img = nImage(file)
     assert get_squeezed_dim_order(img) == 'ZYX'
 
 
 def test_get_squeezed_dim_order_RGB():
-    file = Path(r'./src/napari_ndev/_tests/resources/RGB.tiff')
+    file = Path(r'./tests/resources/RGB.tiff')
     img = nImage(file)
     assert get_squeezed_dim_order(img) == 'YX'
 

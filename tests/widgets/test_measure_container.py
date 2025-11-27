@@ -24,7 +24,7 @@ def test_widg_init_with_viewer(make_napari_viewer):
 
 def test_get_0th_img_from_dir(tmp_path):
     image_directory = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Apoc/Images'
+        'tests/resources/Apoc/Images'
     )
     container = MeasureContainer()
     img, file_id = container._get_0th_img_from_dir(image_directory)
@@ -35,7 +35,7 @@ def test_get_0th_img_from_dir(tmp_path):
 
 def test_update_dim_and_scales():
     image_directory = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Apoc/Images'
+        'tests/resources/Apoc/Images'
     )
     file_name = 'SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tiff'
     container = MeasureContainer()
@@ -48,13 +48,13 @@ def test_update_dim_and_scales():
 def test_update_choices():
     container = MeasureContainer()
     image_directory = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/Images'
+        'tests/resources/Workflow/Images'
     )
     label_directory = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/Labels'
+        'tests/resources/Workflow/Labels'
     )
     region_directory = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/ShapesAsLabels'
+        'tests/resources/Workflow/ShapesAsLabels'
     )
     container._image_directory.value = image_directory
     container._label_directory.value = label_directory
@@ -80,7 +80,7 @@ def test_update_choices():
 def test_batch_measure_label_only(tmp_path):
     container = MeasureContainer()
     label_directory = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/Labels'
+        'tests/resources/Workflow/Labels'
     )
     # make a dummy output folder
     output_folder = tmp_path / 'Output'
@@ -101,13 +101,13 @@ def test_batch_measure_label_only(tmp_path):
 def test_batch_measure_intensity(tmp_path):
     container = MeasureContainer()
     image_directory = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/Images'
+        'tests/resources/Workflow/Images'
     )
     label_directory = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/Labels'
+        'tests/resources/Workflow/Labels'
     )
     region_directory = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/ShapesAsLabels'
+        'tests/resources/Workflow/ShapesAsLabels'
     )
     # make a dummy output folder
     output_folder = tmp_path / 'Output'
@@ -145,7 +145,7 @@ def test_batch_measure_intensity(tmp_path):
 def test_batch_measure_with_regex(tmp_path):
     container = MeasureContainer()
     label_directory = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Measure/Labels'
+        'tests/resources/Measure/Labels'
     )
     output_folder = tmp_path / 'Output'
     output_folder.mkdir()
@@ -187,7 +187,7 @@ def test_batch_measure_with_regex(tmp_path):
 def test_batch_measure_multiple_label_images(tmp_path):
     container = MeasureContainer()
     label_directory = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Measure/Labels'
+        'tests/resources/Measure/Labels'
     )
     output_folder = tmp_path / 'Output'
     output_folder.mkdir()
@@ -204,7 +204,7 @@ def test_batch_measure_multiple_label_images(tmp_path):
 
 def test_group_measurements_no_agg_defaults():
     container = MeasureContainer()
-    test_data_path = pathlib.Path(r'src/napari_ndev/_tests/resources/measure_props_Labels.csv')
+    test_data_path = pathlib.Path(r'tests/resources/measure_props_Labels.csv')
     container._measured_data_path.value = test_data_path
 
     grouped_df = container.group_measurements()
@@ -214,7 +214,7 @@ def test_group_measurements_no_agg_defaults():
 
 def test_group_measurements_with_agg():
     container = MeasureContainer()
-    test_data_path = pathlib.Path(r'src/napari_ndev/_tests/resources/measure_props_Labels.csv')
+    test_data_path = pathlib.Path(r'tests/resources/measure_props_Labels.csv')
     container._measured_data_path.value = test_data_path
     container._grouping_cols.value = ['label_name', 'id', 'intensity_max-Labels']
     container._agg_cols.value = ['area']

@@ -73,7 +73,7 @@ def test_workflow_container_update_roots(make_napari_viewer):
 def test_workflow_container_get_workflow_info():
     container = WorkflowContainer()
     wf_path = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/workflows/'
+        'tests/resources/Workflow/workflows/'
         'cpu_workflow-2roots-2leafs.yaml'
     )
     container.workflow_file.value = wf_path
@@ -94,13 +94,13 @@ def test_update_progress_bar():
 def test_batch_workflow_not_threaded(tmp_path):
     container = WorkflowContainer()
     wf_path = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/workflows/'
+        'tests/resources/Workflow/workflows/'
         'cpu_workflow-2roots-2leafs.yaml'
     )
     container.workflow_file.value = wf_path
 
     container.image_directory.value = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/Images'
+        'tests/resources/Workflow/Images'
     )
 
     output_folder = tmp_path / 'Output'
@@ -123,13 +123,13 @@ def test_batch_workflow_not_threaded(tmp_path):
 def test_batch_workflow_leaf_tasks(tmp_path, qtbot):
     container = WorkflowContainer()
     wf_path = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/workflows/'
+        'tests/resources/Workflow/workflows/'
         'cpu_workflow-2roots-2leafs.yaml'
     )
     container.workflow_file.value = wf_path
 
     container.image_directory.value = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/Images'
+        'tests/resources/Workflow/Images'
     )
 
     output_folder = tmp_path / 'Output'
@@ -157,13 +157,13 @@ def test_batch_workflow_leaf_tasks(tmp_path, qtbot):
 def test_batch_workflow_keep_original_images(tmp_path, qtbot):
     container = WorkflowContainer()
     wf_path = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/workflows/'
+        'tests/resources/Workflow/workflows/'
         'cpu_workflow-2roots-2leafs.yaml'
     )
     container.workflow_file.value = wf_path
 
     container.image_directory.value = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/Images'
+        'tests/resources/Workflow/Images'
     )
 
     output_folder = tmp_path / 'Output'
@@ -192,13 +192,13 @@ def test_batch_workflow_keep_original_images(tmp_path, qtbot):
 def test_batch_workflow_all_tasks(tmp_path, qtbot):
     container = WorkflowContainer()
     wf_path = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/workflows/'
+        'tests/resources/Workflow/workflows/'
         'cpu_workflow-2roots-2leafs.yaml'
     )
     container.workflow_file.value = wf_path
 
     container.image_directory.value = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/Images'
+        'tests/resources/Workflow/Images'
     )
 
     output_folder = tmp_path / 'Output'
@@ -226,7 +226,7 @@ def test_viewer_workflow(make_napari_viewer):
     viewer = make_napari_viewer()
     container = WorkflowContainer(viewer)
     wf_path = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/workflows/'
+        'tests/resources/Workflow/workflows/'
         'cpu_workflow-2roots-2leafs.yaml'
     )
     container.workflow_file.value = wf_path
@@ -266,7 +266,7 @@ def test_viewer_workflow_threaded(make_napari_viewer, qtbot):
     viewer = make_napari_viewer()
     container = WorkflowContainer(viewer)
     wf_path = pathlib.Path(
-        'src/napari_ndev/_tests/resources/Workflow/workflows/'
+        'tests/resources/Workflow/workflows/'
         'cpu_workflow-2roots-2leafs.yaml'
     )
     container.workflow_file.value = wf_path

@@ -454,7 +454,7 @@ def test_group_and_agg_measurements_string_agg_func(sample_data):
     )
 
 def test_group_and_agg_measurements_real_data():
-    df = pd.read_csv('src/napari_ndev/_tests/resources/measure_props_Labels.csv')
+    df = pd.read_csv('tests/resources/measure_props_Labels.csv')
 
     result_df = group_and_agg_measurements(
         df,
