@@ -20,8 +20,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -31,7 +29,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Utilities"
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "numpy>=1.26",
     "magicgui>=0.8.3",
@@ -45,7 +43,7 @@ dependencies = [
     "natsort",
     "stackview",
     "scikit-image>=0.18.0",
-    "ndevio>=0.3.3",  # for min pins on bioio for writers
+    "ndevio>=0.4.0",  # for min pins on bioio for writers
     "matplotlib-scalebar>=0.8.1",
     "ndev-sampledata",
     "ndev-themes",
@@ -76,15 +74,6 @@ extras = [
 all = [
     "napari-ndev[qtpy-backend]",
     "napari-ndev[extras]",
-]
-testing = [
-    "pytest",
-    "pytest-cov",
-    "pytest-qt",
-    "tox",
-    "tox-uv",
-    "napari-ndev[all]",
-    "bioio-czi",  # For testing czi files
 ]
 
 [dependency-groups]
@@ -243,7 +232,7 @@ channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
 [tool.pixi.dependencies]
-python = ">=3.10,<3.14"
+python = ">=3.11,<3.14"
 
 [tool.pixi.pypi-dependencies]
 napari-ndev = { path = ".", editable = true }

@@ -1,0 +1,98 @@
+# This workflows will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+name: tests
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Check daily at midnight UTC
+  push:
+    branches:
+      - main
+      - npe2
+    tags:
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
+  pull_request:
+    branches:
+      - main
+      - npe2
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.platform }} py${{ matrix.python-version }}
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
+          activate-environment: true
+
+      - name: Install Windows OpenGL
+        uses: pyvista/setup-headless-display-action@v4.2
+        with:
+          qt: true
+          wm: herbstluftwm
+
+      - name: Run tests
+        run: uv run --dev pytest -v --color=yes --cov=napari-ndev --cov-report=xml
+
+      - name: Coverage
+        uses: codecov/codecov-action@v5
+
+  report-scheduled-failures:
+    needs: [test]
+    if: ${{ failure() && github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Report Scheduled Test Failures
+        uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
+          TITLE: '[test-bot] Scheduled tests are failing'
+        with:
+          filename: .github/TEST_FAIL_TEMPLATE.md
+          update_existing: true
+
+  build-and-inspect-package:
+    name: Build & inspect package.
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: hynek/build-and-inspect-python-package@v2
+
+  deploy:
+    # this will run when you have tagged a commit, starting with "v*"
+    # and requires that you have put your twine API key in your
+    # github secrets (see readme for details)
+    needs: [test, build-and-inspect-package]
+    runs-on: ubuntu-latest
+    if: contains(github.ref, 'tags')
+    permissions:
+      id-token: write
+    steps:
+      - name: Download built artifact to dist/
+        uses: actions/download-artifact@v6
+        with:
+          name: Packages
+          path: dist
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
