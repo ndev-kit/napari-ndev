@@ -220,6 +220,12 @@ omit = [
 
 
 [tool.pytest.ini_options]
+minversion = "6.0"
+addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
+xfail_strict = true
+# filterwarnings = ["error"]  # recommended by PP309; deprecation warnings cause failures so leaving for the user to enable if desired
+log_cli_level = "INFO"
+testpaths = ["tests"]
 markers = ["notox: mark a test to be excluded from tox"]
 
 [tool.pixi.workspace]
