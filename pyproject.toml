@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=42.0.0", "wheel", "setuptools_scm"]
+requires = ["setuptools>=69.0.0", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -92,13 +92,13 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
-exclude = ["*._tests*", "*._tests.*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml"]
 
 [tool.setuptools_scm]
 write_to = "src/napari_ndev/_version.py"
+fallback_version = "0.0.1dev0"
 
 
 [tool.ruff]
@@ -215,10 +215,6 @@ exclude_lines = [
     "except ImportError:",
     "pass",
     "^ +\\.\\.\\.$",
-]
-omit = [
-    "src/napari_ndev/_tests/*",
-    "docs/*",
 ]
 
 
