@@ -44,7 +44,6 @@ dependencies = [
     "stackview",
     "scikit-image>=0.18.0",
     "ndevio>=0.4.0",  # for min pins on bioio for writers
-    # "tifffile>=2024.8.0",  # Ensure compatible version with modern API
     "matplotlib-scalebar>=0.8.1",
     "ndev-sampledata",
     "ndev-themes",
@@ -248,4 +247,4 @@ dev = { features = ["dev"], solve-group = "default" }
 [tool.pixi.tasks]
 napari = { cmd = "napari" }
 napari-ndev = { cmd = 'napari -w napari-ndev "nDev App"' }
-test = { cmd = "pytest" }
+test = { cmd = "pytest -v --color=yes --cov=napari-ndev --cov-report=xml" }
