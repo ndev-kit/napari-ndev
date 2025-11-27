@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest, windows-latest]  # macos-latest has a segfault, which was known in the tox version of running tests as well
+        platform: [ubuntu-latest, windows-latest, macos-latest]  # macos-latest has a segfault, which was known in the tox version of running tests as well
         python-version: ["3.11", "3.12", "3.13"]
 
     steps:
@@ -49,7 +49,7 @@ jobs:
           wm: herbstluftwm
 
       - name: Run tests
-        run: uv run --dev pytest -v --color=yes --cov=napari-ndev --cov-report=xml
+        run: uv run --dev pytest -v --color=yes --cov=napari-ndev --cov-report=xml -m "not notox"
 
       - name: Coverage
         uses: codecov/codecov-action@v5
