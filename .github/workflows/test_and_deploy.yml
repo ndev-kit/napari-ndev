@@ -49,7 +49,7 @@ jobs:
           wm: herbstluftwm
 
       - name: Run tests
-        run: uv run --dev pytest -v --color=yes --cov=napari-ndev --cov-report=xml -m "not notox"
+        run: uv run --dev pytest -v --color=yes --cov=napari-ndev --cov-report=xml -m "not skip_ci"
 
       - name: Coverage
         uses: codecov/codecov-action@v5

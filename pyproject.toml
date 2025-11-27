@@ -188,7 +188,7 @@ multiline-quotes = "double"
 [tool.ruff.lint.flake8-tidy-imports]
 # Disallow all relative imports.
 ban-relative-imports = "all"
-banned-module-level-imports = ["pyclesperanto", "apoc"]
+banned-module-level-imports = ["pyclesperanto", "apoc"]  # These require GPU/OpenCL - use lazy imports and mark tests with @pytest.mark.skip_ci
 
 
 [tool.ruff.lint.isort]
@@ -226,7 +226,7 @@ xfail_strict = true
 # filterwarnings = ["error"]  # recommended by PP309; deprecation warnings cause failures so leaving for the user to enable if desired
 log_cli_level = "INFO"
 testpaths = ["tests"]
-markers = ["notox: mark a test to be excluded from tox"]
+markers = ["skip_ci: mark a test to be skipped in CI (e.g., requires GPU)"]
 
 [tool.pixi.workspace]
 channels = ["conda-forge"]

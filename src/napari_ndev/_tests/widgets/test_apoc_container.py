@@ -108,7 +108,7 @@ def empty_classifier_file():
         yield classifier_file_path
 
 
-@pytest.mark.notox
+@pytest.mark.skip_ci
 def test_image_train(make_napari_viewer, test_data, empty_classifier_file):
     viewer = make_napari_viewer()
     test_image, _, test_labels, _ = test_data
@@ -152,7 +152,7 @@ def trained_classifier_file(
     return empty_classifier_file
 
 
-@pytest.mark.notox
+@pytest.mark.skip_ci
 def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
     import pyclesperanto as cle
     viewer = make_napari_viewer()
@@ -173,7 +173,7 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
     assert np.asarray(cle.pull(wdg._viewer.layers[expected_layer_name].data)).any()
 
 
-@pytest.mark.notox
+@pytest.mark.skip_ci
 # def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
 def test_batch_predict_normal_operation(tmp_path):
     image_directory = pathlib.Path(
@@ -228,7 +228,7 @@ def test_update_metadata_from_file():
             assert list(wdg._image_channels.choices) == ['C0', 'C1', 'C2']
 
 
-@pytest.mark.notox
+@pytest.mark.skip_ci
 def test_batch_predict_exception_logging(tmp_path):
     image_directory = pathlib.Path(
         'src/napari_ndev/_tests/resources/Apoc/Images'
