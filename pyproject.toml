@@ -89,15 +89,10 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
+exclude = ["*._tests*", "*._tests.*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml"]
-
-[tool.setuptools.exclude-package-data]
-"*" = [
-    "docs/*",
-    "_tests/*",
-]
 
 [tool.setuptools_scm]
 write_to = "src/napari_ndev/_version.py"
