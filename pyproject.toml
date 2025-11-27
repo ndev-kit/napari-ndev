@@ -87,6 +87,9 @@ dev = [
     "bioio-czi",  # For testing czi files
 ]
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.packages.find]
 where = ["src"]
 exclude = ["*._tests*", "*._tests.*"]
