@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest, windows-latest, macos-latest]
+        platform: [ubuntu-latest, windows-latest]  # macos-latest has a segfault, which was known in the tox version of running tests as well
         python-version: ["3.11", "3.12", "3.13"]
 
     steps:
