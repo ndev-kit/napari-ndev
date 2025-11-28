@@ -252,7 +252,7 @@ def test_imageoverview_init(image_and_label_sets_ImageSet):
 def test_imageoverview_save(image_and_label_sets_ImageSet):
     im = ImageOverview(image_and_label_sets_ImageSet, show=False)
     # test that the figure can be saved with .save()
-    save_path = pathlib.Path(r'src\napari_ndev\_tests\resources')
+    save_path = pathlib.Path(r'tests\resources')
     save_file_path = save_path / 'image_overview.png'
 
     im.save(str(save_path), 'image_overview.png')

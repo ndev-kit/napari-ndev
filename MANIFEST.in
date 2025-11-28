@@ -1,7 +1,0 @@
-include LICENSE
-include README.md
-
-prune docs/
-
-recursive-exclude * __pycache__
-recursive-exclude * *.py[co]

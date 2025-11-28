@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=42.0.0", "wheel", "setuptools_scm"]
+requires = ["setuptools>=69.0.0", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -20,8 +20,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -31,7 +29,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Utilities"
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "numpy>=1.26",
     "magicgui>=0.8.3",
@@ -45,8 +43,10 @@ dependencies = [
     "natsort",
     "stackview",
     "scikit-image>=0.18.0",
-    "ndevio>=0.3.3",  # for min pins on bioio for writers
+    "ndevio>=0.4.0",  # for min pins on bioio for writers
     "matplotlib-scalebar>=0.8.1",
+    "ndev-sampledata",
+    "ndev-themes",
 ]
 dynamic = ["version"]
 
@@ -74,38 +74,21 @@ extras = [
 all = [
     "napari-ndev[qtpy-backend]",
     "napari-ndev[extras]",
-    "ndev-sampledata",
-    "ndev-themes",
 ]
-testing = [
+
+[dependency-groups]
+dev = [
     "pytest",
     "pytest-cov",
-    "tox",
-    "tox-uv",
     "pytest-qt",
-    "napari[optional]",
-    "napari-ndev[all]",
-    "bioio-czi",
-]
-docs = [
-    "mkdocs",
-    "mkdocs-autorefs",
-    "mkdocs-material",
-    "mkdocstrings",
-    "mkdocstrings-python",
-    "mkdocs-jupyter",
-    "mkdocs-pdf",
-    "mkdocs-spellcheck[all]",
-    "mkdocs-literate-nav",
-    "mkdocs-table-reader-plugin",
-    "black"
-]
-dev = [
     "ruff",
     "pre-commit",
-    "napari-ndev[testing]",
-    "napari-ndev[docs]",
+    "napari-ndev[all]",
+    "bioio-czi",  # For testing czi files
 ]
+
+[tool.setuptools]
+include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -113,14 +96,9 @@ where = ["src"]
 [tool.setuptools.package-data]
 "*" = ["*.yaml"]
 
-[tool.setuptools.exclude-package-data]
-"*" = [
-    "docs/*",
-    "_tests/*",
-]
-
 [tool.setuptools_scm]
 write_to = "src/napari_ndev/_version.py"
+fallback_version = "0.0.1dev0"
 
 
 [tool.ruff]
@@ -213,7 +191,7 @@ multiline-quotes = "double"
 [tool.ruff.lint.flake8-tidy-imports]
 # Disallow all relative imports.
 ban-relative-imports = "all"
-banned-module-level-imports = ["pyclesperanto", "apoc"]
+banned-module-level-imports = ["pyclesperanto", "apoc"]  # These require GPU/OpenCL - use lazy imports and mark tests with @pytest.mark.skip_ci
 
 
 [tool.ruff.lint.isort]
@@ -238,21 +216,23 @@ exclude_lines = [
     "pass",
     "^ +\\.\\.\\.$",
 ]
-omit = [
-    "src/napari_ndev/_tests/*",
-    "docs/*",
-]
 
 
 [tool.pytest.ini_options]
-markers = ["notox: mark a test to be excluded from tox"]
+minversion = "6.0"
+addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
+xfail_strict = true
+# filterwarnings = ["error"]  # recommended by PP309; deprecation warnings cause failures so leaving for the user to enable if desired
+log_cli_level = "INFO"
+testpaths = ["tests"]
+markers = ["skip_ci: mark a test to be skipped in CI (e.g., requires GPU)"]
 
 [tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
 [tool.pixi.dependencies]
-python = ">=3.10,<3.14"
+python = ">=3.11,<3.14"
 
 [tool.pixi.pypi-dependencies]
 napari-ndev = { path = ".", editable = true }
@@ -260,13 +240,11 @@ napari-ndev = { path = ".", editable = true }
 [tool.pixi.environments]
 default = { features = ["qtpy-backend"], solve-group = "default" }
 all = { features = ["all"], solve-group = "default" }
-dev = { features = ["dev"], solve-group = "default" }
-docs = { features = ["docs"], solve-group = "default" }
 extras = { features = ["extras"], solve-group = "default" }
 qtpy-backend = { features = ["qtpy-backend"], solve-group = "default" }
-testing = { features = ["testing"], solve-group = "default" }
+dev = { features = ["dev"], solve-group = "default" }
 
 [tool.pixi.tasks]
 napari = { cmd = "napari" }
 napari-ndev = { cmd = 'napari -w napari-ndev "nDev App"' }
-test = { cmd = "pytest" }
+test = { cmd = "pytest -v --color=yes --cov=napari_ndev --cov-report=xml" }

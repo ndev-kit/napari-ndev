@@ -27,7 +27,7 @@ def test_skeletonize_labels():
     assert skeleton.dtype == np.uint16
     assert np.all(skeleton == skeleton_label_2d)
 
-@pytest.mark.notox
+@pytest.mark.skip_ci
 def test_connect_breaks_between_labels():
     """Test the connect_breaks_between_labels function."""
     connect_distance = 1.5
@@ -37,7 +37,7 @@ def test_connect_breaks_between_labels():
     assert connected_labels.dtype == np.uint16
     assert np.all(connected_labels == connected_label_2d)
 
-@pytest.mark.notox
+@pytest.mark.skip_ci
 def test_label_voronoi_based_on_intensity():
     import pyclesperanto as cle
     """Test the label_voronoi_based_on_intensity function."""
