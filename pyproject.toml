@@ -247,4 +247,4 @@ dev = { features = ["dev"], solve-group = "default" }
 [tool.pixi.tasks]
 napari = { cmd = "napari" }
 napari-ndev = { cmd = 'napari -w napari-ndev "nDev App"' }
-test = { cmd = "pytest -v --color=yes --cov=napari-ndev --cov-report=xml" }
+test = { cmd = "pytest -v --color=yes --cov=napari_ndev --cov-report=xml" }
