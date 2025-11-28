@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=69.0.0", "setuptools_scm"]
+requires = ["setuptools>=77.0.3", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,13 +9,13 @@ readme = "README.md"
 authors = [
     { name = "Tim Monko", email = "timmonko@gmail.com" }
 ]
-license = { text = "BSD-3-Clause" }
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Framework :: napari",
     "Intended Audience :: Education",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
