@@ -246,7 +246,9 @@ class MeasureContainer(Container):
     def _init_tx_map_container(self):
         """Initialize the container for treatment map settings."""
         self._tx_map_container = Container(layout='vertical')
-        self._update_tx_id_choices_button = PushButton(label='Update Treatment ID Choices')
+        self._update_tx_id_choices_button = PushButton(
+            label='Update Treatment ID Choices'
+        )
         self._tx_id = ComboBox(
             label='Treatment ID',
             choices=['id'],
@@ -305,28 +307,35 @@ class MeasureContainer(Container):
         self._agg_funcs = Select(
             label='Aggregation Functions',
             choices=[
-                'mean', 'median',
-                'std', 'sem',
-                'min', 'max',
-                'sum', 'nunique'
+                'mean',
+                'median',
+                'std',
+                'sem',
+                'min',
+                'max',
+                'sum',
+                'nunique',
             ],
             value=['mean'],
             allow_multiple=True,
             tooltip='Select functions performed on aggregation columns',
         )
         self._pivot_wider = CheckBox(label='Pivot Wider', value=True)
-        self._group_measurements_button = PushButton(label='Group Measurements')
+        self._group_measurements_button = PushButton(
+            label='Group Measurements'
+        )
 
-
-        self._grouping_container.extend([
-            self._measured_data_path,
-            self._grouping_cols,
-            self._count_col,
-            self._agg_cols,
-            self._agg_funcs,
-            self._pivot_wider,
-            self._group_measurements_button,
-        ])
+        self._grouping_container.extend(
+            [
+                self._measured_data_path,
+                self._grouping_cols,
+                self._count_col,
+                self._agg_cols,
+                self._agg_funcs,
+                self._pivot_wider,
+                self._group_measurements_button,
+            ]
+        )
 
     def _init_layout(self):
         """Initialize the layout of the container."""
@@ -356,10 +365,14 @@ class MeasureContainer(Container):
         self._image_directory.changed.connect(self._update_image_choices)
         self._label_directory.changed.connect(self._update_label_choices)
         self._region_directory.changed.connect(self._update_region_choices)
-        self._update_tx_id_choices_button.clicked.connect(self._update_tx_id_choices)
+        self._update_tx_id_choices_button.clicked.connect(
+            self._update_tx_id_choices
+        )
         self._measure_button.clicked.connect(self.batch_measure)
         self._measured_data_path.changed.connect(self._update_grouping_cols)
-        self._group_measurements_button.clicked.connect(self.group_measurements)
+        self._group_measurements_button.clicked.connect(
+            self.group_measurements
+        )
 
     def _update_tx_id_choices(self):
         """Update the choices for treatment ID."""
@@ -517,15 +530,21 @@ class MeasureContainer(Container):
         )
 
         # check if the label files are the same as the image files
-        if self._image_directory.value is not None and len(label_files) != len(image_files):
+        if self._image_directory.value is not None and len(label_files) != len(
+            image_files
+        ):
             logger.error(
                 'Number of label files (%s) and image files (%s) do not match',
-                len(label_files), len(image_files),
+                len(label_files),
+                len(image_files),
             )
-        if self._region_directory.value is not None and len(label_files) != len(region_files):
+        if self._region_directory.value is not None and len(
+            label_files
+        ) != len(region_files):
             logger.error(
                 'Number of label files (%s) and region files (%s) do not match',
-                len(label_files), len(region_files),
+                len(label_files),
+                len(region_files),
             )
 
         self._progress_bar.label = f'Measuring {len(label_files)} Images'
@@ -650,7 +669,9 @@ class MeasureContainer(Container):
 
         measure_props_df = pd.concat(measure_props_concat)
         labels_string = '_'.join(label_names)
-        save_loc = self._output_directory.value / f'measure_props_{labels_string}.csv'
+        save_loc = (
+            self._output_directory.value / f'measure_props_{labels_string}.csv'
+        )
         measure_props_df.to_csv(save_loc, index=False)
 
         logger.removeHandler(handler)
@@ -693,10 +714,16 @@ class MeasureContainer(Container):
         # use the label_name column to make the dataframe wider
         if self._pivot_wider.value:
             # get grouping calls without label name
-            index_cols = [col for col in self._grouping_cols.value if col != 'label_name']
+            index_cols = [
+                col for col in self._grouping_cols.value if col != 'label_name'
+            ]
 
             # alternatively, pivot every values column that is not present in index or columns
-            value_cols = [col for col in grouped_df.columns if col not in self._grouping_cols.value]
+            value_cols = [
+                col
+                for col in grouped_df.columns
+                if col not in self._grouping_cols.value
+            ]
 
             pivot_df = grouped_df.pivot(
                 index=index_cols,
@@ -712,8 +739,8 @@ class MeasureContainer(Container):
             grouped_df = pivot_df
 
         save_loc = (
-            self._measured_data_path.value.parent /
-            f'{self._measured_data_path.value.stem}_grouped.csv'
+            self._measured_data_path.value.parent
+            / f'{self._measured_data_path.value.stem}_grouped.csv'
         )
         grouped_df.to_csv(save_loc, index=False)
 

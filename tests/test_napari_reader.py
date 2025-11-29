@@ -13,13 +13,14 @@ from ndevio import napari_get_reader
 
 ###############################################################################
 
-RGB_TIFF = "RGB.tiff" # has two scenes
-MULTISCENE_CZI = r"0T-4C-0Z-7pos.czi"
-PNG_FILE = "nDev-logo-small.png"
+RGB_TIFF = 'RGB.tiff'  # has two scenes
+MULTISCENE_CZI = r'0T-4C-0Z-7pos.czi'
+PNG_FILE = 'nDev-logo-small.png'
 # GIF_FILE = "example.gif"
-OME_TIFF = "cells3d2ch.tiff"
+OME_TIFF = 'cells3d2ch.tiff'
 
 ###############################################################################
+
 
 def test_napari_viewer_open(resources_dir: Path, make_napari_viewer) -> None:
     """
@@ -35,24 +36,25 @@ def test_napari_viewer_open(resources_dir: Path, make_napari_viewer) -> None:
 
     assert viewer.layers[0].data.shape == (60, 66, 85)
 
+
 @pytest.mark.parametrize(
-    ("in_memory", "expected_dtype"),
+    ('in_memory', 'expected_dtype'),
     [
         (True, np.ndarray),
         (False, da.core.Array),
     ],
 )
 @pytest.mark.parametrize(
-    ("filename", "expected_shape", "expected_meta"),
+    ('filename', 'expected_shape', 'expected_meta'),
     [
         (
             RGB_TIFF,
             (1440, 1920, 3),
             {
-                'name': '0 :: Image:0 :: RGB', # multiscene naming
+                'name': '0 :: Image:0 :: RGB',  # multiscene naming
                 'scale': (264.5833333333333, 264.5833333333333),
                 'rgb': True,
-            }
+            },
         ),
     ],
 )
@@ -73,7 +75,9 @@ def test_reader(
         path = str(resources_dir / filename)
 
     # Get reader
-    partial_napari_reader_function = napari_get_reader(path, in_memory=in_memory, open_first_scene_only=True)
+    partial_napari_reader_function = napari_get_reader(
+        path, in_memory=in_memory, open_first_scene_only=True
+    )
     # Check callable
     assert callable(partial_napari_reader_function)
 
@@ -93,7 +97,9 @@ def test_reader(
         assert meta == expected_meta
 
     # now check open all scenes
-    partial_napari_reader_function = napari_get_reader(path, in_memory=in_memory, open_all_scenes=True)
+    partial_napari_reader_function = napari_get_reader(
+        path, in_memory=in_memory, open_all_scenes=True
+    )
     assert callable(partial_napari_reader_function)
 
     layer_data = partial_napari_reader_function(path)
@@ -101,14 +107,14 @@ def test_reader(
 
 
 @pytest.mark.parametrize(
-    ("in_memory", "expected_dtype"),
+    ('in_memory', 'expected_dtype'),
     [
         (True, np.ndarray),
         (False, da.core.Array),
     ],
 )
 @pytest.mark.parametrize(
-    ("filename", "expected_shape"),
+    ('filename', 'expected_shape'),
     [
         (RGB_TIFF, (1440, 1920, 3)),
         (MULTISCENE_CZI, (32, 32)),
@@ -143,9 +149,11 @@ def test_for_multiscene_widget(
 
         if len(viewer.window._dock_widgets) != 0:
             # Get the second scene
-            scene_widget = viewer.window._dock_widgets[
-                f"{Path(filename).stem} :: Scenes"
-            ].widget()._magic_widget
+            scene_widget = (
+                viewer.window._dock_widgets[f'{Path(filename).stem} :: Scenes']
+                .widget()
+                ._magic_widget
+            )
             assert scene_widget is not None
             assert scene_widget.viewer == viewer
 
@@ -163,6 +171,7 @@ def test_for_multiscene_widget(
             assert isinstance(data, expected_dtype)
             assert data.shape == expected_shape
 
+
 def test_napari_get_reader_multi_path(resources_dir: Path) -> None:
     # Get reader
     reader = napari_get_reader(
@@ -173,6 +182,7 @@ def test_napari_get_reader_multi_path(resources_dir: Path) -> None:
     # Check callable
     assert reader is None
 
+
 def test_napari_get_reader_ome_override(resources_dir: Path) -> None:
     reader = napari_get_reader(
         str(resources_dir / OME_TIFF),
@@ -180,25 +190,28 @@ def test_napari_get_reader_ome_override(resources_dir: Path) -> None:
 
     assert callable(reader)
 
+
 def test_napari_get_reader_unsupported(resources_dir: Path) -> None:
     reader = napari_get_reader(
-        str(resources_dir / "measure_props_Labels.abcdefg"),
+        str(resources_dir / 'measure_props_Labels.abcdefg'),
     )
 
     assert reader is None
 
+
 def test_napari_get_reader_general_exception(caplog):
     """Test that general exceptions in determine_reader_plugin are handled correctly."""
-    test_path = "non_existent_file.xyz"
+    test_path = 'non_existent_file.xyz'
 
     # Mock determine_reader_plugin to raise an exception
     with patch('ndevio._napari_reader.determine_reader_plugin') as mock_reader:
-        mock_reader.side_effect = Exception("Test exception")
+        mock_reader.side_effect = Exception('Test exception')
 
         reader = napari_get_reader(test_path)
         assert reader is None
 
-        assert "Error reading file" in caplog.text
+        assert 'Error reading file' in caplog.text
+
 
 def test_napari_get_reader_png(resources_dir: Path) -> None:
     reader = napari_get_reader(

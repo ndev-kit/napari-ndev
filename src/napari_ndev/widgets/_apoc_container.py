@@ -153,7 +153,7 @@ class ApocContainer(Container):
         viewer: napari.viewer.Viewer = None,
     ):
         super().__init__(labels=False)
-        self.min_width = 500 # TODO: remove this hardcoded value
+        self.min_width = 500  # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
         self._lazy_imports()
         self._initialize_cl_container()
@@ -235,7 +235,7 @@ class ApocContainer(Container):
         self._feature_string = LineEdit(
             label='Feature String',
             tooltip=(
-                'A string in the form of ' "'filter1=radius1 filter2=radius2'."
+                "A string in the form of 'filter1=radius1 filter2=radius2'."
             ),
         )
         self._cl_container = Container(
@@ -273,7 +273,7 @@ class ApocContainer(Container):
             widgets=[
                 self._label_directory,
                 self._batch_train_button,
-            ]
+            ],
         )
 
         self._batch_predict_container = Container(
@@ -281,7 +281,7 @@ class ApocContainer(Container):
             widgets=[
                 self._output_directory,
                 self._batch_predict_button,
-            ]
+            ],
         )
 
         self._progress_bar = ProgressBar(label='Progress:')
@@ -296,7 +296,7 @@ class ApocContainer(Container):
                 self._batch_train_container,
                 self._batch_predict_container,
                 self._progress_bar,
-            ]
+            ],
         )
 
     def _initialize_viewer_container(self):
@@ -325,7 +325,7 @@ class ApocContainer(Container):
                 self._single_result_label,
             ],
             layout='vertical',
-            label='Viewer'
+            label='Viewer',
         )
 
     def _initialize_custom_apoc_container(self):
@@ -351,8 +351,10 @@ class ApocContainer(Container):
         # self._scroll._widget._layout.setAlignment(Qt.AlignTop) # does not work
         # self.append(self._scroll)
         # the only way for _label_layer and _image_layers to stay connected is to attach it to native, not sure why
-        self.native.layout().addWidget(self._tabs.native) # connects and is scrollable, internally, but not in the main window
-        self.native.layout().addStretch() # resets the layout to squish to top
+        self.native.layout().addWidget(
+            self._tabs.native
+        )  # connects and is scrollable, internally, but not in the main window
+        self.native.layout().addStretch()  # resets the layout to squish to top
 
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_metadata_from_file)
@@ -683,6 +685,7 @@ class ApocContainer(Container):
 
     def image_train(self):
         from pyclesperanto import wait_for_kernel_to_finish
+
         image_names = [image.name for image in self._image_layers.value]
         label_name = self._label_layer.value.name
         self._single_result_label.value = (
@@ -715,6 +718,7 @@ class ApocContainer(Container):
 
     def image_predict(self):
         from pyclesperanto import wait_for_kernel_to_finish
+
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
         wait_for_kernel_to_finish()
 
@@ -738,7 +742,7 @@ class ApocContainer(Container):
         self._viewer.add_labels(
             result,
             scale=scale,
-            name=f'{self._classifier_file.value.stem} :: {image_names}'
+            name=f'{self._classifier_file.value.stem} :: {image_names}',
         )
 
         self._single_result_label.value = f'Predicted {image_names}'

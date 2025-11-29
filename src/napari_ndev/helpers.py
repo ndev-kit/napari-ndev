@@ -32,6 +32,7 @@ __all__ = [
     'setup_logger',
 ]
 
+
 def get_directory_and_files(
     dir_path: str | Path | None = None,
     pattern: list[str] | str | None = None,
@@ -241,6 +242,7 @@ def setup_logger(log_loc=Union[str, Path]):
     logger.addHandler(handler)
     return logger, handler
 
+
 def elide_string(input_string, max_length=15, location='middle'):
     """
     Elide a string if it exceeds the specified length.
@@ -269,9 +271,9 @@ def elide_string(input_string, max_length=15, location='middle'):
         return input_string[:max_length]
     # Elide the string based on the location
     if location == 'start':
-        return '...' + input_string[-(max_length - 3):]
+        return '...' + input_string[-(max_length - 3) :]
     if location == 'end':
-        return input_string[:max_length - 3] + '...'
+        return input_string[: max_length - 3] + '...'
     if location == 'middle':
         half_length = (max_length - 3) // 2
         return input_string[:half_length] + '...' + input_string[-half_length:]

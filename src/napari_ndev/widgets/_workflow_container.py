@@ -113,7 +113,7 @@ class WorkflowContainer(Container):
         """Initialize the viewer container tab widgets."""
         self.viewer_button = PushButton(text='Viewer Workflow')
         self._viewer_roots_container = Container(layout='vertical', label=None)
-        self._viewer_roots_container.native.layout().addStretch() # this resets the additions to the top of the container (the name is confusing)
+        self._viewer_roots_container.native.layout().addStretch()  # this resets the additions to the top of the container (the name is confusing)
         self._viewer_container = Container(
             layout='vertical',
             widgets=[
@@ -148,7 +148,7 @@ class WorkflowContainer(Container):
 
         # create the container where roots will later be added
         self._batch_roots_container = Container(layout='vertical', label=None)
-        self._batch_roots_container.native.layout().addStretch() # this resets the additions to the top of the container (the name is confusing)
+        self._batch_roots_container.native.layout().addStretch()  # this resets the additions to the top of the container (the name is confusing)
 
         # establish the layout of the batch container
         self._batch_container = Container(
@@ -160,7 +160,6 @@ class WorkflowContainer(Container):
             label='Batch',
             labels=None,
         )
-
 
     def _init_tasks_container(self):
         """Initialize the tasks container."""
@@ -193,8 +192,10 @@ class WorkflowContainer(Container):
             label=None,
             labels=None,
         )
-        self.native.layout().addWidget(self._tabs.native) # add the tabbed container to the layout, native needed to keep viewer interaction
-        self.native.layout().addStretch() # resets the layout to the top of the container
+        self.native.layout().addWidget(
+            self._tabs.native
+        )  # add the tabbed container to the layout, native needed to keep viewer interaction
+        self.native.layout().addStretch()  # resets the layout to the top of the container
 
     def _connect_events(self):
         """Connect the events of the widgets to respective methods."""
@@ -375,7 +376,9 @@ class WorkflowContainer(Container):
         """Run the batch workflow with threading and progress bar updates."""
         from napari.qt import create_worker
 
-        self._progress_bar.label = f'Workflow on {len(self.image_files)} images'
+        self._progress_bar.label = (
+            f'Workflow on {len(self.image_files)} images'
+        )
         self._progress_bar.value = 0
         self._progress_bar.max = len(self.image_files)
 
@@ -386,9 +389,11 @@ class WorkflowContainer(Container):
 
     def viewer_workflow(self):
         """Run the workflow on the viewer layers."""
-        workflow  = self.workflow
+        workflow = self.workflow
 
-        root_layer_list = [widget.value for widget in self._viewer_roots_container]
+        root_layer_list = [
+            widget.value for widget in self._viewer_roots_container
+        ]
         self._root_scale = root_layer_list[0].scale
 
         for root_idx, root_layer in enumerate(root_layer_list):
@@ -410,7 +415,7 @@ class WorkflowContainer(Container):
             result,
             name=task,
             blending='additive',
-            scale=self._root_scale if self._root_scale is not None else None
+            scale=self._root_scale if self._root_scale is not None else None,
         )
         self._progress_bar.value = task_idx + 1
         return

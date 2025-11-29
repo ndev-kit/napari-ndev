@@ -24,7 +24,10 @@ def test_ndev_container_init_no_viewer():
 
     with patch('webbrowser.open') as mock_open:
         ndev._open_bug_report_link()
-        mock_open.assert_called_once_with('https://github.com/ndev-kit/napari-ndev/issues')
+        mock_open.assert_called_once_with(
+            'https://github.com/ndev-kit/napari-ndev/issues'
+        )
+
 
 @pytest.fixture
 def test_cells3d2ch_image(resources_dir: Path):
@@ -32,7 +35,10 @@ def test_cells3d2ch_image(resources_dir: Path):
     img = nImage(path)
     return path, img
 
-def test_ndev_container_viewer(make_napari_viewer, test_cells3d2ch_image, tmp_path: Path):
+
+def test_ndev_container_viewer(
+    make_napari_viewer, test_cells3d2ch_image, tmp_path: Path
+):
     viewer = make_napari_viewer()
 
     ndev = nDevContainer(viewer=viewer)
@@ -56,5 +62,6 @@ def test_ndev_container_viewer(make_napari_viewer, test_cells3d2ch_image, tmp_pa
 
     # check interacting with apoc container works
     assert ndev._apoc_container._image_layers.choices == (
-        viewer.layers[0], viewer.layers[1]
+        viewer.layers[0],
+        viewer.layers[1],
     )

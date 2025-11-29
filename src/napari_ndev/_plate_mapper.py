@@ -44,7 +44,12 @@ class PlateMapper:
 
     """
 
-    def __init__(self, plate_size=96, treatments=None, leading_zeroes=False, ):
+    def __init__(
+        self,
+        plate_size=96,
+        treatments=None,
+        leading_zeroes=False,
+    ):
         """
         Initialize a PlateMapper object.
 
@@ -137,14 +142,16 @@ class PlateMapper:
                         well_condition = (
                             (self.plate_map['row'] >= start_row)
                             & (self.plate_map['row'] <= end_row)
-                            & (self.plate_map['column'].astype(int) >= start_col)
+                            & (
+                                self.plate_map['column'].astype(int)
+                                >= start_col
+                            )
                             & (self.plate_map['column'].astype(int) <= end_col)
                         )
                     else:
                         row, col = well[0], int(well[1:])
-                        well_condition = (
-                            (self.plate_map['row'] == row)
-                            & (self.plate_map['column'] == col)
+                        well_condition = (self.plate_map['row'] == row) & (
+                            self.plate_map['column'] == col
                         )
 
                     self.plate_map.loc[well_condition, treatment] = condition
@@ -207,7 +214,7 @@ class PlateMapper:
         palette_cycle = itertools.cycle(colors_hex)
         color_dict = {value: next(palette_cycle) for value in unique_values}
 
-        def get_background_color(value): # pragma: no cover
+        def get_background_color(value):  # pragma: no cover
             if pd.isna(value):
                 return ''
             return f'background-color: {color_dict[value]}'

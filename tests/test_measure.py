@@ -187,7 +187,9 @@ def test_map_tx_dict_to_df_id_col():
         }
     )
     id_column = 'well'
-    result = _map_tx_dict_to_df_id_col(tx, tx_n_well, False, target_df, id_column)
+    result = _map_tx_dict_to_df_id_col(
+        tx, tx_n_well, False, target_df, id_column
+    )
     assert isinstance(result, pd.DataFrame)
     assert 'Treatment1' in result.columns
     assert 'Treatment2' in result.columns
@@ -420,8 +422,8 @@ def sample_data():
         }
     )
 
-def test_group_and_agg_measurements_sample_data(sample_data):
 
+def test_group_and_agg_measurements_sample_data(sample_data):
     result_df = group_and_agg_measurements(
         sample_data,
         grouping_cols=['id'],
@@ -432,12 +434,19 @@ def test_group_and_agg_measurements_sample_data(sample_data):
     assert isinstance(result_df, pd.DataFrame)
     assert all(
         column in result_df.columns
-        for column in ['id', 'area_mean', 'area_sum', 'intensity_mean_mean', 'intensity_mean_sum']
+        for column in [
+            'id',
+            'area_mean',
+            'area_sum',
+            'intensity_mean_mean',
+            'intensity_mean_sum',
+        ]
     )
     assert result_df['area_mean'].tolist() == [150.0, 350.0]
     assert result_df['area_sum'].tolist() == [300, 700]
     assert result_df['intensity_mean_mean'].tolist() == [0.6, 0.7]
     assert result_df['intensity_mean_sum'].tolist() == [1.2, 1.4]
+
 
 def test_group_and_agg_measurements_string_agg_func(sample_data):
     result_df = group_and_agg_measurements(
@@ -448,10 +457,8 @@ def test_group_and_agg_measurements_string_agg_func(sample_data):
     )
 
     assert isinstance(result_df, pd.DataFrame)
-    assert all(
-        column in result_df.columns
-        for column in ['id', 'area_mean']
-    )
+    assert all(column in result_df.columns for column in ['id', 'area_mean'])
+
 
 def test_group_and_agg_measurements_real_data():
     df = pd.read_csv('tests/resources/measure_props_Labels.csv')
@@ -466,7 +473,13 @@ def test_group_and_agg_measurements_real_data():
     assert isinstance(result_df, pd.DataFrame)
     assert all(
         column in result_df.columns
-        for column in ['id', 'intensity_max-Labels', 'label_count', 'area_mean', 'area_std']
+        for column in [
+            'id',
+            'intensity_max-Labels',
+            'label_count',
+            'area_mean',
+            'area_std',
+        ]
     )
 
 
@@ -478,7 +491,4 @@ def test_group_and_agg_measurements_no_agg(sample_data):
     )
 
     assert isinstance(result_df, pd.DataFrame)
-    assert all(
-        column in result_df.columns
-        for column in ['id', 'label_count']
-    )
+    assert all(column in result_df.columns for column in ['id', 'label_count'])

@@ -9,4 +9,4 @@ def test_main(mock_run):
     # Check if subprocess.run was called, indicating an attempt to open napari
     assert mock_run.called
     # Optionally, you can check the arguments to ensure it was called correctly
-    mock_run.assert_called_with(["napari", "-w", "napari-ndev"])
+    mock_run.assert_called_with(['napari', '-w', 'napari-ndev'])
