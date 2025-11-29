@@ -329,7 +329,7 @@ class ApocContainer(Container):
         )
 
     def _initialize_custom_apoc_container(self):
-        from napari_ndev import ApocFeatureStack
+        from napari_ndev.widgets._apoc_feature_stack import ApocFeatureStack
 
         self._custom_apoc_container = ApocFeatureStack(viewer=self._viewer)
         self._custom_apoc_container.label = 'Custom Feature Set'

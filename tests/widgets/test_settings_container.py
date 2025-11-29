@@ -1,5 +1,5 @@
 from napari_ndev._settings import get_settings
-from napari_ndev.widgets import SettingsContainer
+from napari_ndev.widgets._settings_container import SettingsContainer
 
 
 def test_settings_container():
