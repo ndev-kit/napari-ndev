@@ -8718,8 +8718,8 @@ packages:
   requires_python: '>=3.10'
 - pypi: ./
   name: napari-ndev
-  version: 0.11.8.dev18+gca9b60517
-  sha256: 977b0d77a2440b587d79c514a6a86314b31265ea532ded570e9a5ab4d82136b7
+  version: 0.12.0rc1.dev3+g0b374a792
+  sha256: 143ac036a200dc2b680c7d2aeac4d43c9eb8e684827d64b34368fd74b30716b9
   requires_dist:
   - numpy>=1.26
   - magicgui>=0.8.3
