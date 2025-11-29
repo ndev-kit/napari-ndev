@@ -4,6 +4,7 @@ import time
 def test_import_time():
     start_time = time.time()
     import napari_ndev  # noqa: F401
+
     end_time = time.time()
 
     import_time = end_time - start_time

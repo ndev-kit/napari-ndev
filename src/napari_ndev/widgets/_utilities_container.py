@@ -21,19 +21,22 @@ from magicgui.widgets import (
     TextEdit,
     TupleEdit,
 )
-from ndevio import nImage
-
 from napari.layers import (
     Image as ImageLayer,
+)
+from napari.layers import (
     Labels as LabelsLayer,
+)
+from napari.layers import (
     Shapes as ShapesLayer,
 )
+from ndevio import nImage
+
 from napari_ndev import get_settings, helpers
 
 if TYPE_CHECKING:
-    from bioio import BioImage
-
     import napari
+    from bioio import BioImage
     from napari.layers import Layer
 
 
@@ -134,7 +137,7 @@ class UtilitiesContainer(ScrollableContainer):
         """
         super().__init__(labels=False)
 
-        self.min_width = 500 # TODO: remove this hardcoded value
+        self.min_width = 500  # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
         self._squeezed_dims_order: str | None = None
         self._squeezed_dims: tuple[int, ...] | None = None
@@ -186,10 +189,9 @@ class UtilitiesContainer(ScrollableContainer):
         self._append_scene_button = PushButton(
             label='Append Scene to Name',
         )
-        self._save_name_container.extend([
-            self._save_name,
-            self._append_scene_button
-        ])
+        self._save_name_container.extend(
+            [self._save_name, self._append_scene_button]
+        )
 
     def _init_open_image_container(self):
         """Initialize the open image container."""
@@ -198,7 +200,7 @@ class UtilitiesContainer(ScrollableContainer):
         self._select_next_image_button = PushButton(
             label='Select Next',
             tooltip='Select the next file(s) in the directory. \n'
-            'Note that the files are sorted alphabetically and numerically.'
+            'Note that the files are sorted alphabetically and numerically.',
         )
         self._open_image_container.append(self._open_image_button)
         self._open_image_container.append(self._select_next_image_button)
@@ -217,11 +219,12 @@ class UtilitiesContainer(ScrollableContainer):
             'with your file viewer. But, opening related consecutive files '
             'should work as expected.',
         )
-        self._concatenate_files_container.extend([
-            self._concatenate_files_button,
-            self._concatenate_batch_button,
-        ])
-
+        self._concatenate_files_container.extend(
+            [
+                self._concatenate_files_button,
+                self._concatenate_batch_button,
+            ]
+        )
 
     def _init_metadata_container(self):
         self._update_scale = CheckBox(
@@ -239,7 +242,7 @@ class UtilitiesContainer(ScrollableContainer):
             name='Update Metadata on File Select',
             labels=False,
             label=False,
-            widgets=[self._update_scale, self._update_channel_names]
+            widgets=[self._update_scale, self._update_channel_names],
         )
 
         self._layer_metadata_update_button = PushButton(
@@ -280,7 +283,7 @@ class UtilitiesContainer(ScrollableContainer):
         self._metadata_button_container = Container(
             widgets=[
                 self._layer_metadata_update_button,
-                self._scale_layers_button
+                self._scale_layers_button,
             ],
             layout='horizontal',
         )
@@ -346,11 +349,13 @@ class UtilitiesContainer(ScrollableContainer):
             labels=None,
         )
 
-        self._save_layers_container.extend([
-            self._save_layers_button,
-            self._export_figure_button,
-            self._export_screenshot_button,
-        ])
+        self._save_layers_container.extend(
+            [
+                self._save_layers_button,
+                self._export_figure_button,
+                self._export_screenshot_button,
+            ]
+        )
 
     def _init_layout(self):
         """Initialize the layout of the widget."""
@@ -396,8 +401,12 @@ class UtilitiesContainer(ScrollableContainer):
         )
         self._scale_layers_button.clicked.connect(self.rescale_by)
 
-        self._concatenate_files_button.clicked.connect(self.save_files_as_ome_tiff)
-        self._concatenate_batch_button.clicked.connect(self.batch_concatenate_files)
+        self._concatenate_files_button.clicked.connect(
+            self.save_files_as_ome_tiff
+        )
+        self._concatenate_batch_button.clicked.connect(
+            self.batch_concatenate_files
+        )
         self._extract_scenes.clicked.connect(self.save_scenes_ome_tiff)
         self._save_layers_button.clicked.connect(self.save_layers_as_ome_tiff)
         self._export_figure_button.clicked.connect(self.canvas_export_figure)
@@ -541,6 +550,7 @@ class UtilitiesContainer(ScrollableContainer):
     # Converted
     def select_next_images(self):
         from natsort import os_sorted
+
         """Open the next set of images in the directyory."""
         num_files = self._files.value.__len__()
 
@@ -562,14 +572,14 @@ class UtilitiesContainer(ScrollableContainer):
 
         # if there are no more files, then return
         if not next_files:
-            self._results.value = (
-                'No more file sets to select.'
-            )
+            self._results.value = 'No more file sets to select.'
             return
         # set the nwe save names, and update the file value
         img = nImage(next_files[0])
 
-        self._save_name.value = helpers.create_id_string(img, next_files[0].stem)
+        self._save_name.value = helpers.create_id_string(
+            img, next_files[0].stem
+        )
         self._files.value = next_files
 
         self.update_metadata_on_file_select()
@@ -672,13 +682,19 @@ class UtilitiesContainer(ScrollableContainer):
 
         # if no dims available, get it from the first instance in the viewer
         dim_layer = next(
-                (layer for layer in self._viewer.layers if isinstance(layer, (ImageLayer, LabelsLayer))),
-                None,
-            )
+            (
+                layer
+                for layer in self._viewer.layers
+                if isinstance(layer, ImageLayer | LabelsLayer)
+            ),
+            None,
+        )
         if dim_layer is None:
-            raise ValueError('No image or labels present to convert shapes layer.')
+            raise ValueError(
+                'No image or labels present to convert shapes layer.'
+            )
         label_dim = dim_layer.data.shape
-            # drop last axis if represents RGB image
+        # drop last axis if represents RGB image
         label_dim = label_dim[:-1] if label_dim[-1] == 3 else label_dim
 
         return label_dim
@@ -760,9 +776,11 @@ class UtilitiesContainer(ScrollableContainer):
                 image_name=image_name or None,
                 physical_pixel_sizes=self.p_sizes,
             )
-            self._results.value = f'Saved {result_str}: ' + str(
-                self._save_name.value
-            ) + f'\nAt {time.strftime("%H:%M:%S")}'
+            self._results.value = (
+                f'Saved {result_str}: '
+                + str(self._save_name.value)
+                + f'\nAt {time.strftime("%H:%M:%S")}'
+            )
         # if ValueError is raised, save with default channel names
         except ValueError as e:
             OmeTiffWriter.save(
@@ -826,7 +844,9 @@ class UtilitiesContainer(ScrollableContainer):
         """
         # get total number of sets of files in the directory
         parent_dir = self._files.value[0].parent
-        total_num_files = len(list(parent_dir.glob(f'*{self._files.value[0].suffix}')))
+        total_num_files = len(
+            list(parent_dir.glob(f'*{self._files.value[0].suffix}'))
+        )
         num_files = self._files.value.__len__()
         num_file_sets = total_num_files // num_files
 
@@ -837,7 +857,6 @@ class UtilitiesContainer(ScrollableContainer):
             self._update_channel_names.value = False
         if first_image.physical_pixel_sizes != self.p_sizes:
             self._update_scale.value = False
-
 
         # save first set of files
         self.save_files_as_ome_tiff()
@@ -936,9 +955,7 @@ class UtilitiesContainer(ScrollableContainer):
         """Export the current canvas screenshot to the save directory."""
         save_name = f'{self._save_name.value}_canvas.png'
         save_path = self._get_save_loc(
-            self._save_directory.value,
-            'Figures',
-            save_name
+            self._save_directory.value, 'Figures', save_name
         )
 
         scale = self._settings.CANVAS_SCALE
@@ -978,7 +995,9 @@ class UtilitiesContainer(ScrollableContainer):
         ]
 
         # if there are multiple layer types, save to Layers directory
-        layer_save_type = 'Layers' if len(set(layer_types)) > 1 else layer_types[0]
+        layer_save_type = (
+            'Layers' if len(set(layer_types)) > 1 else layer_types[0]
+        )
         layer_save_dir = self._determine_save_directory(layer_save_type)
         layer_save_name = f'{self._save_name.value}.tiff'
         layer_save_loc = self._get_save_loc(
@@ -1008,7 +1027,7 @@ class UtilitiesContainer(ScrollableContainer):
             # right to left of layer_data.shape
             num_dims = len(layer_data.shape)
             dim_order = 'C' + ''.join(
-                [str(d) for d in 'TZYX'[-(num_dims-1):]]
+                [str(d) for d in 'TZYX'[-(num_dims - 1) :]]
             )
 
         self._common_save_logic(

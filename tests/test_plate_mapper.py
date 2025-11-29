@@ -11,9 +11,6 @@ def plate_mapper():
     return PlateMapper(96)
 
 
-
-
-
 def test_plate_mapper_init_empty():
     pm = PlateMapper()
     plate_map = pm.plate_map
@@ -29,13 +26,15 @@ def test_plate_mapper_init_empty():
     assert 'well_id' in plate_map.columns
     assert 'A1' in plate_map['well_id'].values
 
+
 def test_plate_mapper_init_with_plate_size():
     pm = PlateMapper(384)
     plate_map = pm.plate_map
     assert len(plate_map) == 384
     assert len(plate_map.columns) == 3
-    assert 'P' in plate_map['row'].values # 16th letter
+    assert 'P' in plate_map['row'].values  # 16th letter
     assert 24 in plate_map['column'].values
+
 
 def test_plate_mapper_leading_zeroes():
     pm = PlateMapper(leading_zeroes=True)
@@ -45,12 +44,14 @@ def test_plate_mapper_leading_zeroes():
     assert 'A01' in pm.plate_map['well_id'].values
     assert 'H12' in pm.plate_map['well_id'].values
 
+
 @pytest.fixture
 def treatments():
     return {
         'Treatment1': {'Condition1': ['A1', 'B2'], 'Condition2': ['C3']},
         'Treatment2': {'Condition3': ['D4:E5']},
     }
+
 
 def test_plate_mapper_init_with_treatments(treatments):
     pm = PlateMapper(96, treatments=treatments)
@@ -86,13 +87,12 @@ def test_plate_mapper_init_with_treatments(treatments):
         == 'Condition3'
     )
 
+
 def test_plate_mapper_init_with_treatments_and_leading_zeroes(treatments):
     pm = PlateMapper(96, treatments=treatments, leading_zeroes=True)
     plate_map = pm.plate_map
 
-    assert (
-        plate_map.loc[plate_map['well_id'] == 'A01', 'Treatment1'].values[0]
-    )
+    assert plate_map.loc[plate_map['well_id'] == 'A01', 'Treatment1'].values[0]
 
 
 def test_plate_mapper_get_pivoted_plate_map(

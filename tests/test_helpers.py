@@ -104,9 +104,7 @@ def test_create_id_string_ometiffwriter_name(tmp_path):
 
 
 def test_get_channel_names_CYX():
-    file = Path(
-        r'./tests/resources/Workflow/Images/cells3d2ch.tiff'
-    )
+    file = Path(r'./tests/resources/Workflow/Images/cells3d2ch.tiff')
     img = nImage(file)
     assert get_channel_names(img) == img.channel_names
 
@@ -138,17 +136,13 @@ def test_get_directory_and_files_none_dir():
 
 
 def test_get_directory_and_files_dir_not_exists():
-    directory = Path(
-        r'./tests/resources/test_czis_not_exists'
-    )
+    directory = Path(r'./tests/resources/test_czis_not_exists')
     with pytest.raises(FileNotFoundError):
         get_directory_and_files(directory)
 
 
 def test_get_squeezed_dim_order_ZYX():
-    file = Path(
-        r'./tests/resources/Workflow/Images/cells3d2ch.tiff'
-    )
+    file = Path(r'./tests/resources/Workflow/Images/cells3d2ch.tiff')
     img = nImage(file)
     assert get_squeezed_dim_order(img) == 'ZYX'
 
@@ -191,36 +185,40 @@ def test_setup_logger():
         # Clean up the temporary log file
         log_path.unlink()
 
+
 def test_elide_string():
     # Test cases where the string is shorter than the max length
-    assert elide_string("short", 10) == "short"
-    assert elide_string("short", 6) == "short"
+    assert elide_string('short', 10) == 'short'
+    assert elide_string('short', 6) == 'short'
 
     # Test cases where the string is exactly the max length
-    assert elide_string("exactly15chars", 15) == "exactly15chars"
+    assert elide_string('exactly15chars', 15) == 'exactly15chars'
 
     # Test cases where the string is longer than the max length
-    assert elide_string("thisisaverylongstring", 10) == "thi...ing"
-    assert elide_string("thisisaverylongstring", 15) == "thisis...string"
-    assert elide_string("thisisaverylongstring", 5) == "thisi"
+    assert elide_string('thisisaverylongstring', 10) == 'thi...ing'
+    assert elide_string('thisisaverylongstring', 15) == 'thisis...string'
+    assert elide_string('thisisaverylongstring', 5) == 'thisi'
 
     # Test cases for different elide locations
-    assert elide_string("thisisaverylongstring", 10, "start") == "...gstring"
-    assert elide_string("thisisaverylongstring", 10, "end") == "thisisa..."
-    assert elide_string("thisisaverylongstring", 10, "middle") == "thi...ing"
+    assert elide_string('thisisaverylongstring', 10, 'start') == '...gstring'
+    assert elide_string('thisisaverylongstring', 10, 'end') == 'thisisa...'
+    assert elide_string('thisisaverylongstring', 10, 'middle') == 'thi...ing'
 
     # Test cases for very small max_length
-    assert elide_string("thisisaverylongstring", 3) == "thi"
-    assert elide_string("thisisaverylongstring", 4) == "this"
-    assert elide_string("thisisaverylongstring", 5) == "thisi"
+    assert elide_string('thisisaverylongstring', 3) == 'thi'
+    assert elide_string('thisisaverylongstring', 4) == 'this'
+    assert elide_string('thisisaverylongstring', 5) == 'thisi'
 
     # Test cases for invalid location
-    with pytest.raises(ValueError, match='Invalid location. Must be "start", "middle", or "end".'):
-        elide_string("thisisaverylongstring", 10, "invalid")
+    with pytest.raises(
+        ValueError,
+        match='Invalid location. Must be "start", "middle", or "end".',
+    ):
+        elide_string('thisisaverylongstring', 10, 'invalid')
 
     # Test cases for edge cases
-    assert elide_string("", 10) == ""
-    assert elide_string("a", 1) == "a"
-    assert elide_string("ab", 1) == "a"
-    assert elide_string("abc", 2) == "ab"
-    assert elide_string("abcd", 3) == "abc"
+    assert elide_string('', 10) == ''
+    assert elide_string('a', 1) == 'a'
+    assert elide_string('ab', 1) == 'a'
+    assert elide_string('abc', 2) == 'ab'
+    assert elide_string('abcd', 3) == 'abc'

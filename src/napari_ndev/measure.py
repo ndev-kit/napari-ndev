@@ -24,6 +24,7 @@ from napari_ndev._plate_mapper import PlateMapper
 
 __all__ = ['group_and_agg_measurements', 'measure_regionprops']
 
+
 def measure_regionprops(
     label_images: list[ArrayLike] | ArrayLike,
     label_names: list[str] | str | None = None,
@@ -129,7 +130,9 @@ def measure_regionprops(
         )
 
         measure_df = pd.DataFrame(measure_props)
-        measure_df.insert(0, 'label_name', measure_dict['label_names'][label_idx])
+        measure_df.insert(
+            0, 'label_name', measure_dict['label_names'][label_idx]
+        )
         measure_df_list.append(measure_df)
 
     if len(measure_df_list) > 1:
@@ -148,12 +151,15 @@ def measure_regionprops(
             measure_df.insert(2, key, value)
 
     if tx_id is not None and tx_dict is not None:
-        _map_tx_dict_to_df_id_col(tx_dict, tx_n_well, tx_leading_zeroes, measure_df, tx_id)
+        _map_tx_dict_to_df_id_col(
+            tx_dict, tx_n_well, tx_leading_zeroes, measure_df, tx_id
+        )
 
     if save_data_path is not None:
         measure_df.to_csv(save_data_path, index=False)
 
     return measure_df
+
 
 def group_and_agg_measurements(
     df: pd.DataFrame,
@@ -190,11 +196,12 @@ def group_and_agg_measurements(
 
     # get count data
     df_count = (
-            df.copy().groupby(grouping_cols)
-            .agg({count_col: 'count'}) # counts count_col
-            .rename(columns={count_col: f'{count_col}_count'})
-            .reset_index()
-        )
+        df.copy()
+        .groupby(grouping_cols)
+        .agg({count_col: 'count'})  # counts count_col
+        .rename(columns={count_col: f'{count_col}_count'})
+        .reset_index()
+    )
 
     if agg_cols is None or agg_cols == []:
         return df_count
@@ -203,16 +210,15 @@ def group_and_agg_measurements(
     agg_cols = df[agg_cols]
     agg_dict = dict.fromkeys(agg_cols, agg_funcs)
     df_agg = (
-            df.copy()
-            .groupby(grouping_cols)  # sw
-            .agg(agg_dict)
-            .reset_index()
-        )  # genereates a multi-index
-        # collapse multi index and combine columns names with '_' sep
+        df.copy()
+        .groupby(grouping_cols)  # sw
+        .agg(agg_dict)
+        .reset_index()
+    )  # genereates a multi-index
+    # collapse multi index and combine columns names with '_' sep
     df_agg.columns = [
-            f'{col[0]}_{col[1]}' if col[1] else col[0]
-            for col in df_agg.columns
-        ]
+        f'{col[0]}_{col[1]}' if col[1] else col[0] for col in df_agg.columns
+    ]
 
     # insert label count column into df_agg after grouping columns
     insert_pos = 1 if isinstance(grouping_cols, str) else len(grouping_cols)

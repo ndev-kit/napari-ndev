@@ -55,6 +55,7 @@ class ImageSet:
         if self.labels is None:
             self.labels = [False] * len(self.image)
 
+
 class ImageOverview:
     """
     A class for generating and saving image overviews.
@@ -169,10 +170,14 @@ def image_overview(
 
     """
     # convert single image_set to list of image_set
-    image_sets = [image_sets] if isinstance(image_sets, (ImageSet, dict)) else image_sets
+    image_sets = [image_sets] if isinstance(image_sets, ImageSet | dict) else image_sets
 
     # if list of dicts convert to ImageSet, until deprecated
-    image_sets = _convert_dict_to_ImageSet(image_sets) if any(isinstance(image_set, dict) for image_set in image_sets) else image_sets
+    image_sets = (
+        _convert_dict_to_ImageSet(image_sets)
+        if any(isinstance(image_set, dict) for image_set in image_sets)
+        else image_sets
+    )
 
     # create the subplot grid
 
@@ -207,10 +212,9 @@ def image_overview(
     # iterate through the image sets
     for image_set_idx, image_set in enumerate(image_sets):
         for image_idx, image in enumerate(image_set.image):
-
             # calculate the correct row and column for the subplot
             if len(image_sets) == 1:
-                row =  image_idx // num_columns
+                row = image_idx // num_columns
                 col = image_idx % num_columns
             if len(image_sets) > 1:
                 row = image_set_idx
@@ -227,13 +231,25 @@ def image_overview(
                 image_set.labels[image_idx] = True
 
             stackview.imshow(
-                image = image,
-                title = image_set.title[image_idx] if image_set.title else None,
-                colormap = image_set.colormap[image_idx] if image_set.colormap else None,
-                labels = image_set.labels[image_idx] if image_set.labels else False,
-                min_display_intensity = image_set.min_display_intensity[image_idx] if image_set.min_display_intensity else None,
-                max_display_intensity = image_set.max_display_intensity[image_idx] if image_set.max_display_intensity else None,
-                plot=axs[row][col]
+                image=image,
+                title=image_set.title[image_idx] if image_set.title else None,
+                colormap=image_set.colormap[image_idx]
+                if image_set.colormap
+                else None,
+                labels=image_set.labels[image_idx]
+                if image_set.labels
+                else False,
+                min_display_intensity=image_set.min_display_intensity[
+                    image_idx
+                ]
+                if image_set.min_display_intensity
+                else None,
+                max_display_intensity=image_set.max_display_intensity[
+                    image_idx
+                ]
+                if image_set.max_display_intensity
+                else None,
+                plot=axs[row][col],
             )
 
             # add scalebar, if dict is present
@@ -248,6 +264,7 @@ def image_overview(
     plt.tight_layout(pad=0.3)
 
     return fig
+
 
 def _convert_dict_to_ImageSet(image_sets):
     """
@@ -272,12 +289,14 @@ def _convert_dict_to_ImageSet(image_sets):
 
     """
     warnings.warn(
-        "Using a dict to pass image information to image_overview() "
-        "is deprecated and will be removed in the future. "
-        "Please use ImageSet objects instead.",
+        'Using a dict to pass image information to image_overview() '
+        'is deprecated and will be removed in the future. '
+        'Please use ImageSet objects instead.',
         category=DeprecationWarning,
+        stacklevel=2,
     )
     return [ImageSet(**image_set) for image_set in image_sets]
+
 
 def _add_scalebar(ax, scalebar):
     from matplotlib_scalebar.scalebar import ScaleBar
@@ -296,7 +315,11 @@ def _add_scalebar(ax, scalebar):
         sb_valid_dict = {'dx': scalebar}
     # if scalebar is dict, only keep the keys that are valid for ScaleBar
     elif isinstance(scalebar, dict):
-        sb_valid_dict = {k: v for k, v in scalebar.items() if k in inspect.signature(ScaleBar).parameters}
+        sb_valid_dict = {
+            k: v
+            for k, v in scalebar.items()
+            if k in inspect.signature(ScaleBar).parameters
+        }
 
     # update key: values in sb_dict with values from scalebar if key is present
     sb_dict.update(sb_valid_dict)

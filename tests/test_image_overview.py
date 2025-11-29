@@ -37,9 +37,10 @@ def test_ImageSet():
     assert isinstance(image_set.colormap, list)
     assert image_set.colormap[0] is None
     assert isinstance(image_set.min_display_intensity, list)
-    assert isinstance(image_set.min_display_intensity[0], (int, float))
+    assert isinstance(image_set.min_display_intensity[0], int | float)
     assert isinstance(image_set.max_display_intensity, list)
-    assert isinstance(image_set.max_display_intensity[0], (int, float))
+    assert isinstance(image_set.max_display_intensity[0], int | float)
+
 
 def test_image_overview_wrap():
     # create a random numpy array of size 100 x 100
@@ -53,12 +54,14 @@ def test_image_overview_wrap():
     fig = image_overview(five_image_set)
     assert isinstance(fig, plt.Figure)
     assert np.array_equal(
-        fig.get_size_inches(), np.array([9, 6]) # 3 columns * 3 width, 2 rows * 3 height
+        fig.get_size_inches(),
+        np.array([9, 6]),  # 3 columns * 3 width, 2 rows * 3 height
     )
     assert len(fig.axes) == 6
     assert fig.axes[0].get_title() == 'Image 1'
     assert not fig.axes[5].get_title()
     assert not fig.axes[5].get_images()
+
 
 def test_image_overview_nowrap():
     # create a random numpy array of size 100 x 100
@@ -72,10 +75,12 @@ def test_image_overview_nowrap():
     fig = image_overview(three_image_set)
     assert isinstance(fig, plt.Figure)
     assert np.array_equal(
-        fig.get_size_inches(), np.array([9, 3]) # 3 columns * 3 width, 2 rows * 3 height
+        fig.get_size_inches(),
+        np.array([9, 3]),  # 3 columns * 3 width, 2 rows * 3 height
     )
     assert len(fig.axes) == 3
     assert fig.axes[0].get_title() == 'Image 1'
+
 
 @pytest.fixture
 def image_and_label_sets_dict():
@@ -94,15 +99,18 @@ def image_and_label_sets_dict():
     label_data = np.random.randint(0, 2, (100, 100))
     label_set = {
         'image': [None, label_data],
-        'colormap': [None, 'Labels'], # tests the cmap.lower() component, this actually helped because it detected a lack of list
+        'colormap': [
+            None,
+            'Labels',
+        ],  # tests the cmap.lower() component, this actually helped because it detected a lack of list
         'title': [None, 'Labels'],
     }
 
     return image_set1, label_set
 
+
 @pytest.fixture
 def image_and_label_sets_ImageSet():
-
     # create an img with shape 2 x 100 x 100
     image_data = np.random.rand(2, 100, 100)
     image_set1 = ImageSet(
@@ -118,11 +126,15 @@ def image_and_label_sets_ImageSet():
     label_data = np.random.randint(0, 2, (100, 100))
     label_set = ImageSet(
         image=[None, label_data],
-        colormap=[None, 'Labels'], # tests the cmap.lower() component, this actually helped because it detected a lack of list
+        colormap=[
+            None,
+            'Labels',
+        ],  # tests the cmap.lower() component, this actually helped because it detected a lack of list
         title=[None, 'Labels'],
     )
 
     return image_set1, label_set
+
 
 # test both the ImageSet and dictionary input
 def test_image_overview_dict(image_and_label_sets_dict):
@@ -144,6 +156,7 @@ def test_image_overview_dict(image_and_label_sets_dict):
 
     assert fig.axes[3].get_title() == 'Labels'
 
+
 def test_image_overview(image_and_label_sets_ImageSet):
     fig = image_overview(image_and_label_sets_ImageSet)
 
@@ -163,13 +176,15 @@ def test_image_overview(image_and_label_sets_ImageSet):
 
     assert fig.axes[3].get_title() == 'Labels'
 
+
 def test_image_overview_plot_scale(image_and_label_sets_ImageSet):
     fig = image_overview(image_and_label_sets_ImageSet, fig_scale=(5, 6))
 
     assert isinstance(fig, plt.Figure)
     assert np.array_equal(
         fig.get_size_inches(), np.array([10, 12])
-    ) # 2 columns * 5 width, 2 rows * 6 height
+    )  # 2 columns * 5 width, 2 rows * 6 height
+
 
 def test_image_overview_plot_title(image_and_label_sets_ImageSet):
     test_title = 'Test title'
@@ -178,16 +193,19 @@ def test_image_overview_plot_title(image_and_label_sets_ImageSet):
     assert isinstance(fig, plt.Figure)
     assert fig._suptitle.get_text() == test_title
 
+
 def test_add_scalebar_float(image_and_label_sets_ImageSet):
     fig = image_overview(image_and_label_sets_ImageSet)
     _add_scalebar(fig.axes[0], 0.5)
 
     assert isinstance(fig, plt.Figure)
     scalebar = [
-        child for child in fig.axes[0].get_children()
+        child
+        for child in fig.axes[0].get_children()
         if isinstance(child, ScaleBar)
     ]
     assert len(scalebar) == 1
+
 
 def test_add_scalebar_dict(image_and_label_sets_ImageSet):
     fig = image_overview(image_and_label_sets_ImageSet)
@@ -201,10 +219,12 @@ def test_add_scalebar_dict(image_and_label_sets_ImageSet):
 
     assert isinstance(fig, plt.Figure)
     scalebar = [
-        child for child in fig.axes[0].get_children()
+        child
+        for child in fig.axes[0].get_children()
         if isinstance(child, ScaleBar)
     ]
     assert len(scalebar) == 1
+
 
 def test_image_overview_scalebar_float(image_and_label_sets_ImageSet):
     fig = image_overview(image_and_label_sets_ImageSet, scalebar=0.5)
@@ -214,16 +234,16 @@ def test_image_overview_scalebar_float(image_and_label_sets_ImageSet):
     scalebar_list = []
     for ax in fig.axes:
         scalebar = [
-            child for child in ax.get_children()
-            if isinstance(child, ScaleBar)
+            child for child in ax.get_children() if isinstance(child, ScaleBar)
         ]
         scalebar_list.append(scalebar)
 
     assert len(scalebar_list) == 4
     assert len(scalebar_list[0]) == 1
     assert len(scalebar_list[1]) == 1
-    assert len(scalebar_list[2]) == 0 # has no ax to add scalebar to
+    assert len(scalebar_list[2]) == 0  # has no ax to add scalebar to
     assert len(scalebar_list[3]) == 1
+
 
 def test_image_overview_scalebar_dict(image_and_label_sets_ImageSet):
     scalebar_dict = {
@@ -238,7 +258,8 @@ def test_image_overview_scalebar_dict(image_and_label_sets_ImageSet):
 
     # get scalebar from the first axis, multi-axes tested in float
     scalebar = [
-        child for child in fig.axes[0].get_children()
+        child
+        for child in fig.axes[0].get_children()
         if isinstance(child, ScaleBar)
     ]
     assert len(scalebar) == 1
@@ -260,6 +281,7 @@ def test_imageoverview_save(image_and_label_sets_ImageSet):
     assert save_file_path.exists()
     # remove the saved file
     save_file_path.unlink()
+
 
 def test_convert_dict_to_ImageSet():
     image_data = np.random.rand(2, 100, 100)

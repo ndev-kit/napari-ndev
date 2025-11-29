@@ -49,7 +49,9 @@ def test_data(request: pytest.FixtureRequest):
 
 
 def test_save_shapes_as_labels(
-    make_napari_viewer, tmp_path: Path, test_data,
+    make_napari_viewer,
+    tmp_path: Path,
+    test_data,
 ):
     test_image, test_shape, _, squeezed_dims = test_data
 
@@ -113,6 +115,7 @@ def test_save_image_layer(make_napari_viewer, test_data, tmp_path: Path):
     assert expected_save_loc.exists()
     assert nImage(expected_save_loc).channel_names == ['0']
 
+
 def test_save_multi_layer(make_napari_viewer, test_data, tmp_path: Path):
     test_image, _, test_labels, squeezed_dims = test_data
     viewer = make_napari_viewer()
@@ -135,6 +138,7 @@ def test_save_multi_layer(make_napari_viewer, test_data, tmp_path: Path):
     assert layer_data.shape.__len__() == squeezed_dims.__len__() + 1
     assert expected_save_loc.exists()
 
+
 @pytest.fixture
 def test_rgb_image(resources_dir: Path):
     path = resources_dir / 'RGB.tiff'
@@ -151,7 +155,10 @@ def test_update_metadata_from_file(make_napari_viewer, test_rgb_image):
     container.update_metadata_on_file_select()
 
     assert container._save_name.value == 'RGB'
-    assert container._dim_shape.value == 'T: 1, C: 1, Z: 1, Y: 1440, X: 1920, S: 3'
+    assert (
+        container._dim_shape.value
+        == 'T: 1, C: 1, Z: 1, Y: 1440, X: 1920, S: 3'
+    )
     assert container._squeezed_dims_order == 'YX'
     assert container._channel_names.value == "['red', 'green', 'blue']"
 
@@ -170,11 +177,13 @@ def test_update_metadata_from_layer(make_napari_viewer, test_data):
     ) in container._results.value
     assert container._scale_tuple.value == (1, 2, 3)
 
+
 @pytest.fixture
 def test_czi_image(resources_dir: Path):
     path = resources_dir / '0T-4C-0Z-7pos.czi'
     img = nImage(path)
     return path, img
+
 
 def test_save_files_as_ome_tiff(test_czi_image, tmp_path: Path):
     path, _ = test_czi_image
@@ -191,7 +200,8 @@ def test_save_files_as_ome_tiff(test_czi_image, tmp_path: Path):
     assert (save_dir / '0T-4C-0Z-7pos.tiff').exists()
     assert img_data.shape.__len__() == 5
 
-@pytest.mark.parametrize('num_files', [1,3])
+
+@pytest.mark.parametrize('num_files', [1, 3])
 def test_select_next_images(resources_dir: Path, num_files: int):
     container = UtilitiesContainer()
 
@@ -213,6 +223,7 @@ def test_select_next_images(resources_dir: Path, num_files: int):
 
     for i in range(num_files):
         assert selected_files[i] == all_image_files[i + num_files]
+
 
 def test_batch_concatenate_files(tmp_path: Path, resources_dir: Path):
     container = UtilitiesContainer()
@@ -245,6 +256,7 @@ def test_save_scenes_ome_tiff(test_czi_image, tmp_path: Path):
     # check that there are 7 files in the save dir
     assert len(list(save_dir.iterdir())) == 7
 
+
 def test_open_images(make_napari_viewer, test_rgb_image):
     viewer = make_napari_viewer()
     container = UtilitiesContainer(viewer)
@@ -253,9 +265,13 @@ def test_open_images(make_napari_viewer, test_rgb_image):
     container._files.value = path
     container.open_images()
 
-    assert container._dim_shape.value == "T: 1, C: 1, Z: 1, Y: 1440, X: 1920, S: 3"
-    assert container._squeezed_dims_order == "YX"
+    assert (
+        container._dim_shape.value
+        == 'T: 1, C: 1, Z: 1, Y: 1440, X: 1920, S: 3'
+    )
+    assert container._squeezed_dims_order == 'YX'
     assert container._channel_names.value == "['red', 'green', 'blue']"
+
 
 def test_canvas_export_figure(make_napari_viewer, tmp_path: Path):
     viewer = make_napari_viewer()
@@ -278,6 +294,7 @@ def test_canvas_export_figure(make_napari_viewer, tmp_path: Path):
     container.canvas_export_figure()
     assert 'Exporting Figure only works in 2D mode' in container._results.value
 
+
 def test_canvas_screenshot(make_napari_viewer, tmp_path: Path):
     viewer = make_napari_viewer()
     viewer.add_image(image_4d)
@@ -293,6 +310,7 @@ def test_canvas_screenshot(make_napari_viewer, tmp_path: Path):
     assert 'Exported screenshot of canvas' in container._results.value
     assert expected_save_loc.exists()
     assert expected_save_loc.stat().st_size > 0
+
 
 def test_rescale_by(make_napari_viewer):
     viewer = make_napari_viewer()
@@ -314,6 +332,7 @@ def test_rescale_by(make_napari_viewer):
     assert layer_3d.scale[0] == 5
     assert layer_3d.scale[1] == 2
     assert layer_3d.scale[2] == 3
+
 
 def test_get_dims_for_shape_layer():
     container = UtilitiesContainer()

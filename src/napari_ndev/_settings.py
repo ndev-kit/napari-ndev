@@ -34,7 +34,6 @@ class Settings:
             )
             self.CANVAS_SIZE = settings.get('CANVAS_SIZE', (1024, 1024))
 
-
     def save_settings(self):
         """Save the current settings to the settings file."""
         settings = {
@@ -50,7 +49,9 @@ class Settings:
         with open(self.settings_file, 'w') as file:
             yaml.safe_dump(settings, file)
 
+
 _settings_instance = None
+
 
 def get_settings() -> Settings:
     """Get the singleton instance of the settings manager."""

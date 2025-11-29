@@ -5,4 +5,4 @@ import pytest
 
 @pytest.fixture
 def resources_dir() -> Path:
-    return Path(__file__).parent / "resources"
+    return Path(__file__).parent / 'resources'

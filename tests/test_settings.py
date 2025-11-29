@@ -4,7 +4,6 @@ from napari_ndev._settings import Settings, get_settings
 
 
 def test_settings(tmp_path):
-
     # Write a temporary settings file
     settings_file = tmp_path / 'test_settings.yaml'
     settings_file.write_text(
@@ -31,7 +30,6 @@ def test_settings(tmp_path):
     settings.CLEAR_LAYERS_ON_NEW_SCENE = False
     settings.UNPACK_CHANNELS_AS_LAYERS = True
 
-
     settings.save_settings()
 
     with open(settings_file) as file:
@@ -42,6 +40,7 @@ def test_settings(tmp_path):
     assert not saved_settings['CLEAR_LAYERS_ON_NEW_SCENE']
     assert saved_settings['UNPACK_CHANNELS_AS_LAYERS']
 
+
 def test_get_settings():
     # this test will look at the real settings file
     # so if there are updates, this may need changed
@@ -49,13 +48,13 @@ def test_get_settings():
     settings2 = get_settings()
 
     assert settings1.PREFERRED_READER == 'bioio-ome-tiff'
-    assert settings1 is settings2 # ensure is singleton
+    assert settings1 is settings2  # ensure is singleton
 
     settings1.PREFERRED_READER = 'test-reader'
 
     assert settings2.PREFERRED_READER == 'test-reader'
 
-    settings1.PREFERRED_READER = 'bioio-ome-tiff' # reset for other tests
+    settings1.PREFERRED_READER = 'bioio-ome-tiff'  # reset for other tests
 
     assert settings1.SCENE_HANDLING == 'Open Scene Widget'
     assert settings1.CLEAR_LAYERS_ON_NEW_SCENE is False
