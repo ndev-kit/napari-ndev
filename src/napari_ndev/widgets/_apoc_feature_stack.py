@@ -9,7 +9,6 @@ from magicgui.widgets import (
     PushButton,
     # TextEdit,
 )
-
 from napari import layers
 
 if TYPE_CHECKING:
@@ -196,7 +195,7 @@ class ApocFeatureStack(Container):
         self._progress_bar.value = 0
 
         for idx, (feature, string) in enumerate(
-            zip(reversed(feature_stack), reversed(feature_strings))
+            zip(reversed(feature_stack), reversed(feature_strings), strict=False)
         ):
             self._viewer.add_image(data=feature, name=string)
             self._progress_bar.value = idx + 1

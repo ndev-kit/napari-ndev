@@ -21,19 +21,22 @@ from magicgui.widgets import (
     TextEdit,
     TupleEdit,
 )
-from ndevio import nImage
-
 from napari.layers import (
     Image as ImageLayer,
+)
+from napari.layers import (
     Labels as LabelsLayer,
+)
+from napari.layers import (
     Shapes as ShapesLayer,
 )
+from ndevio import nImage
+
 from napari_ndev import get_settings, helpers
 
 if TYPE_CHECKING:
-    from bioio import BioImage
-
     import napari
+    from bioio import BioImage
     from napari.layers import Layer
 
 
@@ -682,7 +685,7 @@ class UtilitiesContainer(ScrollableContainer):
             (
                 layer
                 for layer in self._viewer.layers
-                if isinstance(layer, (ImageLayer, LabelsLayer))
+                if isinstance(layer, ImageLayer | LabelsLayer)
             ),
             None,
         )

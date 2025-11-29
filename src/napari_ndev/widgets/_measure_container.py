@@ -24,9 +24,8 @@ from napari_ndev import helpers
 if TYPE_CHECKING:
     import pathlib
 
-    from bioio import BioImage
-
     import napari
+    from bioio import BioImage
 
 
 class MeasureContainer(Container):

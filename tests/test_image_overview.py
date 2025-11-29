@@ -37,9 +37,9 @@ def test_ImageSet():
     assert isinstance(image_set.colormap, list)
     assert image_set.colormap[0] is None
     assert isinstance(image_set.min_display_intensity, list)
-    assert isinstance(image_set.min_display_intensity[0], (int, float))
+    assert isinstance(image_set.min_display_intensity[0], int | float)
     assert isinstance(image_set.max_display_intensity, list)
-    assert isinstance(image_set.max_display_intensity[0], (int, float))
+    assert isinstance(image_set.max_display_intensity[0], int | float)
 
 
 def test_image_overview_wrap():

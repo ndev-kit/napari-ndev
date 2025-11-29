@@ -170,11 +170,7 @@ def image_overview(
 
     """
     # convert single image_set to list of image_set
-    image_sets = (
-        [image_sets]
-        if isinstance(image_sets, (ImageSet, dict))
-        else image_sets
-    )
+    image_sets = [image_sets] if isinstance(image_sets, ImageSet | dict) else image_sets
 
     # if list of dicts convert to ImageSet, until deprecated
     image_sets = (
@@ -297,6 +293,7 @@ def _convert_dict_to_ImageSet(image_sets):
         'is deprecated and will be removed in the future. '
         'Please use ImageSet objects instead.',
         category=DeprecationWarning,
+        stacklevel=2,
     )
     return [ImageSet(**image_set) for image_set in image_sets]
 

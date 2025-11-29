@@ -35,7 +35,7 @@ def test_convert_to_list(
 ):
     result = _convert_to_list(arg)
     if isinstance(result, list):
-        for res, exp in zip(result, expected):
+        for res, exp in zip(result, expected, strict=False):
             if isinstance(res, np.ndarray):
                 assert np.array_equal(res, exp)
             else:

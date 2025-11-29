@@ -126,14 +126,16 @@ def test_get_napari_metadata(resources_dir: Path):
 
 def test_nImage_determine_in_memory_large_file(resources_dir: Path):
     img = nImage(resources_dir / RGB_TIFF)
-    with mock.patch(
-        'psutil.virtual_memory', return_value=mock.Mock(available=1e9)
-    ):
-        with mock.patch(
+    with (
+        mock.patch(
+            'psutil.virtual_memory', return_value=mock.Mock(available=1e9)
+        ),
+        mock.patch(
             'bioio_base.io.pathlike_to_fs',
             return_value=(mock.Mock(size=lambda x: 5e9), ''),
-        ):
-            assert img._determine_in_memory() is False
+        ),
+    ):
+        assert img._determine_in_memory() is False
 
 
 def test_get_napari_image_data_mosaic_tile_in_memory(resources_dir: Path):

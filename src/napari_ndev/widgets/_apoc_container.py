@@ -22,8 +22,8 @@ from magicgui.widgets import (
     SpinBox,
     Table,
 )
-
 from napari import layers
+
 from napari_ndev import helpers
 
 if TYPE_CHECKING:
