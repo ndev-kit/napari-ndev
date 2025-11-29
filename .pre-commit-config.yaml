@@ -1,26 +1,19 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v4.5.0
     hooks:
       - id: check-docstring-first
       - id: end-of-file-fixer
       - id: trailing-whitespace
         exclude: ^\.napari-hub/.*
-
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.17.0
+      - id: check-yaml # checks for correct yaml syntax for github actions ex.
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.6
     hooks:
-      - id: pyupgrade
-        args: [--py38-plus, --keep-runtime-typing]
-
-
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
   - repo: https://github.com/tlambert03/napari-plugin-checks
     rev: v0.3.0
     hooks:
       - id: napari-plugin-checks
-
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.6.4'  # Specify a git hash or tag, e.g., 'v0.0.79'
-    hooks:
-      - id: ruff
-        args: ["--fix"]
