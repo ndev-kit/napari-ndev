@@ -439,6 +439,8 @@ class ApocContainer(Container):
         )
         # Track which operation is running for button state management
         self._current_batch_operation = None
+        # Track error count for completion message
+        self._batch_error_count = 0
 
     def _on_batch_item_complete(self, result, ctx):
         """Callback when a batch item completes."""
@@ -448,21 +450,34 @@ class ApocContainer(Container):
     def _on_batch_complete(self):
         """Callback when the entire batch completes."""
         total = self._progress_bar.max
+        errors = self._batch_error_count
         if self._current_batch_operation == 'train':
-            self._progress_bar.label = f'Trained on {total} Images'
+            if errors > 0:
+                self._progress_bar.label = (
+                    f'Trained on {total - errors} Images ({errors} Errors)'
+                )
+            else:
+                self._progress_bar.label = f'Trained on {total} Images'
             self._set_train_button_state(running=False)
             # Update classifier statistics after training
             if hasattr(self, '_training_classifier'):
                 self._classifier_statistics_table(self._training_classifier)
         elif self._current_batch_operation == 'predict':
-            self._progress_bar.label = f'Predicted {total} Images'
+            if errors > 0:
+                self._progress_bar.label = (
+                    f'Predicted {total - errors} Images ({errors} Errors)'
+                )
+            else:
+                self._progress_bar.label = f'Predicted {total} Images'
             self._set_predict_button_state(running=False)
         self._current_batch_operation = None
+        self._batch_error_count = 0
 
     def _on_batch_error(self, ctx, exception):
         """Callback when a batch item fails."""
+        self._batch_error_count += 1
         file_name = ctx.item.name if hasattr(ctx.item, 'name') else str(ctx.item)
-        self._progress_bar.label = f'Error on {file_name}: {exception}'
+        self._progress_bar.label = f'Error on {file_name}: {str(exception)[:50]}'
 
     def _set_train_button_state(self, running: bool):
         """Update train button appearance based on running state."""
@@ -746,6 +761,7 @@ class ApocContainer(Container):
         )
 
         self._current_batch_operation = 'train'
+        self._batch_error_count = 0
         self._set_train_button_state(running=True)
 
         self._batch_runner.run(
@@ -798,6 +814,7 @@ class ApocContainer(Container):
         )
 
         self._current_batch_operation = 'predict'
+        self._batch_error_count = 0
         self._set_predict_button_state(running=True)
 
         self._batch_runner.run(

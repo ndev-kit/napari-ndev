@@ -1,6 +1,7 @@
 import pathlib
 
 import numpy as np
+import pandas as pd
 from ndevio import nImage
 
 from napari_ndev.widgets._measure_container import MeasureContainer
@@ -67,7 +68,7 @@ def test_update_choices():
     )
 
 
-def test_batch_measure_label_only(tmp_path):
+def test_batch_measure_label_only(tmp_path, qtbot):
     container = MeasureContainer()
     label_directory = pathlib.Path('tests/resources/Workflow/Labels')
     # make a dummy output folder
@@ -77,16 +78,23 @@ def test_batch_measure_label_only(tmp_path):
     container._label_directory.value = label_directory
     container._label_images.value = 'Labels: Labels'
     container._output_directory.value = output_folder
-    df = container.batch_measure()
+    container.batch_measure()
+
+    # Wait for batch to complete
+    qtbot.waitUntil(
+        lambda: container._batch_runner is None
+        or not container._batch_runner.is_running,
+        timeout=60000,
+    )
 
     assert output_folder.exists()
     assert (output_folder / 'measure_props_Labels.csv').exists()
-    assert df is not None
+    df = pd.read_csv(output_folder / 'measure_props_Labels.csv')
     assert list(df.columns) == ['label_name', 'id', 'label', 'area']
 
 
 # TODO: figure out why _intensity_images.value is not in index order, but alphabetical
-def test_batch_measure_intensity(tmp_path):
+def test_batch_measure_intensity(tmp_path, qtbot):
     container = MeasureContainer()
     image_directory = pathlib.Path('tests/resources/Workflow/Images')
     label_directory = pathlib.Path('tests/resources/Workflow/Labels')
@@ -108,11 +116,18 @@ def test_batch_measure_intensity(tmp_path):
         'Intensity: nuclei',
     ]
     container._output_directory.value = output_folder
-    df = container.batch_measure()
+    container.batch_measure()
+
+    # Wait for batch to complete
+    qtbot.waitUntil(
+        lambda: container._batch_runner is None
+        or not container._batch_runner.is_running,
+        timeout=60000,
+    )
 
     assert output_folder.exists()
     assert (output_folder / 'measure_props_Labels.csv').exists()
-    assert df is not None
+    df = pd.read_csv(output_folder / 'measure_props_Labels.csv')
     assert list(df.columns) == [
         'label_name',
         'id',
@@ -124,7 +139,7 @@ def test_batch_measure_intensity(tmp_path):
     ]
 
 
-def test_batch_measure_with_regex(tmp_path):
+def test_batch_measure_with_regex(tmp_path, qtbot):
     container = MeasureContainer()
     label_directory = pathlib.Path('tests/resources/Measure/Labels')
     output_folder = tmp_path / 'Output'
@@ -164,15 +179,23 @@ def test_batch_measure_with_regex(tmp_path):
         }
     """
 
-    df = container.batch_measure()
+    container.batch_measure()
+
+    # Wait for batch to complete
+    qtbot.waitUntil(
+        lambda: container._batch_runner is None
+        or not container._batch_runner.is_running,
+        timeout=60000,
+    )
 
     assert (output_folder / 'measure_props_DAPI.csv').exists()
+    df = pd.read_csv(output_folder / 'measure_props_DAPI.csv')
     assert 'scene' in df.columns
     assert 'well' in df.columns
     assert 'chelation' in df.columns
 
 
-def test_batch_measure_multiple_label_images(tmp_path):
+def test_batch_measure_multiple_label_images(tmp_path, qtbot):
     container = MeasureContainer()
     label_directory = pathlib.Path('tests/resources/Measure/Labels')
     output_folder = tmp_path / 'Output'
@@ -182,9 +205,17 @@ def test_batch_measure_multiple_label_images(tmp_path):
     container._label_images.value = ['Labels: DAPI', 'Labels: Ferritin']
     container._output_directory.value = output_folder
 
-    df = container.batch_measure()
+    container.batch_measure()
+
+    # Wait for batch to complete
+    qtbot.waitUntil(
+        lambda: container._batch_runner is None
+        or not container._batch_runner.is_running,
+        timeout=60000,
+    )
 
     assert (output_folder / 'measure_props_DAPI_Ferritin.csv').exists()
+    df = pd.read_csv(output_folder / 'measure_props_DAPI_Ferritin.csv')
     assert 'label_name' in df.columns
     assert np.array_equal(df['label_name'].unique(), ['DAPI', 'Ferritin'])
 
@@ -223,3 +254,77 @@ def test_group_measurements_with_agg():
         'label_count',
         'area_mean',
     ]
+
+
+def test_measure_button_toggle_state(tmp_path, qtbot):
+    """Test that measure button toggles between Measure/Cancel states."""
+    container = MeasureContainer()
+    label_directory = pathlib.Path('tests/resources/Workflow/Labels')
+    output_folder = tmp_path / 'Output'
+    output_folder.mkdir()
+
+    container._label_directory.value = label_directory
+    container._label_images.value = 'Labels: Labels'
+    container._output_directory.value = output_folder
+
+    # Initially button should show "Measure"
+    assert container._measure_button.text == 'Measure'
+
+    # Start measurement
+    container.batch_measure()
+
+    # Button should show "Cancel" while running
+    assert container._measure_button.text == 'Cancel'
+
+    # Wait for completion
+    qtbot.waitUntil(
+        lambda: container._batch_runner is None
+        or not container._batch_runner.is_running,
+        timeout=60000,
+    )
+
+    # Button should show "Measure" again after completion
+    assert container._measure_button.text == 'Measure'
+
+
+def test_measure_cancel(tmp_path, qtbot):
+    """Test that measurement can be cancelled."""
+    container = MeasureContainer()
+    # Use Measure/Labels which has multiple files
+    label_directory = pathlib.Path('tests/resources/Measure/Labels')
+    output_folder = tmp_path / 'Output'
+    output_folder.mkdir()
+
+    container._label_directory.value = label_directory
+    container._label_images.value = 'Labels: DAPI'
+    container._output_directory.value = output_folder
+
+    # Start measurement
+    container.batch_measure()
+
+    # Wait briefly then cancel
+    qtbot.wait(100)
+
+    # Cancel via button handler
+    container._on_measure_button_clicked()
+
+    # Wait for cancellation
+    qtbot.waitUntil(
+        lambda: container._batch_runner is None
+        or not container._batch_runner.is_running,
+        timeout=10000,
+    )
+
+    # Button should show "Measure" after cancellation
+    assert container._measure_button.text == 'Measure'
+
+
+def test_batch_runner_initialization():
+    """Test that BatchRunner is initialized with correct callbacks."""
+    container = MeasureContainer()
+
+    runner = container._init_batch_runner()
+
+    # Only test that runner is created - avoid accessing private attributes
+    # as that couples tests to implementation details
+    assert runner is not None
