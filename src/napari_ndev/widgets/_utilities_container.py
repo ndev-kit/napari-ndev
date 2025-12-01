@@ -242,10 +242,18 @@ class UtilitiesContainer(ScrollableContainer):
     def _init_batch_runner(self):
         """Initialize the BatchRunner for batch operations."""
         self._batch_runner = BatchRunner(
+            on_start=self._on_batch_start,
             on_item_complete=self._on_batch_item_complete,
             on_complete=self._on_batch_complete,
             on_error=self._on_batch_error,
         )
+
+    def _on_batch_start(self, total: int):
+        """Callback when batch starts - initialize progress bar."""
+        self._progress_bar.label = f'Processing {total} file sets'
+        self._progress_bar.value = 0
+        self._progress_bar.max = total
+        self._set_batch_button_state(running=True)
 
     def _on_batch_item_complete(self, result, ctx):
         """Callback when a batch item completes."""
@@ -256,7 +264,14 @@ class UtilitiesContainer(ScrollableContainer):
 
     def _on_batch_complete(self):
         """Callback when the entire batch completes."""
-        self._progress_bar.label = 'Batch complete'
+        total = self._progress_bar.max
+        errors = self._batch_runner.error_count
+        if errors > 0:
+            self._progress_bar.label = (
+                f'Completed {total - errors} file sets ({errors} Errors)'
+            )
+        else:
+            self._progress_bar.label = f'Completed {total} file sets'
         self._set_batch_button_state(running=False)
         self._results.value = (
             'Batch concatenated files in directory.'
@@ -1041,9 +1056,7 @@ class UtilitiesContainer(ScrollableContainer):
         save_dir = self._determine_save_directory('ConcatenatedImages')
         save_directory = self._save_directory.value / save_dir
 
-        # Set up progress bar
-        self._progress_bar.value = 0
-        self._progress_bar.max = len(file_sets)
+        # Set up progress bar label (max/value handled by on_start)
         self._progress_bar.label = 'Starting batch...'
 
         # Update button state

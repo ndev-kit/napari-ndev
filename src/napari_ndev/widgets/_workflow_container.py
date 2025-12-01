@@ -201,11 +201,20 @@ class WorkflowContainer(Container):
     def _init_batch_runner(self):
         """Initialize the BatchRunner for batch processing."""
         self._batch_runner = BatchRunner(
+            on_start=self._on_batch_start,
             on_item_complete=self._on_batch_item_complete,
             on_complete=self._on_batch_complete,
             on_error=self._on_batch_error,
             on_cancel=self._on_batch_cancel,
         )
+
+    def _on_batch_start(self, total: int):
+        """Callback when batch starts - initialize progress bar."""
+        self._progress_bar.label = f'Workflow on {total} images'
+        self._progress_bar.value = 0
+        self._progress_bar.max = total
+        self.batch_button.enabled = False
+        self._cancel_button.enabled = True
 
     def _get_viewer_layers(self):
         """Get layers from the viewer."""
@@ -402,7 +411,14 @@ class WorkflowContainer(Container):
 
     def _on_batch_complete(self):
         """Callback when the entire batch completes."""
-        self._progress_bar.label = 'Complete!'
+        total = self._progress_bar.max
+        errors = self._batch_runner.error_count
+        if errors > 0:
+            self._progress_bar.label = (
+                f'Completed {total - errors} Images ({errors} Errors)'
+            )
+        else:
+            self._progress_bar.label = f'Completed {total} Images'
         self.batch_button.enabled = True
         self._cancel_button.enabled = False
 
@@ -430,15 +446,6 @@ class WorkflowContainer(Container):
         root_list = [widget.value for widget in self._batch_roots_container]
         root_index_list = [self._channel_names.index(r) for r in root_list]
         task_names = self._tasks_select.value
-
-        # Setup progress bar and button states
-        self._progress_bar.label = (
-            f'Workflow on {len(image_files)} images'
-        )
-        self._progress_bar.value = 0
-        self._progress_bar.max = len(image_files)
-        self.batch_button.enabled = False
-        self._cancel_button.enabled = True
 
         # Run the batch using BatchRunner
         self._batch_runner.run(

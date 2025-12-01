@@ -323,8 +323,7 @@ def test_batch_runner_initialization():
     """Test that BatchRunner is initialized with correct callbacks."""
     container = MeasureContainer()
 
-    runner = container._init_batch_runner()
-
-    # Only test that runner is created - avoid accessing private attributes
-    # as that couples tests to implementation details
-    assert runner is not None
+    # BatchRunner should be initialized during __init__
+    assert container._batch_runner is not None
+    # Verify on_start callback is configured
+    assert container._batch_runner._on_start is not None
