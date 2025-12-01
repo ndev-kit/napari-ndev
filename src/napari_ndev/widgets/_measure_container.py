@@ -75,29 +75,31 @@ def group_and_save_measurements(
         agg_funcs=agg_funcs,
     )
 
-    if pivot_wider:
+    if pivot_wider and 'label_name' in grouping_cols:
         # get grouping cols without label name
         index_cols = [
             col for col in grouping_cols if col != 'label_name'
         ]
 
-        # pivot every values column that is not present in index or columns
-        value_cols = [
-            col
-            for col in grouped_df.columns
-            if col not in grouping_cols
-        ]
+        # Only pivot if there are index columns to pivot on
+        if index_cols:
+            # pivot every values column that is not present in index or columns
+            value_cols = [
+                col
+                for col in grouped_df.columns
+                if col not in grouping_cols
+            ]
 
-        pivot_df = grouped_df.pivot(
-            index=index_cols,
-            columns='label_name',
-            values=value_cols,
-        )
+            pivot_df = grouped_df.pivot(
+                index=index_cols,
+                columns='label_name',
+                values=value_cols,
+            )
 
-        # reset index so that it is saved in the csv
-        pivot_df.reset_index(inplace=True)
+            # reset index so that it is saved in the csv
+            pivot_df.reset_index(inplace=True)
 
-        grouped_df = pivot_df
+            grouped_df = pivot_df
 
     save_loc = (
         measured_data_path.parent

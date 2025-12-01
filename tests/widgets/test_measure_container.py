@@ -220,9 +220,15 @@ def test_batch_measure_multiple_label_images(tmp_path, qtbot):
     assert np.array_equal(df['label_name'].unique(), ['DAPI', 'Ferritin'])
 
 
-def test_group_measurements_no_agg_defaults(qtbot):
+def test_group_measurements_no_agg_defaults(qtbot, tmp_path):
+    import shutil
+
     container = MeasureContainer()
-    test_data_path = pathlib.Path(r'tests/resources/measure_props_Labels.csv')
+    # Copy test data to tmp_path to avoid writing artifacts to source tree
+    source_path = pathlib.Path(r'tests/resources/measure_props_Labels.csv')
+    test_data_path = tmp_path / source_path.name
+    shutil.copy(source_path, test_data_path)
+
     container._measured_data_path.value = test_data_path
 
     # Manually trigger the update since changed events might not fire in tests
@@ -245,9 +251,15 @@ def test_group_measurements_no_agg_defaults(qtbot):
     assert 'label_count' in [col[0] for col in grouped_df.columns]
 
 
-def test_group_measurements_with_agg(qtbot):
+def test_group_measurements_with_agg(qtbot, tmp_path):
+    import shutil
+
     container = MeasureContainer()
-    test_data_path = pathlib.Path(r'tests/resources/measure_props_Labels.csv')
+    # Copy test data to tmp_path to avoid writing artifacts to source tree
+    source_path = pathlib.Path(r'tests/resources/measure_props_Labels.csv')
+    test_data_path = tmp_path / source_path.name
+    shutil.copy(source_path, test_data_path)
+
     container._measured_data_path.value = test_data_path
     container._grouping_cols.value = [
         'label_name',
