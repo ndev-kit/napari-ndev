@@ -15,7 +15,7 @@ from magicgui.widgets import (
     PushButton,
     Select,
 )
-from nbatch import BatchRunner
+from nbatch import BatchRunner, batch
 from ndevio import nImage
 
 from napari_ndev import helpers
@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     import napari
 
 
+@batch(on_error='continue')
 def process_workflow_file(
     image_file: Path,
     result_dir: Path,
