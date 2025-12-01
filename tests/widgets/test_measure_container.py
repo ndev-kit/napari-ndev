@@ -325,7 +325,6 @@ def test_batch_runner_initialization():
 
     runner = container._init_batch_runner()
 
+    # Only test that runner is created - avoid accessing private attributes
+    # as that couples tests to implementation details
     assert runner is not None
-    assert runner._on_item_complete == container._on_batch_item_complete
-    assert runner._on_complete == container._on_batch_complete
-    assert runner._on_error == container._on_batch_error

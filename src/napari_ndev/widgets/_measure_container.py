@@ -138,11 +138,21 @@ def measure_single_file(
                     lbl.set_scene(scene_idx)
                     inten_img = lbl.get_image_data(squeezed_dims, C=lbl_C)
                 elif channel.startswith('Intensity: '):
+                    if img is None:
+                        raise ValueError(
+                            f"Intensity channel '{channel}' requested but no "
+                            "intensity image directory was provided."
+                        )
                     chan = channel[11:]
                     img_C = img.channel_names.index(chan)
                     img.set_scene(scene_idx)
                     inten_img = img.get_image_data(squeezed_dims, C=img_C)
                 elif channel.startswith('Region: '):
+                    if reg is None:
+                        raise ValueError(
+                            f"Region channel '{channel}' requested but no "
+                            "region image directory was provided."
+                        )
                     chan = channel[8:]
                     reg_C = reg.channel_names.index(chan)
                     reg.set_scene(scene_idx)
@@ -305,6 +315,7 @@ class MeasureContainer(Container):
         self._prop = type('', (), {})()
         self._measure_results: list[pd.DataFrame] = []
         self._batch_runner: BatchRunner | None = None
+        self._batch_error_count: int = 0
 
         self._init_widgets()
         self._init_regionprops_container()
@@ -566,6 +577,8 @@ class MeasureContainer(Container):
         button state.
 
         """
+        total = self._progress_bar.max
+        errors = self._batch_error_count
         try:
             if self._measure_results:
                 # Concatenate all DataFrames
@@ -586,8 +599,18 @@ class MeasureContainer(Container):
                     / f'measure_props_{labels_string}.csv'
                 )
                 measure_df.to_csv(output_path, index=False)
+
+            # Update progress bar label with completion status
+            if errors > 0:
+                self._progress_bar.label = (
+                    f'Measured {total - errors} Images ({errors} Errors)'
+                )
+            else:
+                self._progress_bar.label = f'Measured {total} Images'
         finally:
             self._set_measure_button_state(running=False)
+            self._measure_results.clear()
+            self._batch_error_count = 0
 
     def _on_batch_error(self, ctx, error: Exception) -> None:
         """Handle error during measurement processing.
@@ -600,6 +623,7 @@ class MeasureContainer(Container):
             The exception that occurred.
 
         """
+        self._batch_error_count += 1
         self._progress_bar.value = self._progress_bar.value + 1
 
     def _set_measure_button_state(self, running: bool) -> None:
@@ -745,17 +769,8 @@ class MeasureContainer(Container):
         if not label_files:
             return
 
-        # check if the label files are the same as the image files
-        if self._image_directory.value is not None and len(label_files) != len(
-            image_files
-        ):
-            # Log warning but continue - individual files will fail if missing
-            pass
-        if self._region_directory.value is not None and len(
-            label_files
-        ) != len(region_files):
-            # Log warning but continue - individual files will fail if missing
-            pass
+        # File count mismatch validation is handled by individual file errors
+        # during batch processing - each missing file will raise FileNotFoundError
 
         # Setup progress bar
         self._progress_bar.label = f'Measuring {len(label_files)} Images'
@@ -781,8 +796,9 @@ class MeasureContainer(Container):
             int(self._tx_n_well.value) if self._tx_n_well.value else None
         )
 
-        # Reset results collection
+        # Reset results collection and error count
         self._measure_results = []
+        self._batch_error_count = 0
 
         # Create partial function with all parameters bound
         process_func = partial(
