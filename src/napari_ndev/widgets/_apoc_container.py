@@ -752,7 +752,7 @@ class ApocContainer(Container):
             func=train_func,
             items=image_files,
             threaded=True,
-            log_path=self._classifier_file.value.with_suffix('.log.txt'),
+            log_file=self._classifier_file.value.with_suffix('.log.txt'),
         )
 
     def _get_prediction_classifier_instance(self):
@@ -804,7 +804,7 @@ class ApocContainer(Container):
             func=predict_func,
             items=image_files,
             threaded=True,
-            log_path=self._output_directory.value / 'batch_predict.log.txt',
+            log_file=self._output_directory.value / 'batch_predict.log.txt',
         )
 
     def image_train(self):
