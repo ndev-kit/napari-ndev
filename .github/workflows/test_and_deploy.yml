@@ -33,7 +33,7 @@ jobs:
         python-version: ["3.11", "3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: astral-sh/setup-uv@v7
@@ -59,7 +59,7 @@ jobs:
     if: ${{ failure() && github.event_name == 'schedule' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Report Scheduled Test Failures
         uses: JasonEtco/create-an-issue@v2

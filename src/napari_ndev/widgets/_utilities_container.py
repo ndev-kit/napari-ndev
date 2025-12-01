@@ -52,7 +52,7 @@ def concatenate_and_save_files(
     """Concatenate image files and save as OME-TIFF.
 
     This function concatenates multiple image files along the channel axis
-    and saves the result as an OME-TIFF file. It has no widget dependencies.
+    and saves the result as an OME-TIFF file.
 
     Parameters
     ----------
@@ -85,11 +85,16 @@ def concatenate_and_save_files(
         else:
             img_data = img.data
 
-        # iterate over all channels and only keep if not blank
+        # Iterate over the channel dimension (index 1) and only keep non-blank
         for idx in range(img_data.shape[1]):
             array = img_data[:, [idx], :, :, :]
             if array.max() > 0:
                 array_list.append(array)
+
+    if not array_list:
+        raise ValueError(
+            f'No valid channels found in files: {[str(f) for f in files]}'
+        )
 
     img_data = np.concatenate(array_list, axis=1)
 
@@ -266,7 +271,10 @@ class UtilitiesContainer(ScrollableContainer):
         """
         # ctx.item is (files, save_name) tuple
         _, save_name = ctx.item
-        self._progress_bar.label = f'Error on {save_name}: {exception}'
+        error_msg = str(exception)
+        if len(error_msg) > 100:
+            error_msg = error_msg[:100] + '...'
+        self._progress_bar.label = f'Error on {save_name}: {error_msg}'
 
     def _set_batch_button_state(self, running: bool):
         """Update batch button appearance based on running state."""
@@ -984,6 +992,9 @@ class UtilitiesContainer(ScrollableContainer):
             List of (files, save_name) tuples for batch processing.
         """
         from natsort import os_sorted
+
+        if not self._files.value:
+            return []
 
         parent_dir = self._files.value[0].parent
         suffix = self._files.value[0].suffix
