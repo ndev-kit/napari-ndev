@@ -49,6 +49,7 @@ def test_data(request: pytest.FixtureRequest):
 
 
 def test_save_shapes_as_labels(
+    qtbot,
     make_napari_viewer,
     tmp_path: Path,
     test_data,
@@ -64,15 +65,20 @@ def test_save_shapes_as_labels(
     container._save_directory.value = tmp_path
     container._save_name.value = 'test'
 
-    shapes_layer = container.save_layers_as_ome_tiff()
+    container.save_layers_as_ome_tiff()
+
+    # Wait for the threaded worker to complete
+    with qtbot.waitSignal(container._layer_save_worker.finished, timeout=60000):
+        pass
 
     expected_save_loc = tmp_path / 'Shapes' / 'test.tiff'
     assert expected_save_loc.exists()
-    assert shapes_layer.shape.__len__() == squeezed_dims.__len__() + 1
-    assert nImage(expected_save_loc).channel_names == ['Shapes']
+    saved_img = nImage(expected_save_loc)
+    assert saved_img.shape[1] == 1  # single channel (C dimension is index 1)
+    assert saved_img.channel_names == ['Shapes']
 
 
-def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
+def test_save_labels(qtbot, make_napari_viewer, tmp_path: Path, test_data):
     _, _, test_labels, squeezed_dims = test_data
 
     viewer = make_napari_viewer()
@@ -85,17 +91,21 @@ def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
     container._save_directory.value = tmp_path
     container._save_name.value = 'test'
 
-    layer_data = container.save_layers_as_ome_tiff()
+    container.save_layers_as_ome_tiff()
+
+    # Wait for the threaded worker to complete
+    with qtbot.waitSignal(container._layer_save_worker.finished, timeout=60000):
+        pass
 
     expected_save_loc = tmp_path / 'Labels' / 'test.tiff'
 
-    assert isinstance(layer_data, np.ndarray)
     assert expected_save_loc.exists()
-    assert layer_data.shape.__len__() == squeezed_dims.__len__() + 1
-    assert nImage(expected_save_loc).channel_names == ['Labels']
+    saved_img = nImage(expected_save_loc)
+    assert saved_img.shape[1] == 1  # single channel (C dimension is index 1)
+    assert saved_img.channel_names == ['Labels']
 
 
-def test_save_image_layer(make_napari_viewer, test_data, tmp_path: Path):
+def test_save_image_layer(qtbot, make_napari_viewer, test_data, tmp_path: Path):
     test_image, _, _, squeezed_dims = test_data
     viewer = make_napari_viewer()
     viewer.add_image(test_image)
@@ -106,17 +116,21 @@ def test_save_image_layer(make_napari_viewer, test_data, tmp_path: Path):
     container._save_directory.value = tmp_path
     container._save_name.value = 'test'
 
-    layer_data = container.save_layers_as_ome_tiff()
+    container.save_layers_as_ome_tiff()
+
+    # Wait for the threaded worker to complete
+    with qtbot.waitSignal(container._layer_save_worker.finished, timeout=60000):
+        pass
 
     expected_save_loc = tmp_path / 'Image' / 'test.tiff'
 
-    assert isinstance(layer_data, np.ndarray)
-    assert layer_data.shape.__len__() == squeezed_dims.__len__() + 1
     assert expected_save_loc.exists()
-    assert nImage(expected_save_loc).channel_names == ['0']
+    saved_img = nImage(expected_save_loc)
+    assert saved_img.shape[1] == 1  # single channel (C dimension is index 1)
+    assert saved_img.channel_names == ['0']
 
 
-def test_save_multi_layer(make_napari_viewer, test_data, tmp_path: Path):
+def test_save_multi_layer(qtbot, make_napari_viewer, test_data, tmp_path: Path):
     test_image, _, test_labels, squeezed_dims = test_data
     viewer = make_napari_viewer()
     viewer.add_image(test_image)
@@ -130,13 +144,17 @@ def test_save_multi_layer(make_napari_viewer, test_data, tmp_path: Path):
     container._save_directory.value = tmp_path
     container._save_name.value = 'test'
 
-    layer_data = container.save_layers_as_ome_tiff()
+    container.save_layers_as_ome_tiff()
+
+    # Wait for the threaded worker to complete
+    with qtbot.waitSignal(container._layer_save_worker.finished, timeout=60000):
+        pass
 
     expected_save_loc = tmp_path / 'Layers' / 'test.tiff'
 
-    assert isinstance(layer_data, np.ndarray)
-    assert layer_data.shape.__len__() == squeezed_dims.__len__() + 1
     assert expected_save_loc.exists()
+    saved_img = nImage(expected_save_loc)
+    assert saved_img.shape[1] == 2  # two channels (C dimension is index 1)
 
 
 @pytest.fixture
@@ -185,20 +203,23 @@ def test_czi_image(resources_dir: Path):
     return path, img
 
 
-def test_save_files_as_ome_tiff(test_czi_image, tmp_path: Path):
+def test_save_files_as_ome_tiff(test_czi_image, tmp_path: Path, qtbot):
     path, _ = test_czi_image
     container = UtilitiesContainer()
     container._files.value = path
     container._save_directory.value = tmp_path
     save_dir = tmp_path / 'ConcatenatedImages'
 
-    img_data = container.save_files_as_ome_tiff()
+    container.save_files_as_ome_tiff()
+
+    # Wait for the threaded worker to complete
+    with qtbot.waitSignal(container._concat_worker.finished, timeout=60000):
+        pass
 
     # check that there is 1 file
-    assert len(list(tmp_path.iterdir())) == 1
+    assert len(list(save_dir.iterdir())) == 1
     # check the name of the file is 0T-4C-0Z-7pos.tiff
     assert (save_dir / '0T-4C-0Z-7pos.tiff').exists()
-    assert img_data.shape.__len__() == 5
 
 
 @pytest.mark.parametrize('num_files', [1, 3])
