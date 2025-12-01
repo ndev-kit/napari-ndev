@@ -755,8 +755,6 @@ class MeasureContainer(Container):
         progress tracking and cancellation support.
 
         """
-        from functools import partial
-
         # get all the files in the label directory
         label_dir, label_files = helpers.get_directory_and_files(
             self._label_directory.value
@@ -800,9 +798,14 @@ class MeasureContainer(Container):
         # Reset results collection
         self._measure_results = []
 
-        # Create partial function with all parameters bound
-        process_func = partial(
-            measure_single_file,
+        # Setup logging
+        log_file = self._output_directory.value / 'measure.log.txt'
+
+        # Run BatchRunner with kwargs instead of partial - cleaner pattern
+        self._set_measure_button_state(running=True)
+        self._batch_runner.run(
+            func=measure_single_file,
+            items=label_files,
             label_dir=label_dir,
             image_dir=image_dir,
             region_dir=region_dir,
@@ -819,16 +822,6 @@ class MeasureContainer(Container):
             tx_id=self._tx_id.value,
             tx_dict=tx_dict,
             tx_n_well=tx_n_well,
-        )
-
-        # Setup logging
-        log_file = self._output_directory.value / 'measure.log.txt'
-
-        # Run BatchRunner with threaded execution
-        self._set_measure_button_state(running=True)
-        self._batch_runner.run(
-            func=process_func,
-            items=label_files,
             log_file=log_file,
             threaded=True,
         )

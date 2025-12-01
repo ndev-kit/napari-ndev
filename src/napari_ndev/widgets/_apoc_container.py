@@ -728,8 +728,6 @@ class ApocContainer(Container):
     ##############################
     def batch_train(self):
         """Train classifier on batch of image-label pairs using BatchRunner."""
-        from functools import partial
-
         from pyclesperanto import wait_for_kernel_to_finish
 
         image_directory, image_files = helpers.get_directory_and_files(
@@ -757,22 +755,18 @@ class ApocContainer(Container):
             for channel in self._image_channels.value
         ]
 
-        # Create partial function with fixed parameters
-        train_func = partial(
-            train_on_file,
+        self._current_batch_operation = 'train'
+        self._set_train_button_state(running=True)
+
+        # Use kwargs instead of partial - cleaner and recommended pattern
+        self._batch_runner.run(
+            func=train_on_file,
+            items=image_files,
             image_directory=image_directory,
             label_directory=label_directory,
             channel_index_list=channel_index_list,
             classifier=custom_classifier,
             feature_set=feature_set,
-        )
-
-        self._current_batch_operation = 'train'
-        self._set_train_button_state(running=True)
-
-        self._batch_runner.run(
-            func=train_func,
-            items=image_files,
             threaded=True,
             log_file=self._classifier_file.value.with_suffix('.log.txt'),
         )
@@ -789,8 +783,6 @@ class ApocContainer(Container):
 
     def batch_predict(self):
         """Predict labels on batch of images using BatchRunner."""
-        from functools import partial
-
         from pyclesperanto import wait_for_kernel_to_finish
 
         _, image_files = helpers.get_directory_and_files(
@@ -809,20 +801,16 @@ class ApocContainer(Container):
             for channel in self._image_channels.value
         ]
 
-        # Create partial function with fixed parameters
-        predict_func = partial(
-            predict_on_file,
-            output_directory=self._output_directory.value,
-            channel_index_list=channel_index_list,
-            classifier=custom_classifier,
-        )
-
         self._current_batch_operation = 'predict'
         self._set_predict_button_state(running=True)
 
+        # Use kwargs instead of partial - cleaner and recommended pattern
         self._batch_runner.run(
-            func=predict_func,
+            func=predict_on_file,
             items=image_files,
+            output_directory=self._output_directory.value,
+            channel_index_list=channel_index_list,
+            classifier=custom_classifier,
             threaded=True,
             log_file=self._output_directory.value / 'batch_predict.log.txt',
         )
