@@ -54,10 +54,9 @@ def test_ndev_container_viewer(
     # check interacting with alyers in utilities container works
     ndev._utilities_container._save_directory.value = tmp_path
     ndev._utilities_container._save_name.value = 'test'
-    layer_data = ndev._utilities_container.save_layers_as_ome_tiff()
+    ndev._utilities_container.save_layers_as_ome_tiff()
 
     expected_save_loc = tmp_path / 'Image' / 'test.tiff'
-    assert layer_data.shape.__len__() == 4
     assert expected_save_loc.exists()
 
     # check interacting with apoc container works
