@@ -314,8 +314,6 @@ class MeasureContainer(Container):
         self._squeezed_dims = None
         self._prop = type('', (), {})()
         self._measure_results: list[pd.DataFrame] = []
-        self._batch_runner: BatchRunner | None = None
-        self._batch_error_count: int = 0
 
         self._init_widgets()
         self._init_regionprops_container()
@@ -324,6 +322,7 @@ class MeasureContainer(Container):
         self._init_grouping_container()
         self._init_layout()
         self._connect_events()
+        self._init_batch_runner()
 
     def _init_widgets(self):
         """Initialize non-container widgets."""
@@ -536,20 +535,27 @@ class MeasureContainer(Container):
             self.group_measurements
         )
 
-    def _init_batch_runner(self) -> BatchRunner:
-        """Initialize the BatchRunner with callbacks.
-
-        Returns
-        -------
-        BatchRunner
-            A new BatchRunner instance configured for measurement processing.
-
-        """
-        return BatchRunner(
+    def _init_batch_runner(self) -> None:
+        """Initialize the BatchRunner with callbacks."""
+        self._batch_runner = BatchRunner(
+            on_start=self._on_batch_start,
             on_item_complete=self._on_batch_item_complete,
             on_complete=self._on_batch_complete,
             on_error=self._on_batch_error,
         )
+
+    def _on_batch_start(self, total: int) -> None:
+        """Handle batch start to set up progress bar.
+
+        Parameters
+        ----------
+        total : int
+            Total number of items to process.
+
+        """
+        self._progress_bar.value = 0
+        self._progress_bar.max = total
+        self._progress_bar.label = f'Measuring {total} Images'
 
     def _on_batch_item_complete(
         self, result: list[pd.DataFrame], ctx
@@ -568,7 +574,7 @@ class MeasureContainer(Container):
         """
         if result:
             self._measure_results.extend(result)
-        self._progress_bar.value = self._progress_bar.value + 1
+        self._progress_bar.value = ctx.index + 1
 
     def _on_batch_complete(self) -> None:
         """Handle completion of all measurements.
@@ -578,7 +584,7 @@ class MeasureContainer(Container):
 
         """
         total = self._progress_bar.max
-        errors = self._batch_error_count
+        errors = self._batch_runner.error_count
         try:
             if self._measure_results:
                 # Concatenate all DataFrames
@@ -610,7 +616,6 @@ class MeasureContainer(Container):
         finally:
             self._set_measure_button_state(running=False)
             self._measure_results.clear()
-            self._batch_error_count = 0
 
     def _on_batch_error(self, ctx, error: Exception) -> None:
         """Handle error during measurement processing.
@@ -623,8 +628,7 @@ class MeasureContainer(Container):
             The exception that occurred.
 
         """
-        self._batch_error_count += 1
-        self._progress_bar.value = self._progress_bar.value + 1
+        self._progress_bar.value = ctx.index + 1
 
     def _set_measure_button_state(self, running: bool) -> None:
         """Update measure button text and state.
@@ -642,7 +646,7 @@ class MeasureContainer(Container):
 
     def _on_measure_button_clicked(self) -> None:
         """Handle measure button click for run/cancel toggling."""
-        if self._batch_runner is not None and self._batch_runner.is_running:
+        if self._batch_runner.is_running:
             self._batch_runner.cancel()
             self._set_measure_button_state(running=False)
         else:
@@ -752,8 +756,6 @@ class MeasureContainer(Container):
         progress tracking and cancellation support.
 
         """
-        from functools import partial
-
         # get all the files in the label directory
         label_dir, label_files = helpers.get_directory_and_files(
             self._label_directory.value
@@ -771,11 +773,6 @@ class MeasureContainer(Container):
 
         # File count mismatch validation is handled by individual file errors
         # during batch processing - each missing file will raise FileNotFoundError
-
-        # Setup progress bar
-        self._progress_bar.label = f'Measuring {len(label_files)} Images'
-        self._progress_bar.value = 0
-        self._progress_bar.max = len(label_files)
 
         # get the relevant spacing for regionprops, depending on length
         props_scale = self._scale_tuple.value
@@ -796,13 +793,17 @@ class MeasureContainer(Container):
             int(self._tx_n_well.value) if self._tx_n_well.value else None
         )
 
-        # Reset results collection and error count
+        # Reset results collection
         self._measure_results = []
-        self._batch_error_count = 0
 
-        # Create partial function with all parameters bound
-        process_func = partial(
-            measure_single_file,
+        # Setup logging
+        log_file = self._output_directory.value / 'measure.log.txt'
+
+        # Run BatchRunner with kwargs instead of partial - cleaner pattern
+        self._set_measure_button_state(running=True)
+        self._batch_runner.run(
+            func=measure_single_file,
+            items=label_files,
             label_dir=label_dir,
             image_dir=image_dir,
             region_dir=region_dir,
@@ -819,18 +820,8 @@ class MeasureContainer(Container):
             tx_id=self._tx_id.value,
             tx_dict=tx_dict,
             tx_n_well=tx_n_well,
-        )
-
-        # Setup logging
-        log_file = self._output_directory.value / 'measure.log.txt'
-
-        # Initialize and run BatchRunner
-        self._batch_runner = self._init_batch_runner()
-        self._set_measure_button_state(running=True)
-        self._batch_runner.run(
-            func=process_func,
-            items=label_files,
             log_file=log_file,
+            threaded=True,
         )
 
     def group_measurements(self):

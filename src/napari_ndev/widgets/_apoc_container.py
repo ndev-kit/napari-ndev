@@ -433,14 +433,25 @@ class ApocContainer(Container):
     def _init_batch_runner(self):
         """Initialize the BatchRunner for batch operations."""
         self._batch_runner = BatchRunner(
+            on_start=self._on_batch_start,
             on_item_complete=self._on_batch_item_complete,
             on_complete=self._on_batch_complete,
             on_error=self._on_batch_error,
         )
         # Track which operation is running for button state management
         self._current_batch_operation = None
-        # Track error count for completion message
-        self._batch_error_count = 0
+
+    def _on_batch_start(self, total: int) -> None:
+        """Handle batch start to set up progress bar.
+
+        Parameters
+        ----------
+        total : int
+            Total number of items to process.
+
+        """
+        self._progress_bar.value = 0
+        self._progress_bar.max = total
 
     def _on_batch_item_complete(self, result, ctx):
         """Callback when a batch item completes."""
@@ -450,7 +461,7 @@ class ApocContainer(Container):
     def _on_batch_complete(self):
         """Callback when the entire batch completes."""
         total = self._progress_bar.max
-        errors = self._batch_error_count
+        errors = self._batch_runner.error_count
         if self._current_batch_operation == 'train':
             if errors > 0:
                 self._progress_bar.label = (
@@ -471,11 +482,9 @@ class ApocContainer(Container):
                 self._progress_bar.label = f'Predicted {total} Images'
             self._set_predict_button_state(running=False)
         self._current_batch_operation = None
-        self._batch_error_count = 0
 
     def _on_batch_error(self, ctx, exception):
         """Callback when a batch item fails."""
-        self._batch_error_count += 1
         file_name = ctx.item.name if hasattr(ctx.item, 'name') else str(ctx.item)
         self._progress_bar.label = f'Error on {file_name}: {str(exception)[:50]}'
 
@@ -719,8 +728,6 @@ class ApocContainer(Container):
     ##############################
     def batch_train(self):
         """Train classifier on batch of image-label pairs using BatchRunner."""
-        from functools import partial
-
         from pyclesperanto import wait_for_kernel_to_finish
 
         image_directory, image_files = helpers.get_directory_and_files(
@@ -734,8 +741,6 @@ class ApocContainer(Container):
         wait_for_kernel_to_finish()
 
         self._progress_bar.label = f'Training on {len(image_files)} Images'
-        self._progress_bar.value = 0
-        self._progress_bar.max = len(image_files)
 
         if not self._continue_training.value:
             self.apoc.erase_classifier(self._classifier_file.value)
@@ -750,23 +755,18 @@ class ApocContainer(Container):
             for channel in self._image_channels.value
         ]
 
-        # Create partial function with fixed parameters
-        train_func = partial(
-            train_on_file,
+        self._current_batch_operation = 'train'
+        self._set_train_button_state(running=True)
+
+        # Use kwargs instead of partial - cleaner and recommended pattern
+        self._batch_runner.run(
+            func=train_on_file,
+            items=image_files,
             image_directory=image_directory,
             label_directory=label_directory,
             channel_index_list=channel_index_list,
             classifier=custom_classifier,
             feature_set=feature_set,
-        )
-
-        self._current_batch_operation = 'train'
-        self._batch_error_count = 0
-        self._set_train_button_state(running=True)
-
-        self._batch_runner.run(
-            func=train_func,
-            items=image_files,
             threaded=True,
             log_file=self._classifier_file.value.with_suffix('.log.txt'),
         )
@@ -783,8 +783,6 @@ class ApocContainer(Container):
 
     def batch_predict(self):
         """Predict labels on batch of images using BatchRunner."""
-        from functools import partial
-
         from pyclesperanto import wait_for_kernel_to_finish
 
         _, image_files = helpers.get_directory_and_files(
@@ -795,8 +793,6 @@ class ApocContainer(Container):
         wait_for_kernel_to_finish()
 
         self._progress_bar.label = f'Predicting {len(image_files)} Images'
-        self._progress_bar.value = 0
-        self._progress_bar.max = len(image_files)
 
         custom_classifier = self._get_prediction_classifier_instance()
 
@@ -805,21 +801,16 @@ class ApocContainer(Container):
             for channel in self._image_channels.value
         ]
 
-        # Create partial function with fixed parameters
-        predict_func = partial(
-            predict_on_file,
+        self._current_batch_operation = 'predict'
+        self._set_predict_button_state(running=True)
+
+        # Use kwargs instead of partial - cleaner and recommended pattern
+        self._batch_runner.run(
+            func=predict_on_file,
+            items=image_files,
             output_directory=self._output_directory.value,
             channel_index_list=channel_index_list,
             classifier=custom_classifier,
-        )
-
-        self._current_batch_operation = 'predict'
-        self._batch_error_count = 0
-        self._set_predict_button_state(running=True)
-
-        self._batch_runner.run(
-            func=predict_func,
-            items=image_files,
             threaded=True,
             log_file=self._output_directory.value / 'batch_predict.log.txt',
         )
