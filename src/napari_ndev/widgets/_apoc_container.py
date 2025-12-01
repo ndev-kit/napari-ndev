@@ -159,6 +159,60 @@ def predict_on_file(
     return f'Predicted {image_file.name}'
 
 
+def _train_classifier(
+    classifier,
+    feature_set: str,
+    image_stack: np.ndarray,
+    label: np.ndarray,
+) -> None:
+    """Train classifier on image and label data.
+
+    Pure function for training that can run in a background thread.
+
+    Parameters
+    ----------
+    classifier
+        The APOC classifier instance to train.
+    feature_set : str
+        Feature set string for the classifier.
+    image_stack : np.ndarray
+        Stacked image data for training.
+    label : np.ndarray
+        Ground truth label data.
+    """
+    classifier.train(
+        features=feature_set,
+        image=np.squeeze(image_stack),
+        ground_truth=np.squeeze(label),
+        continue_training=True,
+    )
+
+
+def _predict_classifier(
+    classifier,
+    image_stack: np.ndarray,
+) -> np.ndarray:
+    """Run prediction on image data.
+
+    Pure function for prediction that can run in a background thread.
+
+    Parameters
+    ----------
+    classifier
+        The APOC classifier instance to use for prediction.
+    image_stack : np.ndarray
+        Stacked image data for prediction.
+
+    Returns
+    -------
+    np.ndarray
+        Prediction result as numpy array.
+    """
+    result = classifier.predict(image=np.squeeze(image_stack))
+    # Pull from GPU to numpy array
+    return np.asarray(result)
+
+
 class ApocContainer(Container):
     """
     Container class for managing the ApocContainer widget in napari.
@@ -816,6 +870,11 @@ class ApocContainer(Container):
         )
 
     def image_train(self):
+        """Train classifier on napari layers with threading.
+
+        Runs training in a background thread to avoid blocking the UI.
+        """
+        from napari.qt import create_worker
         from pyclesperanto import wait_for_kernel_to_finish
 
         image_names = [image.name for image in self._image_layers.value]
@@ -824,6 +883,7 @@ class ApocContainer(Container):
             f'Training on {image_names} using {label_name}'
         )
 
+        # Extract data from layers before threading
         image_list = [image.data for image in self._image_layers.value]
         image_stack = np.stack(image_list, axis=0)
         label = self._label_layer.value.data
@@ -837,18 +897,44 @@ class ApocContainer(Container):
         custom_classifier = self._get_training_classifier_instance()
         feature_set = self._feature_string.value
 
-        custom_classifier.train(
-            features=feature_set,
-            image=np.squeeze(image_stack),
-            ground_truth=np.squeeze(label),
-            continue_training=True,
+        # Store context for callback
+        self._train_context = {
+            'image_names': image_names,
+            'label_name': label_name,
+        }
+
+        # Create worker for background training
+        self._train_worker = create_worker(
+            _train_classifier,
+            classifier=custom_classifier,
+            feature_set=feature_set,
+            image_stack=image_stack,
+            label=label,
+        )
+        self._train_worker.returned.connect(self._on_image_train_complete)
+        self._train_worker.errored.connect(self._on_image_train_error)
+        self._train_worker.start()
+
+    def _on_image_train_complete(self) -> None:
+        """Handle completion of image training."""
+        ctx = self._train_context
+        self._single_result_label.value = (
+            f"Trained on {ctx['image_names']} using {ctx['label_name']}"
         )
 
+    def _on_image_train_error(self, exception: Exception) -> None:
+        """Handle error during image training."""
+        ctx = self._train_context
         self._single_result_label.value = (
-            f'Trained on {image_names} using {label_name}'
+            f"Error training on {ctx['image_names']}: {exception}"
         )
 
     def image_predict(self):
+        """Predict labels on napari layers with threading.
+
+        Runs prediction in a background thread to avoid blocking the UI.
+        """
+        from napari.qt import create_worker
         from pyclesperanto import wait_for_kernel_to_finish
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
@@ -856,17 +942,39 @@ class ApocContainer(Container):
 
         image_names = [image.name for image in self._image_layers.value]
         self._single_result_label.value = f'Predicting {image_names}'
+
+        # Extract data from layers before threading
         image_list = [image.data for image in self._image_layers.value]
         image_stack = np.stack(image_list, axis=0)
         scale = self._image_layers.value[0].scale
 
         custom_classifier = self._get_prediction_classifier_instance()
 
-        result = custom_classifier.predict(image=np.squeeze(image_stack))
+        # Store context for callback
+        self._predict_context = {
+            'image_names': image_names,
+            'scale': scale,
+            'classifier_stem': self._classifier_file.value.stem,
+        }
+
+        # Create worker for background prediction
+        self._predict_worker = create_worker(
+            _predict_classifier,
+            classifier=custom_classifier,
+            image_stack=image_stack,
+        )
+        self._predict_worker.returned.connect(self._on_image_predict_complete)
+        self._predict_worker.errored.connect(self._on_image_predict_error)
+        self._predict_worker.start()
+
+    def _on_image_predict_complete(self, result: np.ndarray) -> None:
+        """Handle completion of image prediction."""
+        ctx = self._predict_context
+        scale = ctx['scale']
 
         # sometimes, input layers may have shape with 1s, like (1,1,10,10)
-        # however, we are squeezing the input, so the reuslt will have shape
-        # (10,10), and therefore scale needs to accomodate dropped axes
+        # however, we are squeezing the input, so the result will have shape
+        # (10,10), and therefore scale needs to accommodate dropped axes
         result_dims = result.ndim
         if len(scale) > result_dims:
             scale = scale[-result_dims:]
@@ -874,12 +982,17 @@ class ApocContainer(Container):
         self._viewer.add_labels(
             result,
             scale=scale,
-            name=f'{self._classifier_file.value.stem} :: {image_names}',
+            name=f"{ctx['classifier_stem']} :: {ctx['image_names']}",
         )
 
-        self._single_result_label.value = f'Predicted {image_names}'
+        self._single_result_label.value = f"Predicted {ctx['image_names']}"
 
-        return result
+    def _on_image_predict_error(self, exception: Exception) -> None:
+        """Handle error during image prediction."""
+        ctx = self._predict_context
+        self._single_result_label.value = (
+            f"Error predicting {ctx['image_names']}: {exception}"
+        )
 
     def insert_custom_feature_string(self):
         self._feature_string.value = (

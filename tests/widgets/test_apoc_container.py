@@ -109,7 +109,9 @@ def empty_classifier_file():
 
 
 @pytest.mark.skip_ci
-def test_image_train(make_napari_viewer, test_data, empty_classifier_file):
+def test_image_train(
+    make_napari_viewer, test_data, empty_classifier_file, qtbot
+):
     viewer = make_napari_viewer()
     test_image, _, test_labels, _ = test_data
     viewer.add_image(test_image)
@@ -129,7 +131,11 @@ def test_image_train(make_napari_viewer, test_data, empty_classifier_file):
     PDFS = wdg._PDFS
     wdg._predefined_features.value = PDFS.small_quick
 
+    # image_train is now threaded, need to wait for completion
     wdg.image_train()
+    with qtbot.waitSignal(wdg._train_worker.finished, timeout=30000):
+        pass
+
     with open(empty_classifier_file) as f:
         result_classifier = f.read()
 
@@ -147,15 +153,40 @@ def trained_classifier_file(
     make_napari_viewer,
     test_data,
     empty_classifier_file,
+    qtbot,
 ):
-    test_image_train(make_napari_viewer, test_data, empty_classifier_file)
+    """Create a trained classifier file for use in predict tests."""
+    viewer = make_napari_viewer()
+    test_image, _, test_labels, _ = test_data
+    viewer.add_image(test_image)
+    viewer.add_labels(test_labels)
+
+    wdg = ApocContainer(viewer)
+
+    wdg._image_layers.value = [viewer.layers['test_image']]
+    wdg._label_layer.value = viewer.layers['test_labels']
+    wdg._classifier_type.value = 'ObjectSegmenter'
+    wdg._continue_training.value = False
+    wdg._classifier_file.value = empty_classifier_file
+    wdg._positive_class_id.value = 2
+    wdg._max_depth.value = 2
+    wdg._num_trees.value = 50
+
+    PDFS = wdg._PDFS
+    wdg._predefined_features.value = PDFS.small_quick
+
+    # image_train is now threaded, need to wait for completion
+    wdg.image_train()
+    with qtbot.waitSignal(wdg._train_worker.finished, timeout=30000):
+        pass
+
     return empty_classifier_file
 
 
 @pytest.mark.skip_ci
-def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
-    import pyclesperanto as cle
-
+def test_image_predict(
+    make_napari_viewer, test_data, trained_classifier_file, qtbot
+):
     viewer = make_napari_viewer()
     test_image, _, _, _ = test_data
     viewer.add_image(test_image)
@@ -165,15 +196,17 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
     wdg._image_layers.value = [viewer.layers['test_image']]
     wdg._classifier_file.value = trained_classifier_file
 
-    result = wdg.image_predict()
+    # image_predict is now threaded, need to wait for completion
+    wdg.image_predict()
+    with qtbot.waitSignal(wdg._predict_worker.finished, timeout=30000):
+        pass
+
     expected_layer_name = "empty_classifier :: ['test_image']"
 
     assert wdg._single_result_label.value == "Predicted ['test_image']"
     assert wdg._viewer.layers[expected_layer_name].visible
-    assert np.asarray(cle.pull(result)).any()
-    assert np.asarray(
-        cle.pull(wdg._viewer.layers[expected_layer_name].data)
-    ).any()
+    # Result is now added directly to viewer layers (no return value)
+    assert np.asarray(wdg._viewer.layers[expected_layer_name].data).any()
 
 
 @pytest.mark.skip_ci
