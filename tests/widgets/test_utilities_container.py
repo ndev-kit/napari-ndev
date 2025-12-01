@@ -253,6 +253,73 @@ def test_batch_concatenate_files(tmp_path: Path, resources_dir: Path, qtbot):
     assert (expected_output_dir / 'batch_concatenate.log.txt').exists()
 
 
+def test_batch_cancel_button(tmp_path: Path, resources_dir: Path, qtbot):
+    """Test that cancel button stops the batch runner."""
+    container = UtilitiesContainer()
+    image_dir = resources_dir / 'test_czis'
+    all_image_files = list(image_dir.iterdir())
+    all_image_files = natsort.os_sorted(all_image_files)
+
+    container._files.value = tuple(all_image_files[:1])
+    container._save_directory.value = tmp_path
+    container._save_directory_prefix.value = 'test'
+
+    # Start the batch operation
+    container.batch_concatenate_files()
+
+    # Verify the batch is running
+    assert container._batch_runner.is_running
+
+    # Click cancel (the button text changes to 'Cancel' when running)
+    container._concatenate_batch_button.clicked()
+
+    # Wait for cancellation to complete
+    qtbot.waitUntil(
+        lambda: not container._batch_runner.is_running, timeout=10000
+    )
+
+    # Verify it stopped
+    assert not container._batch_runner.is_running
+
+
+def test_batch_error_callback(qtbot):
+    """Test that error callback updates progress bar label."""
+    from unittest.mock import MagicMock
+
+    from nbatch import BatchContext
+
+    container = UtilitiesContainer()
+
+    # Create a mock context with a file_set item (files, save_name)
+    mock_files = [Path('file1.tiff'), Path('file2.tiff')]
+    ctx = MagicMock(spec=BatchContext)
+    ctx.item = (mock_files, 'bad_file')
+
+    test_exception = ValueError('Test error message')
+
+    container._on_batch_error(ctx, test_exception)
+
+    # Verify progress bar label was updated with error info
+    assert 'Error on bad_file' in container._progress_bar.label
+    assert 'Test error message' in container._progress_bar.label
+
+
+def test_batch_button_state_toggle(qtbot):
+    """Test that batch button toggles between run and cancel states."""
+    container = UtilitiesContainer()
+
+    # Initial state should be 'Batch Concat.'
+    assert container._concatenate_batch_button.text == 'Batch Concat.'
+
+    # Set to running state
+    container._set_batch_button_state(running=True)
+    assert container._concatenate_batch_button.text == 'Cancel'
+
+    # Set back to not running
+    container._set_batch_button_state(running=False)
+    assert container._concatenate_batch_button.text == 'Batch Concat.'
+
+
 def test_save_scenes_ome_tiff(test_czi_image, tmp_path: Path):
     path, _ = test_czi_image
     container = UtilitiesContainer()
