@@ -303,3 +303,63 @@ def test_viewer_workflow_threaded(make_napari_viewer, qtbot):
     assert container._progress_bar.value == 2
     assert container._viewer.layers[2].name == 'membrane-label'
     assert container._viewer.layers[3].name == 'nucleus-label'
+
+
+def test_cancel_button_stops_batch(tmp_path, qtbot):
+    """Test that cancel button stops the batch runner."""
+    container = WorkflowContainer()
+    wf_path = pathlib.Path(
+        'tests/resources/Workflow/workflows/cpu_workflow-2roots-2leafs.yaml'
+    )
+    container.workflow_file.value = wf_path
+
+    container.image_directory.value = pathlib.Path(
+        'tests/resources/Workflow/Images'
+    )
+
+    output_folder = tmp_path / 'Output'
+    output_folder.mkdir()
+    container.result_directory.value = output_folder
+
+    container._batch_roots_container[0].value = 'membrane'
+    container._batch_roots_container[1].value = 'nuclei'
+
+    # Start the batch workflow
+    container.batch_workflow()
+
+    # Verify the batch is running
+    assert container._batch_runner.is_running
+
+    # Click cancel
+    container._cancel_button.clicked()
+
+    # Wait for cancellation to complete
+    qtbot.waitUntil(
+        lambda: not container._batch_runner.is_running, timeout=10000
+    )
+
+    # Verify it stopped
+    assert not container._batch_runner.is_running
+
+
+def test_batch_error_callback(tmp_path, qtbot):
+    """Test that error callback updates progress bar label."""
+    from unittest.mock import MagicMock
+
+    from nbatch import BatchContext
+
+    container = WorkflowContainer()
+
+    # Create a mock context with a file item
+    mock_item = MagicMock()
+    mock_item.name = 'bad_file.tiff'
+    ctx = MagicMock(spec=BatchContext)
+    ctx.item = mock_item
+
+    test_exception = ValueError('Test error message')
+
+    container._on_batch_error(ctx, test_exception)
+
+    # Verify progress bar label was updated with error info
+    assert 'Error on bad_file.tiff' in container._progress_bar.label
+    assert 'Test error message' in container._progress_bar.label

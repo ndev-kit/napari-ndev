@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 def process_workflow_file(
     image_file: Path,
     result_dir: Path,
-    workflow,
+    workflow_file: Path,
     root_index_list: list[int],
     task_names: list[str],
     keep_original_images: bool,
@@ -37,7 +37,8 @@ def process_workflow_file(
 ) -> Path:
     """Process a single image file through a napari-workflow.
 
-    This is a pure computational function with no widget dependencies.
+    This function loads the workflow fresh for each file to ensure thread
+    safety when running in parallel. It has no widget dependencies.
 
     Parameters
     ----------
@@ -45,8 +46,9 @@ def process_workflow_file(
         Path to the image file to process.
     result_dir : Path
         Directory to save results.
-    workflow : napari_workflows.Workflow
-        The workflow to run.
+    workflow_file : Path
+        Path to the workflow YAML file. A fresh workflow is loaded for each
+        file to ensure thread safety.
     root_index_list : list[int]
         Indices of channels to use as workflow roots.
     task_names : list[str]
@@ -67,6 +69,10 @@ def process_workflow_file(
     import dask.array as da
     from bioio.writers import OmeTiffWriter
     from bioio_base import transforms
+    from napari_workflows._io_yaml_v1 import load_workflow
+
+    # Load fresh workflow instance for thread safety
+    workflow = load_workflow(str(workflow_file))
 
     img = nImage(image_file)
 
@@ -179,6 +185,7 @@ class WorkflowContainer(Container):
         self._viewer = viewer if viewer is not None else None
         self._channel_names = []
         self._img_dims = ''
+        self._squeezed_img_dims = ''
         self.image_files = []
         self.workflow = None
         self._root_scale = None
@@ -400,8 +407,12 @@ class WorkflowContainer(Container):
         self._cancel_button.enabled = False
 
     def _on_batch_error(self, ctx, exception):
-        """Callback when a batch item fails."""
-        self._progress_bar.label = f'Error on {ctx.item.name}'
+        """Callback when a batch item fails.
+
+        Note: Error logging is handled by BatchRunner's internal logger.
+        This callback only updates the UI.
+        """
+        self._progress_bar.label = f'Error on {ctx.item.name}: {exception}'
 
     def _on_batch_cancel(self):
         """Callback when the batch is cancelled."""
@@ -434,7 +445,7 @@ class WorkflowContainer(Container):
             process_workflow_file,
             image_files,
             result_dir=result_dir,
-            workflow=self.workflow,
+            workflow_file=self.workflow_file.value,
             root_index_list=root_index_list,
             task_names=task_names,
             keep_original_images=self._keep_original_images.value,
