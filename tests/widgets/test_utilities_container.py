@@ -225,7 +225,7 @@ def test_select_next_images(resources_dir: Path, num_files: int):
         assert selected_files[i] == all_image_files[i + num_files]
 
 
-def test_batch_concatenate_files(tmp_path: Path, resources_dir: Path):
+def test_batch_concatenate_files(tmp_path: Path, resources_dir: Path, qtbot):
     container = UtilitiesContainer()
     image_dir = resources_dir / 'test_czis'
     all_image_files = list(image_dir.iterdir())
@@ -238,10 +238,19 @@ def test_batch_concatenate_files(tmp_path: Path, resources_dir: Path):
     container._save_directory_prefix.value = 'test'
     container.batch_concatenate_files()
 
+    # Wait for threaded batch to complete
+    qtbot.waitUntil(
+        lambda: not container._batch_runner.is_running, timeout=60000
+    )
+
     expected_output_dir = tmp_path / 'test_ConcatenatedImages'
 
     assert expected_output_dir.exists()
-    assert len(list(expected_output_dir.iterdir())) == 8
+    # 8 tiff files + 1 log file = 9 total
+    output_files = list(expected_output_dir.iterdir())
+    tiff_files = [f for f in output_files if f.suffix == '.tiff']
+    assert len(tiff_files) == 8
+    assert (expected_output_dir / 'batch_concatenate.log.txt').exists()
 
 
 def test_save_scenes_ome_tiff(test_czi_image, tmp_path: Path):
