@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -14,6 +15,7 @@ from magicgui.widgets import (
     PushButton,
     Select,
 )
+from nbatch import BatchRunner
 from ndevio import nImage
 
 from napari_ndev import helpers
@@ -87,11 +89,21 @@ class WorkflowContainer(Container):
         self._root_scale = None
 
         self._init_widgets()
+        self._init_batch_runner()
         self._init_viewer_container()
         self._init_batch_container()
         self._init_tasks_container()
         self._init_layout()
         self._connect_events()
+
+    def _init_batch_runner(self):
+        """Initialize the BatchRunner for batch processing."""
+        self._batch_runner = BatchRunner(
+            on_item_complete=self._on_batch_item_complete,
+            on_complete=self._on_batch_complete,
+            on_error=self._on_batch_error,
+            on_cancel=self._on_batch_cancel,
+        )
 
     def _get_viewer_layers(self):
         """Get layers from the viewer."""
@@ -136,6 +148,8 @@ class WorkflowContainer(Container):
             'concatenated with the results',
         )
         self.batch_button = PushButton(label='Batch Workflow')
+        self._cancel_button = PushButton(label='Cancel')
+        self._cancel_button.enabled = False
         self._batch_info_container = Container(
             layout='vertical',
             widgets=[
@@ -143,6 +157,7 @@ class WorkflowContainer(Container):
                 self.result_directory,
                 self._keep_original_images,
                 self.batch_button,
+                self._cancel_button,
             ],
         )
 
@@ -201,7 +216,8 @@ class WorkflowContainer(Container):
         """Connect the events of the widgets to respective methods."""
         self.image_directory.changed.connect(self._get_image_info)
         self.workflow_file.changed.connect(self._get_workflow_info)
-        self.batch_button.clicked.connect(self.batch_workflow_threaded)
+        self.batch_button.clicked.connect(self.batch_workflow)
+        self._cancel_button.clicked.connect(self._batch_runner.cancel)
         self.viewer_button.clicked.connect(self.viewer_workflow_threaded)
 
         if self._viewer is not None:
@@ -278,114 +294,163 @@ class WorkflowContainer(Container):
         self._progress_bar.value = value
         return
 
-    def batch_workflow(self):
-        """Run the workflow on all images in the image directory."""
+    def _process_workflow_file(
+        self,
+        image_file: Path,
+        result_dir: Path,
+        workflow,
+        root_index_list: list[int],
+        task_names: list[str],
+        keep_original_images: bool,
+        root_list: list[str],
+        squeezed_img_dims: str,
+    ) -> Path:
+        """Process a single image file through the workflow.
+
+        Parameters
+        ----------
+        image_file : Path
+            Path to the image file to process.
+        result_dir : Path
+            Directory to save results.
+        workflow : napari_workflows.Workflow
+            The workflow to run.
+        root_index_list : list[int]
+            Indices of channels to use as workflow roots.
+        task_names : list[str]
+            Names of workflow tasks to execute.
+        keep_original_images : bool
+            Whether to concatenate original images with results.
+        root_list : list[str]
+            Names of root channels (for output naming).
+        squeezed_img_dims : str
+            Squeezed dimension order of the image.
+
+        Returns
+        -------
+        Path
+            Path to the saved output file.
+
+        """
         import dask.array as da
         from bioio.writers import OmeTiffWriter
         from bioio_base import transforms
 
+        img = nImage(image_file)
+
+        root_stack = []
+        # get image corresponding to each root, and set it to the workflow
+        for idx, root_index in enumerate(root_index_list):
+            if 'S' in img.dims.order:
+                root_img = img.get_image_data('TSZYX', S=root_index)
+            else:
+                root_img = img.get_image_data('TCZYX', C=root_index)
+            # stack the TCZYX images for later stacking with results
+            root_stack.append(root_img)
+            # squeeze the root image for workflow
+            root_squeeze = np.squeeze(root_img)
+            # set the root image to the index of the root in the workflow
+            workflow.set(
+                name=workflow.roots()[idx], func_or_data=root_squeeze
+            )
+
+        result = workflow.get(name=task_names)
+
+        result_stack = np.asarray(
+            result
+        )  # cle.pull stacks the results on the 0th axis as "C"
+        # transform result_stack to TCZYX
+        result_stack = transforms.reshape_data(
+            data=result_stack,
+            given_dims='C' + squeezed_img_dims,
+            return_dims='TCZYX',
+        )
+
+        if result_stack.dtype == np.int64:
+            result_stack = result_stack.astype(np.int32)
+
+        if keep_original_images:
+            dask_images = da.concatenate(root_stack, axis=1)  # along "C"
+            result_stack = da.concatenate(
+                [dask_images, result_stack], axis=1
+            )
+            result_names = root_list + task_names
+        else:
+            result_names = task_names
+
+        output_path = result_dir / (image_file.stem + '.tiff')
+        OmeTiffWriter.save(
+            data=result_stack,
+            uri=output_path,
+            dim_order='TCZYX',
+            channel_names=result_names,
+            image_name=image_file.stem,
+            physical_pixel_sizes=img.physical_pixel_sizes,
+        )
+
+        return output_path
+
+    def _on_batch_item_complete(self, result, ctx):
+        """Callback when a batch item completes successfully."""
+        self._progress_bar.value = ctx.index + 1
+
+    def _on_batch_complete(self):
+        """Callback when the entire batch completes."""
+        self._progress_bar.label = 'Complete!'
+        self.batch_button.enabled = True
+        self._cancel_button.enabled = False
+
+    def _on_batch_error(self, ctx, exception):
+        """Callback when a batch item fails."""
+        self._progress_bar.label = f'Error on {ctx.item.name}'
+
+    def _on_batch_cancel(self):
+        """Callback when the batch is cancelled."""
+        self._progress_bar.label = 'Cancelled'
+        self.batch_button.enabled = True
+        self._cancel_button.enabled = False
+
+    def batch_workflow(self):
+        """Run the workflow on all images in the image directory."""
         result_dir = self.result_directory.value
         image_files = self.image_files
-        workflow = self.workflow
 
         # get indexes of channel names, in case not all images have
         # the same channel names, the index should be in the same order
         root_list = [widget.value for widget in self._batch_roots_container]
         root_index_list = [self._channel_names.index(r) for r in root_list]
+        task_names = self._tasks_select.value
 
-        # Setting up Logging File
-        log_loc = result_dir / 'workflow.log.txt'
-        logger, handler = helpers.setup_logger(log_loc)
-        logger.info(
-            """
-            Image Directory: %s
-            Result Directory: %s
-            Workflow File: %s
-            Roots: %s
-            Tasks: %s
-            """,
-            self.image_directory.value,
-            result_dir,
-            self.workflow_file.value,
-            root_list,
-            self._tasks_select.value,
-        )
-
-        for idx_file, image_file in enumerate(image_files):
-            logger.info('Processing %d: %s', idx_file + 1, image_file.name)
-            img = nImage(image_file)
-
-            root_stack = []
-            # get image corresponding to each root, and set it to the workflow
-            for idx, root_index in enumerate(root_index_list):
-                if 'S' in img.dims.order:
-                    root_img = img.get_image_data('TSZYX', S=root_index)
-                else:
-                    root_img = img.get_image_data('TCZYX', C=root_index)
-                # stack the TCZYX images for later stacking with results
-                root_stack.append(root_img)
-                # squeeze the root image for workflow
-                root_squeeze = np.squeeze(root_img)
-                # set the root image to the index of the root in the workflow
-                workflow.set(
-                    name=workflow.roots()[idx], func_or_data=root_squeeze
-                )
-
-            task_names = self._tasks_select.value
-            result = workflow.get(name=task_names)
-
-            result_stack = np.asarray(
-                result
-            )  # cle.pull stacks the results on the 0th axis as "C"
-            # transform result_stack to TCZYX
-            result_stack = transforms.reshape_data(
-                data=result_stack,
-                given_dims='C' + self._squeezed_img_dims,
-                return_dims='TCZYX',
-            )
-
-            if result_stack.dtype == np.int64:
-                result_stack = result_stack.astype(np.int32)
-
-            # <- should I add a check for the result_stack to be a dask array?
-            # <- should this be done using dask or numpy?
-            if self._keep_original_images.value:
-                dask_images = da.concatenate(root_stack, axis=1)  # along "C"
-                result_stack = da.concatenate(
-                    [dask_images, result_stack], axis=1
-                )
-                result_names = root_list + task_names
-            else:
-                result_names = task_names
-
-            OmeTiffWriter.save(
-                data=result_stack,
-                uri=result_dir / (image_file.stem + '.tiff'),
-                dim_order='TCZYX',
-                channel_names=result_names,
-                image_name=image_file.stem,
-                physical_pixel_sizes=img.physical_pixel_sizes,
-            )
-
-            yield idx_file + 1
-
-        logger.removeHandler(handler)
-        return
-
-    def batch_workflow_threaded(self):
-        """Run the batch workflow with threading and progress bar updates."""
-        from napari.qt import create_worker
-
+        # Setup progress bar and button states
         self._progress_bar.label = (
-            f'Workflow on {len(self.image_files)} images'
+            f'Workflow on {len(image_files)} images'
         )
         self._progress_bar.value = 0
-        self._progress_bar.max = len(self.image_files)
+        self._progress_bar.max = len(image_files)
+        self.batch_button.enabled = False
+        self._cancel_button.enabled = True
 
-        self._batch_worker = create_worker(self.batch_workflow)
-        self._batch_worker.yielded.connect(self._update_progress_bar)
-        self._batch_worker.start()
-        return
+        # Run the batch using BatchRunner
+        self._batch_runner.run(
+            self._process_workflow_file,
+            image_files,
+            result_dir=result_dir,
+            workflow=self.workflow,
+            root_index_list=root_index_list,
+            task_names=task_names,
+            keep_original_images=self._keep_original_images.value,
+            root_list=root_list,
+            squeezed_img_dims=self._squeezed_img_dims,
+            log_file=result_dir / 'workflow.log.txt',
+            log_header={
+                'Image Directory': str(self.image_directory.value),
+                'Result Directory': str(result_dir),
+                'Workflow File': str(self.workflow_file.value),
+                'Roots': str(root_list),
+                'Tasks': str(task_names),
+            },
+            threaded=True,
+        )
 
     def viewer_workflow(self):
         """Run the workflow on the viewer layers."""
