@@ -124,6 +124,128 @@ def concatenate_and_save_files(
     return save_path
 
 
+def save_ome_tiff(
+    data: np.ndarray,
+    uri: Path,
+    dim_order: str = 'TCZYX',
+    channel_names: list[str] | None = None,
+    image_name: str | None = None,
+    physical_pixel_sizes: PhysicalPixelSizes | None = None,
+) -> None:
+    """Save data as OME-TIFF with automatic dtype and channel name handling.
+
+    Converts int64 to int32 for bioio compatibility. If channel_names cause
+    a ValueError (e.g., wrong count), falls back to saving without them.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The image data to save.
+    uri : Path
+        Path to save the file.
+    dim_order : str, optional
+        Dimension order string, by default 'TCZYX'.
+    channel_names : list[str] | None, optional
+        Channel names for OME metadata.
+    image_name : str | None, optional
+        Image name for OME metadata.
+    physical_pixel_sizes : PhysicalPixelSizes | None, optional
+        Physical pixel sizes for OME metadata.
+
+    """
+    from bioio.writers import OmeTiffWriter
+
+    # Convert int64 to int32 for bioio compatibility
+    # See: https://github.com/napari/napari/issues/5545
+    if data.dtype == np.int64:
+        data = data.astype(np.int32)
+
+    try:
+        OmeTiffWriter.save(
+            data=data,
+            uri=uri,
+            dim_order=dim_order or None,
+            channel_names=channel_names or None,
+            image_name=image_name or None,
+            physical_pixel_sizes=physical_pixel_sizes,
+        )
+    except ValueError:
+        # Save with default channel names if provided ones are invalid
+        OmeTiffWriter.save(
+            data=data,
+            uri=uri,
+            dim_order=dim_order or None,
+            image_name=image_name or None,
+            physical_pixel_sizes=physical_pixel_sizes,
+        )
+
+
+def extract_and_save_scenes_ome_tiff(
+    file_path: Path,
+    save_directory: Path,
+    scenes: list[int | str] | None = None,
+    channel_names: list[str] | None = None,
+    p_sizes: PhysicalPixelSizes | None = None,
+    base_save_name: str | None = None,
+):
+    """Extract and save scenes from an image file as OME-TIFF.
+
+    This function extracts specified scenes from a multi-scene image file
+    and saves each as a separate OME-TIFF file. It yields progress updates
+    for each scene processed.
+
+    Parameters
+    ----------
+    file_path : Path
+        Path to the source image file.
+    save_directory : Path
+        Directory to save the extracted scenes.
+    scenes : list[int | str] | None, optional
+        List of scene indices or names to extract. If None, extracts all scenes.
+    channel_names : list[str] | None, optional
+        Channel names for OME metadata. If None, defaults are used.
+    p_sizes : PhysicalPixelSizes, optional
+        Physical pixel sizes for OME metadata.
+    base_save_name : str | None, optional
+        Base name for saved files. If None, uses the source filename stem.
+
+    Yields
+    ------
+    tuple[int, str]
+        Tuple of (scene_index, scene_name) for each processed scene.
+
+    """
+    img = nImage(file_path)
+
+    # Use all scenes if none specified
+    scenes_to_process = scenes if scenes else list(img.scenes)
+
+    # Create save directory
+    save_directory.mkdir(parents=True, exist_ok=True)
+
+    # Use filename stem as base name if not provided
+    if base_save_name is None:
+        base_save_name = file_path.stem
+
+    for scene in scenes_to_process:
+        img.set_scene(scene)
+
+        # Create ID string for this scene
+        image_id = helpers.create_id_string(img, base_save_name)
+        save_path = save_directory / f'{image_id}.tiff'
+
+        save_ome_tiff(
+            data=img.data,
+            uri=save_path,
+            dim_order='TCZYX',
+            channel_names=channel_names,
+            image_name=image_id,
+            physical_pixel_sizes=p_sizes,
+        )
+
+        yield (img.current_scene_index, img.current_scene)
+
+
 class UtilitiesContainer(ScrollableContainer):
     """
     A widget to work with images and labels in the napari viewer.
@@ -1081,52 +1203,70 @@ class UtilitiesContainer(ScrollableContainer):
 
     def save_scenes_ome_tiff(self) -> None:
         """
-        Save selected scenes as OME-TIFF.
+        Save selected scenes as OME-TIFF with threading.
 
         This method is intended to save scenes from a single file. The scenes
         are extracted based on the scenes_to_extract widget value, which is a
         list of scene indices. If the widget is left blank, then all scenes
         will be extracted.
 
+        Uses a background thread to avoid blocking the UI during processing.
+
         """
-        img = nImage(self._files.value[0])
+        from napari.qt import create_worker
+
+        file_path = self._files.value[0]
+        img = nImage(file_path)
 
         scenes = self._scenes_to_extract.value
-        scenes_list = ast.literal_eval(scenes) if scenes else img.scenes
+        scenes_list = ast.literal_eval(scenes) if scenes else list(img.scenes)
+
         save_dir = self._determine_save_directory('ExtractedScenes')
         save_directory = self._save_directory.value / save_dir
-        save_directory.mkdir(parents=False, exist_ok=True)
 
-        for scene in scenes_list:
-            # TODO: fix this to not have an issue if there are identical scenes
-            # presented as strings, though the asssumption is most times the
-            # user will input a list of integers.
-            img.set_scene(scene)
+        base_save_name = self._save_name.value.split('.')[0]
 
-            base_save_name = self._save_name.value.split('.')[0]
-            image_id = helpers.create_id_string(img, base_save_name)
+        # get channel names from widget if truthy
+        cnames = self._channel_names.value
+        channel_names = ast.literal_eval(cnames) if cnames else None
 
-            img_save_name = f'{image_id}.tiff'
-            img_save_loc = save_directory / img_save_name
+        # Setup progress bar
+        self._progress_bar.label = 'Extracting Scenes'
+        self._progress_bar.value = 0
+        self._progress_bar.max = len(scenes_list)
 
-            # get channel names from widget if truthy
-            cnames = self._channel_names.value
-            channel_names = ast.literal_eval(cnames) if cnames else None
+        # Create worker for background processing
+        self._scene_worker = create_worker(
+            extract_and_save_scenes_ome_tiff,
+            file_path=file_path,
+            save_directory=save_directory,
+            scenes=scenes_list,
+            channel_names=channel_names,
+            p_sizes=self.p_sizes,
+            base_save_name=base_save_name,
+        )
+        self._scene_worker.yielded.connect(self._on_scene_extracted)
+        self._scene_worker.finished.connect(
+            lambda _=None: self._on_scenes_complete(scenes_list)
+        )
+        self._scene_worker.start()
 
-            self._common_save_logic(
-                data=img.data,
-                uri=img_save_loc,
-                dim_order='TCZYX',
-                channel_names=channel_names,
-                image_name=image_id,
-                result_str=f'Scene: {img.current_scene}',
-            )
+    def _on_scene_extracted(self, result: tuple[int, str]) -> None:
+        """Handle completion of a single scene extraction."""
+        scene_idx, scene_name = result
+        self._progress_bar.value = self._progress_bar.value + 1
+        self._results.value = (
+            f'Extracted scene {scene_idx}: {scene_name}'
+            f'\nAt {time.strftime("%H:%M:%S")}'
+        )
 
+    def _on_scenes_complete(self, scenes_list: list) -> None:
+        """Handle completion of all scene extractions."""
+        self._progress_bar.label = ''
         self._results.value = (
             f'Saved extracted scenes: {scenes_list}'
             f'\nAt {time.strftime("%H:%M:%S")}'
         )
-        return
 
     def canvas_export_figure(self) -> None:
         """Export the current canvas figure to the save directory."""

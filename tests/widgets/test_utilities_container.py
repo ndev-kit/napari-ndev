@@ -320,7 +320,7 @@ def test_batch_button_state_toggle(qtbot):
     assert container._concatenate_batch_button.text == 'Batch Concat.'
 
 
-def test_save_scenes_ome_tiff(test_czi_image, tmp_path: Path):
+def test_save_scenes_ome_tiff(test_czi_image, tmp_path: Path, qtbot):
     path, _ = test_czi_image
     container = UtilitiesContainer()
     container._files.value = path
@@ -329,8 +329,52 @@ def test_save_scenes_ome_tiff(test_czi_image, tmp_path: Path):
 
     container.save_scenes_ome_tiff()
 
+    # Wait for the threaded worker to complete
+    with qtbot.waitSignal(container._scene_worker.finished, timeout=60000):
+        pass
+
     # check that there are 7 files in the save dir
     assert len(list(save_dir.iterdir())) == 7
+
+
+def test_extract_and_save_scenes_ome_tiff(test_czi_image, tmp_path: Path):
+    """Test the pure function for extracting scenes directly."""
+    from napari_ndev.widgets._utilities_container import (
+        extract_and_save_scenes_ome_tiff,
+    )
+
+    path, _ = test_czi_image
+    save_dir = tmp_path / 'ExtractedScenes'
+
+    # Collect all yielded results
+    results = list(extract_and_save_scenes_ome_tiff(path, save_dir))
+
+    # Should have 7 scenes
+    assert len(results) == 7
+    # Each result should be (scene_idx, scene_name)
+    assert all(isinstance(r, tuple) and len(r) == 2 for r in results)
+    # Check files were created
+    assert len(list(save_dir.iterdir())) == 7
+
+
+def test_extract_and_save_scenes_ome_tiff_specific_scenes(
+    test_czi_image, tmp_path: Path
+):
+    """Test extracting specific scenes only."""
+    from napari_ndev.widgets._utilities_container import (
+        extract_and_save_scenes_ome_tiff,
+    )
+
+    path, _ = test_czi_image
+    save_dir = tmp_path / 'ExtractedScenes'
+
+    # Extract only scenes 0 and 2
+    results = list(
+        extract_and_save_scenes_ome_tiff(path, save_dir, scenes=[0, 2])
+    )
+
+    assert len(results) == 2
+    assert len(list(save_dir.iterdir())) == 2
 
 
 def test_open_images(make_napari_viewer, test_rgb_image):
