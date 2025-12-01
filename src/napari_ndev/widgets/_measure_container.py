@@ -30,6 +30,84 @@ if TYPE_CHECKING:
     from bioio import BioImage
 
 
+def group_and_save_measurements(
+    measured_data_path: Path,
+    grouping_cols: list[str],
+    count_col: str | None,
+    agg_cols: list[str],
+    agg_funcs: list[str],
+    pivot_wider: bool,
+) -> Path:
+    """Group measurements and save to CSV.
+
+    Pure function for grouping measurements that can be run in a thread.
+
+    Parameters
+    ----------
+    measured_data_path : Path
+        Path to the measured data CSV file.
+    grouping_cols : list[str]
+        Columns to group by.
+    count_col : str | None
+        Column to count.
+    agg_cols : list[str]
+        Columns to aggregate.
+    agg_funcs : list[str]
+        Aggregation functions to apply.
+    pivot_wider : bool
+        Whether to pivot the data wider by label_name.
+
+    Returns
+    -------
+    Path
+        Path to the saved grouped measurements file.
+
+    """
+    from napari_ndev import measure as ndev_measure
+
+    df = pd.read_csv(measured_data_path)
+
+    grouped_df = ndev_measure.group_and_agg_measurements(
+        df=df,
+        grouping_cols=grouping_cols,
+        count_col=count_col,
+        agg_cols=agg_cols,
+        agg_funcs=agg_funcs,
+    )
+
+    if pivot_wider:
+        # get grouping cols without label name
+        index_cols = [
+            col for col in grouping_cols if col != 'label_name'
+        ]
+
+        # pivot every values column that is not present in index or columns
+        value_cols = [
+            col
+            for col in grouped_df.columns
+            if col not in grouping_cols
+        ]
+
+        pivot_df = grouped_df.pivot(
+            index=index_cols,
+            columns='label_name',
+            values=value_cols,
+        )
+
+        # reset index so that it is saved in the csv
+        pivot_df.reset_index(inplace=True)
+
+        grouped_df = pivot_df
+
+    save_loc = (
+        measured_data_path.parent
+        / f'{measured_data_path.stem}_grouped.csv'
+    )
+    grouped_df.to_csv(save_loc, index=False)
+
+    return save_loc
+
+
 def measure_single_file(
     file: Path,
     label_dir: Path,
@@ -825,70 +903,46 @@ class MeasureContainer(Container):
         )
 
     def group_measurements(self):
-        """
-        Group measurements based on user input.
+        """Group measurements based on user input with threading.
 
         Uses the values in the Grouping Container of the Widget and passes them
         to the group_and_agg_measurements function in the measure module. The
         grouped measurements are saved to a CSV file in the same directory as
         the measured data with '_grouped' appended.
 
-        Returns
-        -------
-        pd.DataFrame
-            The grouped measurements as a DataFrame.
+        Uses a background thread to avoid blocking the UI during processing.
 
         """
-        from napari_ndev import measure as ndev_measure
+        from napari.qt import create_worker
 
         self._progress_bar.label = 'Grouping Measurements'
         self._progress_bar.value = 0
-        self._progress_bar.max = 1
-
-        df = pd.read_csv(self._measured_data_path.value)
+        self._progress_bar.max = 0  # indeterminate mode
 
         # Filter out None values from agg_cols
         agg_cols = [col for col in self._agg_cols.value if col is not None]
 
-        grouped_df = ndev_measure.group_and_agg_measurements(
-            df=df,
-            grouping_cols=self._grouping_cols.value,
+        self._group_worker = create_worker(
+            group_and_save_measurements,
+            measured_data_path=self._measured_data_path.value,
+            grouping_cols=list(self._grouping_cols.value),
             count_col=self._count_col.value,
             agg_cols=agg_cols,
-            agg_funcs=self._agg_funcs.value,
+            agg_funcs=list(self._agg_funcs.value),
+            pivot_wider=self._pivot_wider.value,
         )
-        # use the label_name column to make the dataframe wider
-        if self._pivot_wider.value:
-            # get grouping calls without label name
-            index_cols = [
-                col for col in self._grouping_cols.value if col != 'label_name'
-            ]
+        self._group_worker.returned.connect(self._on_group_complete)
+        self._group_worker.errored.connect(self._on_group_error)
+        self._group_worker.start()
 
-            # alternatively, pivot every values column that is not present in index or columns
-            value_cols = [
-                col
-                for col in grouped_df.columns
-                if col not in self._grouping_cols.value
-            ]
-
-            pivot_df = grouped_df.pivot(
-                index=index_cols,
-                columns='label_name',
-                values=value_cols,
-            )
-            # # flatten the multiindex columns
-            # pivot_df.columns = [f'{col[1]}_{col[0]}' for col in pivot_df.columns]
-
-            # reset index so that it is saved in the csv
-            pivot_df.reset_index(inplace=True)
-
-            grouped_df = pivot_df
-
-        save_loc = (
-            self._measured_data_path.value.parent
-            / f'{self._measured_data_path.value.stem}_grouped.csv'
-        )
-        grouped_df.to_csv(save_loc, index=False)
-
+    def _on_group_complete(self, save_loc: Path) -> None:
+        """Handle completion of grouping measurements."""
+        self._progress_bar.label = f'Grouped measurements saved to {save_loc.name}'
+        self._progress_bar.max = 1
         self._progress_bar.value = 1
-        return grouped_df
+
+    def _on_group_error(self, exc: Exception) -> None:
+        """Handle error during grouping measurements."""
+        self._progress_bar.label = f'Error grouping: {exc}'
+        self._progress_bar.max = 1
+        self._progress_bar.value = 0

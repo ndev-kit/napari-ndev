@@ -220,18 +220,32 @@ def test_batch_measure_multiple_label_images(tmp_path, qtbot):
     assert np.array_equal(df['label_name'].unique(), ['DAPI', 'Ferritin'])
 
 
-def test_group_measurements_no_agg_defaults():
+def test_group_measurements_no_agg_defaults(qtbot):
     container = MeasureContainer()
     test_data_path = pathlib.Path(r'tests/resources/measure_props_Labels.csv')
     container._measured_data_path.value = test_data_path
 
-    grouped_df = container.group_measurements()
+    # Manually trigger the update since changed events might not fire in tests
+    container._update_grouping_cols()
 
-    assert grouped_df is not None
-    assert list(grouped_df.columns) == [('id', ''), ('label_count', 'label_1')]
+    # group_measurements is now threaded
+    container.group_measurements()
+    with qtbot.waitSignal(container._group_worker.finished, timeout=10000):
+        pass
+
+    # Check the output file was created
+    expected_output = test_data_path.parent / 'measure_props_Labels_grouped.csv'
+    assert expected_output.exists()
+
+    # With pivot_wider=True (default) and label_name in grouping,
+    # the result has MultiIndex columns when read back
+    grouped_df = pd.read_csv(expected_output, header=[0, 1])
+    # Columns are multi-index due to pivoting by label_name
+    assert 'id' in [col[0] for col in grouped_df.columns]
+    assert 'label_count' in [col[0] for col in grouped_df.columns]
 
 
-def test_group_measurements_with_agg():
+def test_group_measurements_with_agg(qtbot):
     container = MeasureContainer()
     test_data_path = pathlib.Path(r'tests/resources/measure_props_Labels.csv')
     container._measured_data_path.value = test_data_path
@@ -244,9 +258,16 @@ def test_group_measurements_with_agg():
     container._agg_funcs.value = ['mean']
     container._pivot_wider.value = False
 
-    grouped_df = container.group_measurements()
+    # group_measurements is now threaded
+    container.group_measurements()
+    with qtbot.waitSignal(container._group_worker.finished, timeout=10000):
+        pass
 
-    assert grouped_df is not None
+    # Check the output file was created
+    expected_output = test_data_path.parent / 'measure_props_Labels_grouped.csv'
+    assert expected_output.exists()
+
+    grouped_df = pd.read_csv(expected_output)
     assert list(grouped_df.columns) == [
         'label_name',
         'id',
