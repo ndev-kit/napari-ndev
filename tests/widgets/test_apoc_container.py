@@ -267,8 +267,9 @@ def test_batch_predict_exception_logging(tmp_path, qtbot):
         lambda: not container._batch_runner.is_running, timeout=60000
     )
 
-    # Check if error is reflected in progress bar
-    assert 'Error' in container._progress_bar.label
+    # Check if error count is reflected in progress bar (2 files, both failed)
+    assert 'Errors' in container._progress_bar.label
+    assert f'{num_files} Errors' in container._progress_bar.label
 
 
 def test_batch_train_button_toggle(qtbot):
