@@ -159,60 +159,6 @@ def predict_on_file(
     return f'Predicted {image_file.name}'
 
 
-def _train_classifier(
-    classifier,
-    feature_set: str,
-    image_stack: np.ndarray,
-    label: np.ndarray,
-) -> None:
-    """Train classifier on image and label data.
-
-    Pure function for training that can run in a background thread.
-
-    Parameters
-    ----------
-    classifier
-        The APOC classifier instance to train.
-    feature_set : str
-        Feature set string for the classifier.
-    image_stack : np.ndarray
-        Stacked image data for training.
-    label : np.ndarray
-        Ground truth label data.
-    """
-    classifier.train(
-        features=feature_set,
-        image=np.squeeze(image_stack),
-        ground_truth=np.squeeze(label),
-        continue_training=True,
-    )
-
-
-def _predict_classifier(
-    classifier,
-    image_stack: np.ndarray,
-) -> np.ndarray:
-    """Run prediction on image data.
-
-    Pure function for prediction that can run in a background thread.
-
-    Parameters
-    ----------
-    classifier
-        The APOC classifier instance to use for prediction.
-    image_stack : np.ndarray
-        Stacked image data for prediction.
-
-    Returns
-    -------
-    np.ndarray
-        Prediction result as numpy array.
-    """
-    result = classifier.predict(image=np.squeeze(image_stack))
-    # Pull from GPU to numpy array
-    return np.asarray(result)
-
-
 class ApocContainer(Container):
     """
     Container class for managing the ApocContainer widget in napari.
@@ -903,13 +849,14 @@ class ApocContainer(Container):
             'label_name': label_name,
         }
 
-        # Create worker for background training
+        # Create worker for background training using lambda
         self._train_worker = create_worker(
-            _train_classifier,
-            classifier=custom_classifier,
-            feature_set=feature_set,
-            image_stack=image_stack,
-            label=label,
+            lambda: custom_classifier.train(
+                features=feature_set,
+                image=np.squeeze(image_stack),
+                ground_truth=np.squeeze(label),
+                continue_training=True,
+            )
         )
         self._train_worker.returned.connect(self._on_image_train_complete)
         self._train_worker.errored.connect(self._on_image_train_error)
@@ -957,11 +904,11 @@ class ApocContainer(Container):
             'classifier_stem': self._classifier_file.value.stem,
         }
 
-        # Create worker for background prediction
+        # Create worker for background prediction using lambda
         self._predict_worker = create_worker(
-            _predict_classifier,
-            classifier=custom_classifier,
-            image_stack=image_stack,
+            lambda: np.asarray(
+                custom_classifier.predict(image=np.squeeze(image_stack))
+            )
         )
         self._predict_worker.returned.connect(self._on_image_predict_complete)
         self._predict_worker.errored.connect(self._on_image_predict_error)
