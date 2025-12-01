@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import ast
+import logging
 import re
 import time
+from collections.abc import Generator
+from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -84,10 +87,20 @@ def save_ome_tiff(
     # Validate channel_names count matches data
     if channel_names is not None and dim_order:
         channel_idx = dim_order.upper().find('C')
-        if channel_idx != -1 and channel_idx < len(data.shape):
-            num_channels = data.shape[channel_idx]
-            if len(channel_names) != num_channels:
-                channel_names = None  # Ignore mismatched channel names
+        if channel_idx != -1:
+            if channel_idx >= len(data.shape):
+                logging.warning(
+                    'dim_order %r has C at index %d, but data has only %d '
+                    'dimensions. Ignoring channel_names.',
+                    dim_order,
+                    channel_idx,
+                    len(data.shape),
+                )
+                channel_names = None
+            else:
+                num_channels = data.shape[channel_idx]
+                if len(channel_names) != num_channels:
+                    channel_names = None  # Ignore mismatched channel names
 
     OmeTiffWriter.save(
         data=data,
@@ -175,7 +188,7 @@ def extract_and_save_scenes_ome_tiff(
     channel_names: list[str] | None = None,
     p_sizes: PhysicalPixelSizes | None = None,
     base_save_name: str | None = None,
-):
+) -> Generator[tuple[int, str], None, None]:
     """Extract and save scenes from an image file as OME-TIFF.
 
     This function extracts specified scenes from a multi-scene image file
@@ -189,7 +202,8 @@ def extract_and_save_scenes_ome_tiff(
     save_directory : Path
         Directory to save the extracted scenes.
     scenes : list[int | str] | None, optional
-        List of scene indices or names to extract. If None, extracts all scenes.
+        List of scene indices or names to extract. If None or empty,
+        extracts all scenes. Empty list is treated as "process all".
     channel_names : list[str] | None, optional
         Channel names for OME metadata. If None, defaults are used.
     p_sizes : PhysicalPixelSizes, optional
@@ -205,7 +219,8 @@ def extract_and_save_scenes_ome_tiff(
     """
     img = nImage(file_path)
 
-    # Use all scenes if none specified
+    # Use all scenes if none specified or empty list provided
+    # (empty list intentionally means "process all scenes")
     scenes_to_process = scenes if scenes else list(img.scenes)
 
     # Create save directory
@@ -1005,6 +1020,8 @@ class UtilitiesContainer(ScrollableContainer):
     def _on_concat_error(self, exception: Exception) -> None:
         """Handle error during file concatenation."""
         self._progress_bar.label = 'Error'
+        self._progress_bar.max = 1
+        self._progress_bar.value = 0
         self._results.value = (
             f'Error concatenating files: {exception}'
             f'\nAt {time.strftime("%H:%M:%S")}'
@@ -1141,8 +1158,9 @@ class UtilitiesContainer(ScrollableContainer):
         )
         self._scene_worker.yielded.connect(self._on_scene_extracted)
         self._scene_worker.finished.connect(
-            lambda _=None: self._on_scenes_complete(scenes_list)
+            partial(self._on_scenes_complete, scenes_list)
         )
+        self._scene_worker.errored.connect(self._on_scene_error)
         self._scene_worker.start()
 
     def _on_scene_extracted(self, result: tuple[int, str]) -> None:
@@ -1154,11 +1172,21 @@ class UtilitiesContainer(ScrollableContainer):
             f'\nAt {time.strftime("%H:%M:%S")}'
         )
 
-    def _on_scenes_complete(self, scenes_list: list) -> None:
+    def _on_scenes_complete(self, scenes_list: list, _=None) -> None:
         """Handle completion of all scene extractions."""
         self._progress_bar.label = ''
         self._results.value = (
             f'Saved extracted scenes: {scenes_list}'
+            f'\nAt {time.strftime("%H:%M:%S")}'
+        )
+
+    def _on_scene_error(self, exc: Exception) -> None:
+        """Handle error during scene extraction."""
+        self._progress_bar.label = 'Error'
+        self._progress_bar.max = 1
+        self._progress_bar.value = 0
+        self._results.value = (
+            f'Error extracting scenes: {exc}'
             f'\nAt {time.strftime("%H:%M:%S")}'
         )
 
@@ -1304,6 +1332,9 @@ class UtilitiesContainer(ScrollableContainer):
 
     def _on_layer_save_error(self, exc: Exception) -> None:
         """Handle layer save error."""
+        self._progress_bar.label = 'Error'
+        self._progress_bar.max = 1
+        self._progress_bar.value = 0
         self._results.value = (
             f'Error saving layers: {exc}'
             f'\nAt {time.strftime("%H:%M:%S")}'
