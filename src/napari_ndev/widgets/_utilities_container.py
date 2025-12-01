@@ -17,6 +17,7 @@ from magicgui.widgets import (
     FileEdit,
     Label,
     LineEdit,
+    ProgressBar,
     PushButton,
     TextEdit,
     TupleEdit,
@@ -30,6 +31,7 @@ from napari.layers import (
 from napari.layers import (
     Shapes as ShapesLayer,
 )
+from nbatch import BatchRunner
 from ndevio import nImage
 
 from napari_ndev import get_settings, helpers
@@ -37,7 +39,89 @@ from napari_ndev import get_settings, helpers
 if TYPE_CHECKING:
     import napari
     from bioio import BioImage
+    from bioio_base.types import PhysicalPixelSizes
     from napari.layers import Layer
+
+
+def concatenate_and_save_files(
+    file_set: tuple[list[Path], str],
+    save_directory: Path,
+    channel_names: list[str] | None,
+    p_sizes: PhysicalPixelSizes,
+) -> Path:
+    """Concatenate image files and save as OME-TIFF.
+
+    This function concatenates multiple image files along the channel axis
+    and saves the result as an OME-TIFF file.
+
+    Parameters
+    ----------
+    file_set : tuple[list[Path], str]
+        Tuple of (files, save_name) where files is a list of image files
+        to concatenate and save_name is the base name for the output file.
+    save_directory : Path
+        Directory to save the output file.
+    channel_names : list[str] | None
+        Channel names for OME metadata. If None, defaults are used.
+    p_sizes : PhysicalPixelSizes
+        Physical pixel sizes for OME metadata.
+
+    Returns
+    -------
+    Path
+        Path to the saved output file.
+
+    """
+    from bioio.writers import OmeTiffWriter
+
+    files, save_name = file_set
+
+    # Concatenate files
+    array_list = []
+    for file in files:
+        img = nImage(file)
+        if 'S' in img.dims.order:
+            img_data = img.get_image_data('TSZYX')
+        else:
+            img_data = img.data
+
+        # Iterate over the channel dimension (index 1) and only keep non-blank
+        for idx in range(img_data.shape[1]):
+            array = img_data[:, [idx], :, :, :]
+            if array.max() > 0:
+                array_list.append(array)
+
+    if not array_list:
+        raise ValueError(
+            f'No valid channels found in files: {[str(f) for f in files]}'
+        )
+
+    img_data = np.concatenate(array_list, axis=1)
+
+    # Save as OME-TIFF
+    save_directory.mkdir(parents=True, exist_ok=True)
+    save_path = save_directory / f'{save_name}.tiff'
+
+    try:
+        OmeTiffWriter.save(
+            data=img_data,
+            uri=save_path,
+            dim_order='TCZYX',
+            channel_names=channel_names,
+            image_name=save_name,
+            physical_pixel_sizes=p_sizes,
+        )
+    except ValueError:
+        # Save with default channel names if provided ones are invalid
+        OmeTiffWriter.save(
+            data=img_data,
+            uri=save_path,
+            dim_order='TCZYX',
+            image_name=save_name,
+            physical_pixel_sizes=p_sizes,
+        )
+
+    return save_path
 
 
 class UtilitiesContainer(ScrollableContainer):
@@ -153,6 +237,68 @@ class UtilitiesContainer(ScrollableContainer):
         # self._init_figure_options_container() # TODO: add figure saving
         self._init_layout()
         self._connect_events()
+        self._init_batch_runner()
+
+    def _init_batch_runner(self):
+        """Initialize the BatchRunner for batch operations."""
+        self._batch_runner = BatchRunner(
+            on_item_complete=self._on_batch_item_complete,
+            on_complete=self._on_batch_complete,
+            on_error=self._on_batch_error,
+        )
+
+    def _on_batch_item_complete(self, result, ctx):
+        """Callback when a batch item completes."""
+        self._progress_bar.value = ctx.index + 1
+        # ctx.item is (files, save_name) tuple
+        _, save_name = ctx.item
+        self._progress_bar.label = f'Processed {save_name}'
+
+    def _on_batch_complete(self):
+        """Callback when the entire batch completes."""
+        self._progress_bar.label = 'Batch complete'
+        self._set_batch_button_state(running=False)
+        self._results.value = (
+            'Batch concatenated files in directory.'
+            f'\nAt {time.strftime("%H:%M:%S")}'
+        )
+
+    def _on_batch_error(self, ctx, exception):
+        """Callback when a batch item fails.
+
+        Note: Error logging is handled by BatchRunner's internal logger.
+        This callback only updates the UI.
+        """
+        # ctx.item is (files, save_name) tuple
+        _, save_name = ctx.item
+        error_msg = str(exception)
+        if len(error_msg) > 100:
+            error_msg = error_msg[:100] + '...'
+        self._progress_bar.label = f'Error on {save_name}: {error_msg}'
+
+    def _set_batch_button_state(self, running: bool):
+        """Update batch button appearance based on running state."""
+        if running:
+            self._concatenate_batch_button.text = 'Cancel'
+            self._concatenate_batch_button.tooltip = (
+                'Cancel the current batch operation.'
+            )
+        else:
+            self._concatenate_batch_button.text = 'Batch Concat.'
+            self._concatenate_batch_button.tooltip = (
+                'Concatenate files in the selected directory by iterating'
+                ' over the remaining files in the directory based on the '
+                'number of files selected.'
+            )
+
+    def _on_batch_button_clicked(self):
+        """Handle batch button click - either start or cancel."""
+        if self._batch_runner.is_running:
+            self._batch_runner.cancel()
+            self._set_batch_button_state(running=False)
+            self._progress_bar.label = 'Cancelled'
+        else:
+            self.batch_concatenate_files()
 
     def _init_widgets(self):
         """Initialize widgets."""
@@ -176,6 +322,7 @@ class UtilitiesContainer(ScrollableContainer):
             tooltip='Select file(s) to load.',
         )
 
+        self._progress_bar = ProgressBar(label='Progress')
         self._results = TextEdit(label='Info')
 
     def _init_save_name_container(self):
@@ -374,6 +521,7 @@ class UtilitiesContainer(ScrollableContainer):
                 self._concatenate_files_container,
                 self._scene_container,
                 self._save_layers_container,
+                self._progress_bar,
             ],
             name='Saving',
             labels=False,
@@ -405,7 +553,7 @@ class UtilitiesContainer(ScrollableContainer):
             self.save_files_as_ome_tiff
         )
         self._concatenate_batch_button.clicked.connect(
-            self.batch_concatenate_files
+            self._on_batch_button_clicked
         )
         self._extract_scenes.clicked.connect(self.save_scenes_ome_tiff)
         self._save_layers_button.clicked.connect(self.save_layers_as_ome_tiff)
@@ -831,43 +979,91 @@ class UtilitiesContainer(ScrollableContainer):
 
         return img_data
 
+    def _build_file_sets(self) -> list[tuple[list[Path], str]]:
+        """Build list of file sets for batch processing.
+
+        Returns a list of tuples, each containing:
+        - List of files to concatenate
+        - Save name for that set
+
+        Returns
+        -------
+        list[tuple[list[Path], str]]
+            List of (files, save_name) tuples for batch processing.
+        """
+        from natsort import os_sorted
+
+        if not self._files.value:
+            return []
+
+        parent_dir = self._files.value[0].parent
+        suffix = self._files.value[0].suffix
+        num_files = len(self._files.value)
+
+        # Get all files sorted naturally
+        all_files = os_sorted(list(parent_dir.glob(f'*{suffix}')))
+
+        # Build file sets
+        file_sets = []
+        for i in range(0, len(all_files), num_files):
+            files = all_files[i : i + num_files]
+            if len(files) == num_files:  # Only complete sets
+                # Generate save name from first file in set
+                img = nImage(files[0])
+                save_name = helpers.create_id_string(img, files[0].stem)
+                file_sets.append((files, save_name))
+
+        return file_sets
+
     def batch_concatenate_files(self) -> None:
         """
         Concatenate files in the selected directory.
 
-        Save the concatenated files as OME-TIFF, then select the next set of
-        files in the directory to be concatenated. This is done by iterating
-        over the remaining files in the directory based on the number of files
-        selected. The files are sorted alphabetically and numerically. The
-        files will be concatenated until no more files are left in the parent
-        directory.
+        Save the concatenated files as OME-TIFF using BatchRunner for
+        threaded execution. Files are grouped based on the number of files
+        currently selected, sorted alphabetically and numerically.
         """
-        # get total number of sets of files in the directory
-        parent_dir = self._files.value[0].parent
-        total_num_files = len(
-            list(parent_dir.glob(f'*{self._files.value[0].suffix}'))
-        )
-        num_files = self._files.value.__len__()
-        num_file_sets = total_num_files // num_files
+        # Build file sets for batch processing
+        file_sets = self._build_file_sets()
 
-        # check if channel names and scale are different than in the first file
-        # if so, turn off the update options
-        first_image = nImage(self._files.value[0])
-        if first_image.channel_names != self._channel_names.value:
-            self._update_channel_names.value = False
-        if first_image.physical_pixel_sizes != self.p_sizes:
-            self._update_scale.value = False
+        if not file_sets:
+            self._results.value = (
+                'No complete file sets found.'
+                f'\nAt {time.strftime("%H:%M:%S")}'
+            )
+            return
 
-        # save first set of files
-        self.save_files_as_ome_tiff()
-        # iterate through the remaining sets of files in the directory
-        for _ in range(num_file_sets):
-            self.select_next_images()
-            self.save_files_as_ome_tiff()
+        # Get channel names if set
+        cnames = self._channel_names.value
+        channel_names = ast.literal_eval(cnames) if cnames else None
 
-        self._results.value = (
-            'Batch concatenated files in directory.'
-            f'\nAt {time.strftime("%H:%M:%S")}'
+        # Determine save directory
+        save_dir = self._determine_save_directory('ConcatenatedImages')
+        save_directory = self._save_directory.value / save_dir
+
+        # Set up progress bar
+        self._progress_bar.value = 0
+        self._progress_bar.max = len(file_sets)
+        self._progress_bar.label = 'Starting batch...'
+
+        # Update button state
+        self._set_batch_button_state(running=True)
+
+        # Run the batch using BatchRunner
+        self._batch_runner.run(
+            concatenate_and_save_files,
+            file_sets,
+            save_directory=save_directory,
+            channel_names=channel_names,
+            p_sizes=self.p_sizes,
+            log_file=save_directory / 'batch_concatenate.log.txt',
+            log_header={
+                'Source Directory': str(self._files.value[0].parent),
+                'Save Directory': str(save_directory),
+                'Files per Set': len(self._files.value),
+                'Total Sets': len(file_sets),
+            },
+            threaded=True,
         )
 
     def save_scenes_ome_tiff(self) -> None:
