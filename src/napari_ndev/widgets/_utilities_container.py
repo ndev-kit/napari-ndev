@@ -302,8 +302,6 @@ class UtilitiesContainer(ScrollableContainer):
         Update the metadata from the selected layer.
     open_images()
         Open the selected images in the napari viewer.
-    concatenate_images(concatenate_files, files, concatenate_layers, layers)
-        Concatenate the image data based on the selected options.
     p_sizes()
         Get the physical pixel sizes.
     _get_save_loc(parent)
@@ -314,6 +312,8 @@ class UtilitiesContainer(ScrollableContainer):
         Concatenate and save files as OME-TIFF.
     save_scenes_ome_tiff()
         Extract and save scenes as OME-TIFF.
+    batch_concatenate_files()
+        Batch concatenate files in the selected directory.
 
     """
 
@@ -818,7 +818,6 @@ class UtilitiesContainer(ScrollableContainer):
         """Open the selected images in the napari viewer with ndevio."""
         self._viewer.open(self._files.value, plugin='ndevio')
 
-    # Converted
     def select_next_images(self):
         from natsort import os_sorted
 
@@ -865,47 +864,6 @@ class UtilitiesContainer(ScrollableContainer):
             # get the scale_tup from the back of the tuple first, in case dims
             # are missing in the new layer
             layer.scale = scale_tup[-scale_len:]
-
-    @staticmethod
-    def concatenate_files(
-        files: str | Path | list[str | Path],
-    ) -> np.ndarray:
-        """
-        Concatenate the image data from the selected files.
-
-        Removes "empty" channels, which are channels with no values above 0.
-        This is present in some microscope formats where it will image in RGB,
-        and then leave empty channels not represented by the color channels.
-
-        Does not currently handle scenes.
-
-        Parameters
-        ----------
-        files : str or Path or list of str or Path
-            The file(s) to concatenate.
-
-        Returns
-        -------
-        numpy.ndarray
-            The concatenated image data.
-
-        """
-        array_list = []
-
-        for file in files:
-            img = nImage(file)
-
-            if 'S' in img.dims.order:
-                img_data = img.get_image_data('TSZYX')
-            else:
-                img_data = img.data
-
-            # iterate over all channels and only keep if not blank
-            for idx in range(img_data.shape[1]):
-                array = img_data[:, [idx], :, :, :]
-                if array.max() > 0:
-                    array_list.append(array)
-        return np.concatenate(array_list, axis=1)
 
     def concatenate_layers(
         self,
