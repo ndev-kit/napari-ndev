@@ -220,6 +220,10 @@ def setup_logger(log_loc=Union[str, Path]):
     """
     Set up a logger with the specified log location.
 
+    .. deprecated::
+        Use ``nbatch.batch_logger`` instead. This function will be removed
+        in a future release.
+
     Parameters
     ----------
     log_loc : str or Path
@@ -233,6 +237,13 @@ def setup_logger(log_loc=Union[str, Path]):
         The file handler object.
 
     """
+    import warnings
+
+    warnings.warn(
+        'setup_logger is deprecated. Use nbatch.batch_logger instead.',
+        DeprecationWarning,
+        stacklevel=2,
+    )
     logger = logging.getLogger(__name__ + str(time.time()))
     logger.setLevel(logging.INFO)
     handler = logging.FileHandler(log_loc)

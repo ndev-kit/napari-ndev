@@ -104,7 +104,7 @@ def test_update_progress_bar():
     assert container._progress_bar.value == 9
 
 
-def test_batch_workflow_not_threaded(tmp_path):
+def test_batch_workflow(tmp_path, qtbot):
     container = WorkflowContainer()
     wf_path = pathlib.Path(
         'tests/resources/Workflow/workflows/cpu_workflow-2roots-2leafs.yaml'
@@ -122,11 +122,13 @@ def test_batch_workflow_not_threaded(tmp_path):
     container._batch_roots_container[0].value = 'membrane'
     container._batch_roots_container[1].value = 'nuclei'
 
-    # test the _batch_workflow_threaded generator method
-    generator = container.batch_workflow()
+    # Run the batch workflow
+    container.batch_workflow()
 
-    for _ in generator:
-        pass
+    # wait for BatchRunner to complete
+    qtbot.waitUntil(
+        lambda: not container._batch_runner.is_running, timeout=10000
+    )
 
     assert output_folder.exists()
     assert (output_folder / 'cells3d2ch.tiff').exists()
@@ -151,13 +153,14 @@ def test_batch_workflow_leaf_tasks(tmp_path, qtbot):
     container._batch_roots_container[0].value = 'membrane'
     container._batch_roots_container[1].value = 'nuclei'
 
-    container.batch_workflow_threaded()
+    container.batch_workflow()
 
-    # wait for multithreading to complete
-    with qtbot.waitSignal(container._batch_worker.finished, timeout=10000):
-        pass
+    # wait for BatchRunner to complete
+    qtbot.waitUntil(
+        lambda: not container._batch_runner.is_running, timeout=10000
+    )
 
-    # confirm a value was yielded by batch_workflow
+    # confirm progress bar was updated
     assert container._progress_bar.value == 1
     # output folder does exist
     assert output_folder.exists()
@@ -188,9 +191,10 @@ def test_batch_workflow_keep_original_images(tmp_path, qtbot):
     container._keep_original_images.value = True
     container.batch_button.clicked()
 
-    # wait for multithreading to complete
-    with qtbot.waitSignal(container._batch_worker.finished, timeout=10000):
-        pass
+    # wait for BatchRunner to complete
+    qtbot.waitUntil(
+        lambda: not container._batch_runner.is_running, timeout=10000
+    )
 
     assert output_folder.exists()
     assert (output_folder / 'cells3d2ch.tiff').exists()
@@ -225,11 +229,12 @@ def test_batch_workflow_all_tasks(tmp_path, qtbot):
 
     container._tasks_select.value = list(container.workflow._tasks.keys())
 
-    container.batch_workflow_threaded()
+    container.batch_workflow()
 
-    # wait for multithreading to complete
-    with qtbot.waitSignal(container._batch_worker.finished, timeout=10000):
-        pass
+    # wait for BatchRunner to complete
+    qtbot.waitUntil(
+        lambda: not container._batch_runner.is_running, timeout=10000
+    )
 
     assert output_folder.exists()
     assert (output_folder / 'cells3d2ch.tiff').exists()
@@ -298,3 +303,63 @@ def test_viewer_workflow_threaded(make_napari_viewer, qtbot):
     assert container._progress_bar.value == 2
     assert container._viewer.layers[2].name == 'membrane-label'
     assert container._viewer.layers[3].name == 'nucleus-label'
+
+
+def test_cancel_button_stops_batch(tmp_path, qtbot):
+    """Test that cancel button stops the batch runner."""
+    container = WorkflowContainer()
+    wf_path = pathlib.Path(
+        'tests/resources/Workflow/workflows/cpu_workflow-2roots-2leafs.yaml'
+    )
+    container.workflow_file.value = wf_path
+
+    container.image_directory.value = pathlib.Path(
+        'tests/resources/Workflow/Images'
+    )
+
+    output_folder = tmp_path / 'Output'
+    output_folder.mkdir()
+    container.result_directory.value = output_folder
+
+    container._batch_roots_container[0].value = 'membrane'
+    container._batch_roots_container[1].value = 'nuclei'
+
+    # Start the batch workflow
+    container.batch_workflow()
+
+    # Verify the batch is running
+    assert container._batch_runner.is_running
+
+    # Click cancel
+    container._cancel_button.clicked()
+
+    # Wait for cancellation to complete
+    qtbot.waitUntil(
+        lambda: not container._batch_runner.is_running, timeout=10000
+    )
+
+    # Verify it stopped
+    assert not container._batch_runner.is_running
+
+
+def test_batch_error_callback(tmp_path, qtbot):
+    """Test that error callback updates progress bar label."""
+    from unittest.mock import MagicMock
+
+    from nbatch import BatchContext
+
+    container = WorkflowContainer()
+
+    # Create a mock context with a file item
+    mock_item = MagicMock()
+    mock_item.name = 'bad_file.tiff'
+    ctx = MagicMock(spec=BatchContext)
+    ctx.item = mock_item
+
+    test_exception = ValueError('Test error message')
+
+    container._on_batch_error(ctx, test_exception)
+
+    # Verify progress bar label was updated with error info
+    assert 'Error on bad_file.tiff' in container._progress_bar.label
+    assert 'Test error message' in container._progress_bar.label
