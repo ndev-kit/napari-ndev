@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import ast
+import logging
 import re
 import time
+from collections.abc import Generator
+from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -43,6 +46,72 @@ if TYPE_CHECKING:
     from napari.layers import Layer
 
 
+def save_ome_tiff(
+    data: np.ndarray,
+    uri: Path,
+    dim_order: str = 'TCZYX',
+    channel_names: list[str] | None = None,
+    image_name: str | None = None,
+    physical_pixel_sizes: PhysicalPixelSizes | None = None,
+) -> None:
+    """Save data as OME-TIFF with automatic dtype and channel name handling.
+
+    Converts int64 to int32 for bioio compatibility. Validates channel_names
+    count matches the data's channel dimension; if mismatched, channel_names
+    are ignored.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The image data to save.
+    uri : Path
+        Path to save the file.
+    dim_order : str, optional
+        Dimension order string, by default 'TCZYX'.
+    channel_names : list[str] | None, optional
+        Channel names for OME metadata. Ignored if count doesn't match
+        the channel dimension of data.
+    image_name : str | None, optional
+        Image name for OME metadata.
+    physical_pixel_sizes : PhysicalPixelSizes | None, optional
+        Physical pixel sizes for OME metadata.
+
+    """
+    from bioio.writers import OmeTiffWriter
+
+    # Convert int64 to int32 for bioio compatibility
+    # See: https://github.com/napari/napari/issues/5545
+    if data.dtype == np.int64:
+        data = data.astype(np.int32)
+
+    # Validate channel_names count matches data
+    if channel_names is not None and dim_order:
+        channel_idx = dim_order.upper().find('C')
+        if channel_idx != -1:
+            if channel_idx >= len(data.shape):
+                logging.warning(
+                    'dim_order %r has C at index %d, but data has only %d '
+                    'dimensions. Ignoring channel_names.',
+                    dim_order,
+                    channel_idx,
+                    len(data.shape),
+                )
+                channel_names = None
+            else:
+                num_channels = data.shape[channel_idx]
+                if len(channel_names) != num_channels:
+                    channel_names = None  # Ignore mismatched channel names
+
+    OmeTiffWriter.save(
+        data=data,
+        uri=uri,
+        dim_order=dim_order or None,
+        channel_names=channel_names,
+        image_name=image_name or None,
+        physical_pixel_sizes=physical_pixel_sizes,
+    )
+
+
 def concatenate_and_save_files(
     file_set: tuple[list[Path], str],
     save_directory: Path,
@@ -72,8 +141,6 @@ def concatenate_and_save_files(
         Path to the saved output file.
 
     """
-    from bioio.writers import OmeTiffWriter
-
     files, save_name = file_set
 
     # Concatenate files
@@ -102,26 +169,84 @@ def concatenate_and_save_files(
     save_directory.mkdir(parents=True, exist_ok=True)
     save_path = save_directory / f'{save_name}.tiff'
 
-    try:
-        OmeTiffWriter.save(
-            data=img_data,
+    save_ome_tiff(
+        data=img_data,
+        uri=save_path,
+        dim_order='TCZYX',
+        channel_names=channel_names,
+        image_name=save_name,
+        physical_pixel_sizes=p_sizes,
+    )
+
+    return save_path
+
+
+def extract_and_save_scenes_ome_tiff(
+    file_path: Path,
+    save_directory: Path,
+    scenes: list[int | str] | None = None,
+    channel_names: list[str] | None = None,
+    p_sizes: PhysicalPixelSizes | None = None,
+    base_save_name: str | None = None,
+) -> Generator[tuple[int, str], None, None]:
+    """Extract and save scenes from an image file as OME-TIFF.
+
+    This function extracts specified scenes from a multi-scene image file
+    and saves each as a separate OME-TIFF file. It yields progress updates
+    for each scene processed.
+
+    Parameters
+    ----------
+    file_path : Path
+        Path to the source image file.
+    save_directory : Path
+        Directory to save the extracted scenes.
+    scenes : list[int | str] | None, optional
+        List of scene indices or names to extract. If None or empty,
+        extracts all scenes. Empty list is treated as "process all".
+    channel_names : list[str] | None, optional
+        Channel names for OME metadata. If None, defaults are used.
+    p_sizes : PhysicalPixelSizes, optional
+        Physical pixel sizes for OME metadata.
+    base_save_name : str | None, optional
+        Base name for saved files. If None, uses the source filename stem.
+
+    Yields
+    ------
+    tuple[int, str]
+        Tuple of (scene_index, scene_name) for each processed scene.
+
+    """
+    img = nImage(file_path)
+
+    # Use all scenes if none specified or empty list provided
+    # (empty list intentionally means "process all scenes")
+    scenes_to_process = scenes if scenes else list(img.scenes)
+
+    # Create save directory
+    save_directory.mkdir(parents=True, exist_ok=True)
+
+    # Use filename stem as base name if not provided
+    if base_save_name is None:
+        base_save_name = file_path.stem
+
+    for scene in scenes_to_process:
+        img.set_scene(scene)
+
+        # Create ID string for this scene
+        image_id = helpers.create_id_string(img, base_save_name)
+        save_path = save_directory / f'{image_id}.tiff'
+
+        save_ome_tiff(
+            data=img.data,
             uri=save_path,
             dim_order='TCZYX',
             channel_names=channel_names,
-            image_name=save_name,
-            physical_pixel_sizes=p_sizes,
-        )
-    except ValueError:
-        # Save with default channel names if provided ones are invalid
-        OmeTiffWriter.save(
-            data=img_data,
-            uri=save_path,
-            dim_order='TCZYX',
-            image_name=save_name,
+            image_name=image_id,
             physical_pixel_sizes=p_sizes,
         )
 
-    return save_path
+        yield (img.current_scene_index, img.current_scene)
 
 
 class UtilitiesContainer(ScrollableContainer):
@@ -192,20 +317,18 @@ class UtilitiesContainer(ScrollableContainer):
         Update the metadata from the selected layer.
     open_images()
         Open the selected images in the napari viewer.
-    concatenate_images(concatenate_files, files, concatenate_layers, layers)
-        Concatenate the image data based on the selected options.
     p_sizes()
         Get the physical pixel sizes.
     _get_save_loc(parent)
         Get the save location based on the parent directory.
-    _common_save_logic(data, uri, dim_order, channel_names, layer)
-        Common logic for saving data as OME-TIFF.
-    save_ome_tiff()
-        Save the concatenated image data as OME-TIFF.
-    save_labels()
-        Save the labels data.
-    save_shapes_as_labels()
-        Save the shapes data as labels.
+    save_layers_as_ome_tiff()
+        Save the selected layers as OME-TIFF.
+    save_files_as_ome_tiff()
+        Concatenate and save files as OME-TIFF.
+    save_scenes_ome_tiff()
+        Extract and save scenes as OME-TIFF.
+    batch_concatenate_files()
+        Batch concatenate files in the selected directory.
 
     """
 
@@ -710,7 +833,6 @@ class UtilitiesContainer(ScrollableContainer):
         """Open the selected images in the napari viewer with ndevio."""
         self._viewer.open(self._files.value, plugin='ndevio')
 
-    # Converted
     def select_next_images(self):
         from natsort import os_sorted
 
@@ -757,47 +879,6 @@ class UtilitiesContainer(ScrollableContainer):
             # get the scale_tup from the back of the tuple first, in case dims
             # are missing in the new layer
             layer.scale = scale_tup[-scale_len:]
-
-    @staticmethod
-    def concatenate_files(
-        files: str | Path | list[str | Path],
-    ) -> np.ndarray:
-        """
-        Concatenate the image data from the selected files.
-
-        Removes "empty" channels, which are channels with no values above 0.
-        This is present in some microscope formats where it will image in RGB,
-        and then leave empty channels not represented by the color channels.
-
-        Does not currently handle scenes.
-
-        Parameters
-        ----------
-        files : str or Path or list of str or Path
-            The file(s) to concatenate.
-
-        Returns
-        -------
-        numpy.ndarray
-            The concatenated image data.
-
-        """
-        array_list = []
-
-        for file in files:
-            img = nImage(file)
-
-            if 'S' in img.dims.order:
-                img_data = img.get_image_data('TSZYX')
-            else:
-                img_data = img.data
-
-            # iterate over all channels and only keep if not blank
-            for idx in range(img_data.shape[1]):
-                array = img_data[:, [idx], :, :, :]
-                if array.max() > 0:
-                    array_list.append(array)
-        return np.concatenate(array_list, axis=1)
 
     def concatenate_layers(
         self,
@@ -887,81 +968,6 @@ class UtilitiesContainer(ScrollableContainer):
         save_directory.mkdir(parents=False, exist_ok=True)
         return save_directory / file_name
 
-    def _common_save_logic(
-        self,
-        data: np.ndarray,
-        uri: Path,
-        dim_order: str,
-        channel_names: list[str],
-        image_name: str | list[str | None] | None,
-        result_str: str,
-    ) -> None:
-        """
-        Save data as OME-TIFF with bioio based on common logic.
-
-        Converts labels to np.int32 if np.int64 is detected, due to bioio
-        not supporting np.int64 labels, even though napari and other libraries
-        generate np.int64 labels.
-
-        Parameters
-        ----------
-        data : np.ndarray
-            The data to save.
-        uri : Path
-            The URI to save the data to.
-        dim_order : str
-            The dimension order.
-        channel_names : list[str]
-            The channel names saved to OME metadata
-        image_name : str | list[str | None] | None
-            The image name saved to OME metadata
-        result_str : str
-            The string used for the result widget.
-
-        """
-        # TODO: add image_name to save method
-        from bioio.writers import OmeTiffWriter
-
-        # BioImage does not allow saving labels as np.int64
-        # napari generates labels differently depending on the OS
-        # so we need to convert to np.int32 in case np.int64 generated
-        # see: https://github.com/napari/napari/issues/5545
-        # This is a failsafe
-        if data.dtype == np.int64:
-            data = data.astype(np.int32)
-
-        try:
-            OmeTiffWriter.save(
-                data=data,
-                uri=uri,
-                dim_order=dim_order or None,
-                channel_names=channel_names or None,
-                image_name=image_name or None,
-                physical_pixel_sizes=self.p_sizes,
-            )
-            self._results.value = (
-                f'Saved {result_str}: '
-                + str(self._save_name.value)
-                + f'\nAt {time.strftime("%H:%M:%S")}'
-            )
-        # if ValueError is raised, save with default channel names
-        except ValueError as e:
-            OmeTiffWriter.save(
-                data=data,
-                uri=uri,
-                dim_order=dim_order,
-                image_name=image_name or None,
-                physical_pixel_sizes=self.p_sizes,
-            )
-            self._results.value = (
-                'ValueError: '
-                + str(e)
-                + '\nSo, saved with default channel names: \n'
-                + str(self._save_name.value)
-                + f'\nAt {time.strftime("%H:%M:%S")}'
-            )
-        return
-
     def _determine_save_directory(self, save_dir: str | None = None) -> str:
         if self._save_directory_prefix.value != '':
             save_dir = f'{self._save_directory_prefix.value}_{save_dir}'
@@ -969,30 +975,57 @@ class UtilitiesContainer(ScrollableContainer):
             save_dir = f'{save_dir}'
         return save_dir
 
-    def save_files_as_ome_tiff(self) -> np.ndarray:
-        """Save the selected files as OME-TIFF using BioImage."""
-        img_data = self.concatenate_files(self._files.value)
+    def save_files_as_ome_tiff(self) -> None:
+        """Save the selected files as OME-TIFF with threading.
+
+        Concatenates selected files and saves as OME-TIFF in a background
+        thread to avoid blocking the UI.
+        """
+        from napari.qt import create_worker
+
         save_dir = self._determine_save_directory('ConcatenatedImages')
-        img_save_name = f'{self._save_name.value}.tiff'
-        img_save_loc = self._get_save_loc(
-            self._save_directory.value,
-            save_dir,
-            img_save_name,
-        )
+        save_directory = self._save_directory.value / save_dir
+        save_name = self._save_name.value
 
         cnames = self._channel_names.value
         channel_names = ast.literal_eval(cnames) if cnames else None
 
-        self._common_save_logic(
-            data=img_data,
-            uri=img_save_loc,
-            dim_order='TCZYX',
+        # Setup progress bar (indeterminate since we don't know duration)
+        self._progress_bar.label = 'Concatenating files...'
+        self._progress_bar.value = 0
+        self._progress_bar.max = 0  # Indeterminate
+
+        # Create worker for background processing
+        self._concat_worker = create_worker(
+            concatenate_and_save_files,
+            file_set=(list(self._files.value), save_name),
+            save_directory=save_directory,
             channel_names=channel_names,
-            image_name=self._save_name.value,
-            result_str='Concatenated Image',
+            p_sizes=self.p_sizes,
+        )
+        self._concat_worker.returned.connect(self._on_concat_complete)
+        self._concat_worker.errored.connect(self._on_concat_error)
+        self._concat_worker.start()
+
+    def _on_concat_complete(self, save_path: Path) -> None:
+        """Handle completion of file concatenation."""
+        self._progress_bar.label = ''
+        self._progress_bar.max = 1
+        self._progress_bar.value = 1
+        self._results.value = (
+            f'Saved Concatenated Image: {save_path.name}'
+            f'\nAt {time.strftime("%H:%M:%S")}'
         )
 
-        return img_data
+    def _on_concat_error(self, exception: Exception) -> None:
+        """Handle error during file concatenation."""
+        self._progress_bar.label = 'Error'
+        self._progress_bar.max = 1
+        self._progress_bar.value = 0
+        self._results.value = (
+            f'Error concatenating files: {exception}'
+            f'\nAt {time.strftime("%H:%M:%S")}'
+        )
 
     def _build_file_sets(self) -> list[tuple[list[Path], str]]:
         """Build list of file sets for batch processing.
@@ -1081,52 +1114,81 @@ class UtilitiesContainer(ScrollableContainer):
 
     def save_scenes_ome_tiff(self) -> None:
         """
-        Save selected scenes as OME-TIFF.
+        Save selected scenes as OME-TIFF with threading.
 
         This method is intended to save scenes from a single file. The scenes
         are extracted based on the scenes_to_extract widget value, which is a
         list of scene indices. If the widget is left blank, then all scenes
         will be extracted.
 
+        Uses a background thread to avoid blocking the UI during processing.
+
         """
-        img = nImage(self._files.value[0])
+        from napari.qt import create_worker
+
+        file_path = self._files.value[0]
+        img = nImage(file_path)
 
         scenes = self._scenes_to_extract.value
-        scenes_list = ast.literal_eval(scenes) if scenes else img.scenes
+        scenes_list = ast.literal_eval(scenes) if scenes else list(img.scenes)
+
         save_dir = self._determine_save_directory('ExtractedScenes')
         save_directory = self._save_directory.value / save_dir
-        save_directory.mkdir(parents=False, exist_ok=True)
 
-        for scene in scenes_list:
-            # TODO: fix this to not have an issue if there are identical scenes
-            # presented as strings, though the asssumption is most times the
-            # user will input a list of integers.
-            img.set_scene(scene)
+        base_save_name = self._save_name.value.split('.')[0]
 
-            base_save_name = self._save_name.value.split('.')[0]
-            image_id = helpers.create_id_string(img, base_save_name)
+        # get channel names from widget if truthy
+        cnames = self._channel_names.value
+        channel_names = ast.literal_eval(cnames) if cnames else None
 
-            img_save_name = f'{image_id}.tiff'
-            img_save_loc = save_directory / img_save_name
+        # Setup progress bar
+        self._progress_bar.label = 'Extracting Scenes'
+        self._progress_bar.value = 0
+        self._progress_bar.max = len(scenes_list)
 
-            # get channel names from widget if truthy
-            cnames = self._channel_names.value
-            channel_names = ast.literal_eval(cnames) if cnames else None
+        # Create worker for background processing
+        self._scene_worker = create_worker(
+            extract_and_save_scenes_ome_tiff,
+            file_path=file_path,
+            save_directory=save_directory,
+            scenes=scenes_list,
+            channel_names=channel_names,
+            p_sizes=self.p_sizes,
+            base_save_name=base_save_name,
+        )
+        self._scene_worker.yielded.connect(self._on_scene_extracted)
+        self._scene_worker.finished.connect(
+            partial(self._on_scenes_complete, scenes_list)
+        )
+        self._scene_worker.errored.connect(self._on_scene_error)
+        self._scene_worker.start()
 
-            self._common_save_logic(
-                data=img.data,
-                uri=img_save_loc,
-                dim_order='TCZYX',
-                channel_names=channel_names,
-                image_name=image_id,
-                result_str=f'Scene: {img.current_scene}',
-            )
+    def _on_scene_extracted(self, result: tuple[int, str]) -> None:
+        """Handle completion of a single scene extraction."""
+        scene_idx, scene_name = result
+        self._progress_bar.value = self._progress_bar.value + 1
+        self._results.value = (
+            f'Extracted scene {scene_idx}: {scene_name}'
+            f'\nAt {time.strftime("%H:%M:%S")}'
+        )
 
+    def _on_scenes_complete(self, scenes_list: list, _=None) -> None:
+        """Handle completion of all scene extractions."""
+        self._progress_bar.label = ''
         self._results.value = (
             f'Saved extracted scenes: {scenes_list}'
             f'\nAt {time.strftime("%H:%M:%S")}'
         )
-        return
+
+    def _on_scene_error(self, exc: Exception) -> None:
+        """Handle error during scene extraction."""
+        self._progress_bar.label = 'Error'
+        self._progress_bar.max = 1
+        self._progress_bar.value = 0
+        self._results.value = (
+            f'Error extracting scenes: {exc}'
+            f'\nAt {time.strftime("%H:%M:%S")}'
+        )
 
     def canvas_export_figure(self) -> None:
         """Export the current canvas figure to the save directory."""
@@ -1189,12 +1251,16 @@ class UtilitiesContainer(ScrollableContainer):
         )
         return
 
-    def save_layers_as_ome_tiff(self) -> np.ndarray:
+    def save_layers_as_ome_tiff(self) -> None:
         """
         Save the selected layers as OME-TIFF.
 
         Determines types of layers and saves to corresponding directories.
+        Runs the I/O operation in a background thread.
         """
+        from napari.qt import create_worker
+
+        # Gather data in main thread (requires viewer access)
         layer_data = self.concatenate_layers(
             list(self._viewer.layers.selection)
         )
@@ -1239,13 +1305,37 @@ class UtilitiesContainer(ScrollableContainer):
                 [str(d) for d in 'TZYX'[-(num_dims - 1) :]]
             )
 
-        self._common_save_logic(
+        # Store result_str for callbacks
+        self._layer_save_type = layer_save_type
+
+        # Run save in background thread
+        self._layer_save_worker = create_worker(
+            save_ome_tiff,
             data=layer_data,
             uri=layer_save_loc,
             dim_order=dim_order,
             channel_names=channel_names,
             image_name=self._save_name.value,
-            result_str=layer_save_type,
+            physical_pixel_sizes=self.p_sizes,
+        )
+        self._layer_save_worker.finished.connect(self._on_layer_save_complete)
+        self._layer_save_worker.errored.connect(self._on_layer_save_error)
+        self._layer_save_worker.start()
+
+    def _on_layer_save_complete(self, result: None = None) -> None:
+        """Handle successful layer save completion."""
+        self._results.value = (
+            f'Saved {self._layer_save_type}: '
+            + str(self._save_name.value)
+            + f'\nAt {time.strftime("%H:%M:%S")}'
         )
 
-        return layer_data
+    def _on_layer_save_error(self, exc: Exception) -> None:
+        """Handle layer save error."""
+        self._progress_bar.label = 'Error'
+        self._progress_bar.max = 1
+        self._progress_bar.value = 0
+        self._results.value = (
+            f'Error saving layers: {exc}'
+            f'\nAt {time.strftime("%H:%M:%S")}'
+        )

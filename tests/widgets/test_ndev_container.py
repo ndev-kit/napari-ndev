@@ -37,7 +37,7 @@ def test_cells3d2ch_image(resources_dir: Path):
 
 
 def test_ndev_container_viewer(
-    make_napari_viewer, test_cells3d2ch_image, tmp_path: Path
+    make_napari_viewer, test_cells3d2ch_image, tmp_path: Path, qtbot
 ):
     viewer = make_napari_viewer()
 
@@ -54,10 +54,15 @@ def test_ndev_container_viewer(
     # check interacting with alyers in utilities container works
     ndev._utilities_container._save_directory.value = tmp_path
     ndev._utilities_container._save_name.value = 'test'
-    layer_data = ndev._utilities_container.save_layers_as_ome_tiff()
+
+    # save_layers_as_ome_tiff is threaded, call first then wait for worker
+    ndev._utilities_container.save_layers_as_ome_tiff()
+    with qtbot.waitSignal(
+        ndev._utilities_container._layer_save_worker.finished, timeout=10000
+    ):
+        pass
 
     expected_save_loc = tmp_path / 'Image' / 'test.tiff'
-    assert layer_data.shape.__len__() == 4
     assert expected_save_loc.exists()
 
     # check interacting with apoc container works
