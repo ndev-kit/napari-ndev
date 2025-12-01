@@ -819,9 +819,14 @@ class ApocContainer(Container):
         """Train classifier on napari layers with threading.
 
         Runs training in a background thread to avoid blocking the UI.
+        If a training operation is already in progress, this call is ignored.
         """
         from napari.qt import create_worker
         from pyclesperanto import wait_for_kernel_to_finish
+
+        # Prevent race condition if called while already training
+        if hasattr(self, '_train_worker') and self._train_worker.is_running:
+            return
 
         image_names = [image.name for image in self._image_layers.value]
         label_name = self._label_layer.value.name
@@ -877,12 +882,22 @@ class ApocContainer(Container):
         )
 
     def image_predict(self):
-        """Predict labels on napari layers with threading.
+        """Predict labels on napari layers asynchronously.
 
         Runs prediction in a background thread to avoid blocking the UI.
+        If a prediction operation is already in progress, this call is ignored.
+
+        Notes
+        -----
+        This method does not return a value. When prediction is complete,
+        the result will be added to the viewer as a new labels layer.
         """
         from napari.qt import create_worker
         from pyclesperanto import wait_for_kernel_to_finish
+
+        # Prevent race condition if called while already predicting
+        if hasattr(self, '_predict_worker') and self._predict_worker.is_running:
+            return
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
         wait_for_kernel_to_finish()
