@@ -178,7 +178,7 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
 
 @pytest.mark.skip_ci
 # def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
-def test_batch_predict_normal_operation(tmp_path):
+def test_batch_predict_normal_operation(tmp_path, qtbot):
     image_directory = pathlib.Path('tests/resources/Apoc/Images')
     num_files = len(list(image_directory.glob('*.tiff')))
     output_directory = tmp_path / 'output'
@@ -198,6 +198,11 @@ def test_batch_predict_normal_operation(tmp_path):
     container._classifier_file.value = classifier
 
     container.batch_predict()
+
+    # Wait for threaded batch to complete
+    qtbot.waitUntil(
+        lambda: not container._batch_runner.is_running, timeout=60000
+    )
 
     # Check if the loop completes without exceptions
     assert container._progress_bar.value == num_files
@@ -229,7 +234,7 @@ def test_update_metadata_from_file():
 
 
 @pytest.mark.skip_ci
-def test_batch_predict_exception_logging(tmp_path):
+def test_batch_predict_exception_logging(tmp_path, qtbot):
     image_directory = pathlib.Path('tests/resources/Apoc/Images')
 
     num_files = len(list(image_directory.glob('*.tiff')))
@@ -254,27 +259,68 @@ def test_batch_predict_exception_logging(tmp_path):
 
     container._get_prediction_classifier_instance = lambda: MockClassifier()
 
-    # Set up logging
-    log_file = output_directory / 'log.txt'
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-    handler = logging.FileHandler(log_file)
-    handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-
     # Call the batch_predict() method
     container.batch_predict()
 
-    # Check if the exception is logged
-    with open(log_file) as f:
-        log_contents = f.read()
-        assert 'Error predicting' in log_contents
+    # Wait for threaded batch to complete
+    qtbot.waitUntil(
+        lambda: not container._batch_runner.is_running, timeout=60000
+    )
 
-    # Check if the loop continues
-    assert container._progress_bar.value == num_files
-    assert container._progress_bar.label == f'Predicted {num_files} Images'
+    # Check if error is reflected in progress bar
+    assert 'Error' in container._progress_bar.label
 
-    # Clean up
-    logger.removeHandler(handler)
+
+def test_batch_train_button_toggle(qtbot):
+    """Test that train button toggles between Train and Cancel states."""
+    container = ApocContainer()
+
+    # Initial state should be 'Train'
+    assert container._batch_train_button.text == 'Train'
+
+    # Set to running state
+    container._set_train_button_state(running=True)
+    assert container._batch_train_button.text == 'Cancel'
+
+    # Set back to not running
+    container._set_train_button_state(running=False)
+    assert container._batch_train_button.text == 'Train'
+
+
+def test_batch_predict_button_toggle(qtbot):
+    """Test that predict button toggles between Predict and Cancel states."""
+    container = ApocContainer()
+
+    # Initial state should be 'Predict'
+    assert container._batch_predict_button.text == 'Predict'
+
+    # Set to running state
+    container._set_predict_button_state(running=True)
+    assert container._batch_predict_button.text == 'Cancel'
+
+    # Set back to not running
+    container._set_predict_button_state(running=False)
+    assert container._batch_predict_button.text == 'Predict'
+
+
+def test_batch_error_callback(qtbot):
+    """Test that error callback updates progress bar label."""
+    from unittest.mock import MagicMock
+
+    from nbatch import BatchContext
+
+    container = ApocContainer()
+
+    # Create a mock context with a file item
+    mock_item = MagicMock()
+    mock_item.name = 'bad_file.tiff'
+    ctx = MagicMock(spec=BatchContext)
+    ctx.item = mock_item
+
+    test_exception = ValueError('Test error message')
+
+    container._on_batch_error(ctx, test_exception)
+
+    # Verify progress bar label was updated with error info
+    assert 'Error on bad_file.tiff' in container._progress_bar.label
+    assert 'Test error message' in container._progress_bar.label

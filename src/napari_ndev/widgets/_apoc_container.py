@@ -3,10 +3,12 @@ from __future__ import annotations
 import os
 import re
 from enum import Enum
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+from nbatch import BatchRunner
 from magicclass.widgets import TabbedContainer
 from magicgui.widgets import (
     CheckBox,
@@ -28,6 +30,133 @@ from napari_ndev import helpers
 
 if TYPE_CHECKING:
     import napari
+
+
+def get_channel_image(img, channel_index_list: list[int]) -> np.ndarray:
+    """Get channel image data based on channel indices.
+
+    Parameters
+    ----------
+    img : nImage
+        The image object to extract channels from.
+    channel_index_list : list[int]
+        List of channel indices to extract.
+
+    Returns
+    -------
+    np.ndarray
+        The extracted channel image data.
+    """
+    if 'S' in img.dims.order:
+        channel_img = img.get_image_data('TSZYX', S=channel_index_list)
+    else:
+        channel_img = img.get_image_data('TCZYX', C=channel_index_list)
+    return channel_img
+
+
+def train_on_file(
+    image_file: Path,
+    image_directory: Path,
+    label_directory: Path,
+    channel_index_list: list[int],
+    classifier,
+    feature_set: str,
+) -> str:
+    """Train classifier on a single image-label pair.
+
+    Parameters
+    ----------
+    image_file : Path
+        Path to the image file.
+    image_directory : Path
+        Directory containing image files.
+    label_directory : Path
+        Directory containing label files.
+    channel_index_list : list[int]
+        List of channel indices to use for training.
+    classifier
+        The APOC classifier instance to train.
+    feature_set : str
+        Feature set string for the classifier.
+
+    Returns
+    -------
+    str
+        Status message indicating success or failure.
+    """
+    from ndevio import nImage
+
+    label_path = label_directory / image_file.name
+    if not label_path.exists():
+        raise FileNotFoundError(f'Label file missing for {image_file.name}')
+
+    img = nImage(image_directory / image_file.name)
+    channel_img = get_channel_image(img, channel_index_list)
+
+    lbl = nImage(label_path)
+    label = lbl.get_image_data('TCZYX', C=0)
+
+    classifier.train(
+        features=feature_set,
+        image=np.squeeze(channel_img),
+        ground_truth=np.squeeze(label),
+        continue_training=True,
+    )
+
+    return f'Trained on {image_file.name}'
+
+
+def predict_on_file(
+    image_file: Path,
+    output_directory: Path,
+    channel_index_list: list[int],
+    classifier,
+) -> str:
+    """Predict labels for a single image file.
+
+    Parameters
+    ----------
+    image_file : Path
+        Path to the image file to predict.
+    output_directory : Path
+        Directory to save the prediction output.
+    channel_index_list : list[int]
+        List of channel indices to use for prediction.
+    classifier
+        The APOC classifier instance to use for prediction.
+
+    Returns
+    -------
+    str
+        Status message indicating success.
+    """
+    from bioio.writers import OmeTiffWriter
+    from ndevio import nImage
+
+    from napari_ndev import helpers
+
+    img = nImage(image_file)
+    channel_img = get_channel_image(img, channel_index_list)
+    squeezed_dim_order = helpers.get_squeezed_dim_order(img)
+
+    result = classifier.predict(image=np.squeeze(channel_img))
+
+    save_data = np.asarray(result)
+    if save_data.max() > 65535:
+        save_data = save_data.astype(np.int32)
+    else:
+        save_data = save_data.astype(np.int16)
+
+    OmeTiffWriter.save(
+        data=save_data,
+        uri=output_directory / (image_file.stem + '.tiff'),
+        dim_order=squeezed_dim_order,
+        channel_names=['Labels'],
+        physical_pixel_sizes=img.physical_pixel_sizes,
+    )
+    del result
+
+    return f'Predicted {image_file.name}'
 
 
 class ApocContainer(Container):
@@ -299,6 +428,61 @@ class ApocContainer(Container):
             ],
         )
 
+        self._init_batch_runner()
+
+    def _init_batch_runner(self):
+        """Initialize the BatchRunner for batch operations."""
+        self._batch_runner = BatchRunner(
+            on_item_complete=self._on_batch_item_complete,
+            on_complete=self._on_batch_complete,
+            on_error=self._on_batch_error,
+        )
+        # Track which operation is running for button state management
+        self._current_batch_operation = None
+
+    def _on_batch_item_complete(self, result, ctx):
+        """Callback when a batch item completes."""
+        self._progress_bar.value = ctx.index + 1
+        self._progress_bar.label = result
+
+    def _on_batch_complete(self):
+        """Callback when the entire batch completes."""
+        total = self._progress_bar.max
+        if self._current_batch_operation == 'train':
+            self._progress_bar.label = f'Trained on {total} Images'
+            self._set_train_button_state(running=False)
+            # Update classifier statistics after training
+            if hasattr(self, '_training_classifier'):
+                self._classifier_statistics_table(self._training_classifier)
+        elif self._current_batch_operation == 'predict':
+            self._progress_bar.label = f'Predicted {total} Images'
+            self._set_predict_button_state(running=False)
+        self._current_batch_operation = None
+
+    def _on_batch_error(self, ctx, exception):
+        """Callback when a batch item fails."""
+        file_name = ctx.item.name if hasattr(ctx.item, 'name') else str(ctx.item)
+        self._progress_bar.label = f'Error on {file_name}: {exception}'
+
+    def _set_train_button_state(self, running: bool):
+        """Update train button appearance based on running state."""
+        if running:
+            self._batch_train_button.text = 'Cancel'
+            self._batch_train_button.tooltip = 'Cancel training.'
+        else:
+            self._batch_train_button.text = 'Train'
+            self._batch_train_button.tooltip = 'Train classifier on images.'
+
+    def _set_predict_button_state(self, running: bool):
+        """Update predict button appearance based on running state."""
+        if running:
+            self._batch_predict_button.text = 'Cancel'
+            self._batch_predict_button.tooltip = 'Cancel prediction.'
+        else:
+            self._batch_predict_button.text = 'Predict'
+            self._batch_predict_button.tooltip = 'Predict labels on images.'
+
+
     def _initialize_viewer_container(self):
         self._image_layers = Select(
             choices=self._filter_layers(layers.Image),
@@ -361,8 +545,10 @@ class ApocContainer(Container):
         self._image_channels.changed.connect(self._update_channel_order)
         self._classifier_file.changed.connect(self._update_classifier_metadata)
 
-        self._batch_train_button.clicked.connect(self.batch_train)
-        self._batch_predict_button.clicked.connect(self.batch_predict)
+        self._batch_train_button.clicked.connect(self._on_train_button_clicked)
+        self._batch_predict_button.clicked.connect(
+            self._on_predict_button_clicked
+        )
         self._train_image_button.clicked.connect(self.image_train)
         self._predict_image_layer.clicked.connect(self.image_predict)
 
@@ -379,6 +565,22 @@ class ApocContainer(Container):
             self._viewer.layers.events.inserted.connect(
                 self._update_layer_choices
             )
+
+    def _on_train_button_clicked(self):
+        """Handle train button click - either start or cancel."""
+        if self._batch_runner.is_running:
+            self._batch_runner.cancel()
+            self._set_train_button_state(running=False)
+        else:
+            self.batch_train()
+
+    def _on_predict_button_clicked(self):
+        """Handle predict button click - either start or cancel."""
+        if self._batch_runner.is_running:
+            self._batch_runner.cancel()
+            self._set_predict_button_state(running=False)
+        else:
+            self.batch_predict()
 
     def _update_layer_choices(self):
         self._label_layer.choices = self._filter_layers(layers.Labels)
@@ -500,15 +702,10 @@ class ApocContainer(Container):
     ##############################
     # Training and Prediction
     ##############################
-    def _get_channel_image(self, img, channel_index_list):
-        if 'S' in img.dims.order:
-            channel_img = img.get_image_data('TSZYX', S=channel_index_list)
-        else:
-            channel_img = img.get_image_data('TCZYX', C=channel_index_list)
-        return channel_img
-
     def batch_train(self):
-        from ndevio import nImage
+        """Train classifier on batch of image-label pairs using BatchRunner."""
+        from functools import partial
+
         from pyclesperanto import wait_for_kernel_to_finish
 
         image_directory, image_files = helpers.get_directory_and_files(
@@ -516,25 +713,6 @@ class ApocContainer(Container):
         )
         label_directory, _ = helpers.get_directory_and_files(
             self._label_directory.value
-        )
-        # missing_files = check_for_missing_files(image_files, label_directory)
-
-        log_loc = self._classifier_file.value.with_suffix('.log.txt')
-        logger, handler = helpers.setup_logger(log_loc)
-
-        logger.info(
-            """
-        Classifier: %s
-        Channels: %s
-        Num. Files: %d
-        Image Directory: %s
-        Label Directory: %s
-        """,
-            self._classifier_file.value,
-            self._image_channels.value,
-            len(image_files),
-            image_directory,
-            label_directory,
         )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
@@ -544,10 +722,12 @@ class ApocContainer(Container):
         self._progress_bar.value = 0
         self._progress_bar.max = len(image_files)
 
-        if not self._continue_training:
+        if not self._continue_training.value:
             self.apoc.erase_classifier(self._classifier_file.value)
 
         custom_classifier = self._get_training_classifier_instance()
+        # Store classifier reference for statistics display after completion
+        self._training_classifier = custom_classifier
         feature_set = self._feature_string.value
 
         channel_index_list = [
@@ -555,44 +735,25 @@ class ApocContainer(Container):
             for channel in self._image_channels.value
         ]
 
-        # Iterate over image files, only pulling label files with an identical
-        # name to the image file. Ensuring that files match by some other
-        # method would be much more complicated, so I'm leaving it up to the
-        # user at this point. In addition, the utilities widget saves with
-        # the same name, so this should be a non-issue, if staying within the
-        # same workflow.
-        for idx, image_file in enumerate(image_files):
-            if not (label_directory / image_file.name).exists():
-                logger.error('Label file missing for %s', image_file.name)
-                self._progress_bar.value = idx + 1
-                continue
+        # Create partial function with fixed parameters
+        train_func = partial(
+            train_on_file,
+            image_directory=image_directory,
+            label_directory=label_directory,
+            channel_index_list=channel_index_list,
+            classifier=custom_classifier,
+            feature_set=feature_set,
+        )
 
-            logger.info('Training Image %d: %s', idx + 1, image_file.name)
+        self._current_batch_operation = 'train'
+        self._set_train_button_state(running=True)
 
-            img = nImage(image_directory / image_file.name)
-            channel_img = self._get_channel_image(img, channel_index_list)
-
-            lbl = nImage(label_directory / image_file.name)
-            label = lbl.get_image_data('TCZYX', C=0)
-
-            # <- this is where setting up dask processing would be useful
-
-            try:
-                custom_classifier.train(
-                    features=feature_set,
-                    image=np.squeeze(channel_img),
-                    ground_truth=np.squeeze(label),
-                    continue_training=True,
-                )
-                self._progress_bar.value = idx + 1
-            except Exception:
-                logger.exception('Error training %s', image_file)
-                self._progress_bar.value = idx + 1
-                continue
-
-        self._classifier_statistics_table(custom_classifier)
-        self._progress_bar.label = f'Trained on {len(image_files)} Images'
-        logger.removeHandler(handler)
+        self._batch_runner.run(
+            func=train_func,
+            items=image_files,
+            threaded=True,
+            log_file=self._classifier_file.value.with_suffix('.log.txt'),
+        )
 
     def _get_prediction_classifier_instance(self):
         if self._classifier_type.value in self._classifier_type_mapping:
@@ -605,30 +766,13 @@ class ApocContainer(Container):
         return None
 
     def batch_predict(self):
-        from bioio.writers import OmeTiffWriter
-        from ndevio import nImage
+        """Predict labels on batch of images using BatchRunner."""
+        from functools import partial
+
         from pyclesperanto import wait_for_kernel_to_finish
 
-        image_directory, image_files = helpers.get_directory_and_files(
+        _, image_files = helpers.get_directory_and_files(
             dir_path=self._image_directory.value,
-        )
-
-        log_loc = self._output_directory.value / 'log.txt'
-        logger, handler = helpers.setup_logger(log_loc)
-
-        logger.info(
-            """
-        Classifier: %s
-        Channels: %s
-        Num. Files: %d
-        Image Directory: %s
-        Output Directory: %s
-        """,
-            self._classifier_file.value,
-            self._image_channels.value,
-            len(image_files),
-            image_directory,
-            self._output_directory.value,
         )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
@@ -645,43 +789,23 @@ class ApocContainer(Container):
             for channel in self._image_channels.value
         ]
 
-        for idx, file in enumerate(image_files):
-            logger.info('Predicting Image %d: %s', idx + 1, file.name)
+        # Create partial function with fixed parameters
+        predict_func = partial(
+            predict_on_file,
+            output_directory=self._output_directory.value,
+            channel_index_list=channel_index_list,
+            classifier=custom_classifier,
+        )
 
-            img = nImage(file)
-            channel_img = self._get_channel_image(img, channel_index_list)
-            squeezed_dim_order = helpers.get_squeezed_dim_order(img)
+        self._current_batch_operation = 'predict'
+        self._set_predict_button_state(running=True)
 
-            # <- this is where setting up dask processing would be useful
-
-            try:
-                result = custom_classifier.predict(
-                    image=np.squeeze(channel_img)
-                )
-            except Exception:
-                logger.exception('Error predicting %s', file)
-                self._progress_bar.value = idx + 1
-                continue
-
-            save_data = np.asarray(result)
-            if save_data.max() > 65535:
-                save_data = save_data.astype(np.int32)
-            else:
-                save_data = save_data.astype(np.int16)
-
-            OmeTiffWriter.save(
-                data=save_data,
-                uri=self._output_directory.value / (file.stem + '.tiff'),
-                dim_order=squeezed_dim_order,
-                channel_names=['Labels'],
-                physical_pixel_sizes=img.physical_pixel_sizes,
-            )
-            del result
-
-            self._progress_bar.value = idx + 1
-
-        self._progress_bar.label = f'Predicted {len(image_files)} Images'
-        logger.removeHandler(handler)
+        self._batch_runner.run(
+            func=predict_func,
+            items=image_files,
+            threaded=True,
+            log_file=self._output_directory.value / 'batch_predict.log.txt',
+        )
 
     def image_train(self):
         from pyclesperanto import wait_for_kernel_to_finish
