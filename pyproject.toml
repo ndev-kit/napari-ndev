@@ -41,7 +41,7 @@ dependencies = [
     "dask",
     "napari-workflows",
     "natsort",
-    "nbatch",
+    "nbatch>=0.0.3",
     "stackview",
     "scikit-image>=0.18.0",
     "ndevio>=0.4.0",  # for min pins on bioio for writers
