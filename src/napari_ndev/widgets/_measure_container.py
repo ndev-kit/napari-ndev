@@ -555,6 +555,7 @@ class MeasureContainer(Container):
         """
         self._progress_bar.value = 0
         self._progress_bar.max = total
+        self._progress_bar.label = f'Measuring {total} Images'
 
     def _on_batch_item_complete(
         self, result: list[pd.DataFrame], ctx
@@ -772,9 +773,6 @@ class MeasureContainer(Container):
 
         # File count mismatch validation is handled by individual file errors
         # during batch processing - each missing file will raise FileNotFoundError
-
-        # Setup progress bar label (max/value handled by on_start)
-        self._progress_bar.label = f'Measuring {len(label_files)} Images'
 
         # get the relevant spacing for regionprops, depending on length
         props_scale = self._scale_tuple.value
