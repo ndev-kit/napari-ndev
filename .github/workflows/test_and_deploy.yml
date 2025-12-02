@@ -26,6 +26,8 @@ jobs:
     name: ${{ matrix.platform }} py${{ matrix.python-version }}
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 30
+    permissions:
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
@@ -53,6 +55,8 @@ jobs:
 
       - name: Coverage
         uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
 
   report-scheduled-failures:
     needs: [test]
