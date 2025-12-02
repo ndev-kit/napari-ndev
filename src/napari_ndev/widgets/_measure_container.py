@@ -184,7 +184,7 @@ def measure_single_file(
 
     scene_results = []
 
-    for scene_idx, scene in enumerate(lbl.scenes):
+    for scene_idx, _scene in enumerate(lbl.scenes):
         lbl.set_scene(scene_idx)
 
         label_images = []
