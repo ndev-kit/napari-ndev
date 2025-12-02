@@ -28,7 +28,6 @@ from napari_ndev import helpers
 
 if TYPE_CHECKING:
     import napari
-    from napari import layers
 
 
 def get_channel_image(img, channel_index_list: list[int]) -> np.ndarray:
@@ -486,8 +485,12 @@ class ApocContainer(Container):
 
     def _on_batch_error(self, ctx, exception):
         """Callback when a batch item fails."""
-        file_name = ctx.item.name if hasattr(ctx.item, 'name') else str(ctx.item)
-        self._progress_bar.label = f'Error on {file_name}: {str(exception)[:50]}'
+        file_name = (
+            ctx.item.name if hasattr(ctx.item, 'name') else str(ctx.item)
+        )
+        self._progress_bar.label = (
+            f'Error on {file_name}: {str(exception)[:50]}'
+        )
 
     def _set_train_button_state(self, running: bool):
         """Update train button appearance based on running state."""
@@ -506,7 +509,6 @@ class ApocContainer(Container):
         else:
             self._batch_predict_button.text = 'Predict'
             self._batch_predict_button.tooltip = 'Predict labels on images.'
-
 
     def _initialize_viewer_container(self):
         from napari import layers
@@ -876,14 +878,14 @@ class ApocContainer(Container):
         """Handle completion of image training."""
         ctx = self._train_context
         self._single_result_label.value = (
-            f"Trained on {ctx['image_names']} using {ctx['label_name']}"
+            f'Trained on {ctx["image_names"]} using {ctx["label_name"]}'
         )
 
     def _on_image_train_error(self, exception: Exception) -> None:
         """Handle error during image training."""
         ctx = self._train_context
         self._single_result_label.value = (
-            f"Error training on {ctx['image_names']}: {exception}"
+            f'Error training on {ctx["image_names"]}: {exception}'
         )
 
     def image_predict(self):
@@ -901,7 +903,10 @@ class ApocContainer(Container):
         from pyclesperanto import wait_for_kernel_to_finish
 
         # Prevent race condition if called while already predicting
-        if hasattr(self, '_predict_worker') and self._predict_worker.is_running:
+        if (
+            hasattr(self, '_predict_worker')
+            and self._predict_worker.is_running
+        ):
             return
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
@@ -949,16 +954,16 @@ class ApocContainer(Container):
         self._viewer.add_labels(
             result,
             scale=scale,
-            name=f"{ctx['classifier_stem']} :: {ctx['image_names']}",
+            name=f'{ctx["classifier_stem"]} :: {ctx["image_names"]}',
         )
 
-        self._single_result_label.value = f"Predicted {ctx['image_names']}"
+        self._single_result_label.value = f'Predicted {ctx["image_names"]}'
 
     def _on_image_predict_error(self, exception: Exception) -> None:
         """Handle error during image prediction."""
         ctx = self._predict_context
         self._single_result_label.value = (
-            f"Error predicting {ctx['image_names']}: {exception}"
+            f'Error predicting {ctx["image_names"]}: {exception}'
         )
 
     def insert_custom_feature_string(self):

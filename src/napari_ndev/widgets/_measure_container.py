@@ -76,17 +76,13 @@ def group_and_save_measurements(
 
     if pivot_wider and 'label_name' in grouping_cols:
         # get grouping cols without label name
-        index_cols = [
-            col for col in grouping_cols if col != 'label_name'
-        ]
+        index_cols = [col for col in grouping_cols if col != 'label_name']
 
         # Only pivot if there are index columns to pivot on
         if index_cols:
             # pivot every values column that is not present in index or columns
             value_cols = [
-                col
-                for col in grouped_df.columns
-                if col not in grouping_cols
+                col for col in grouped_df.columns if col not in grouping_cols
             ]
 
             pivot_df = grouped_df.pivot(
@@ -101,8 +97,7 @@ def group_and_save_measurements(
             grouped_df = pivot_df
 
     save_loc = (
-        measured_data_path.parent
-        / f'{measured_data_path.stem}_grouped.csv'
+        measured_data_path.parent / f'{measured_data_path.stem}_grouped.csv'
     )
     grouped_df.to_csv(save_loc, index=False)
 
@@ -198,7 +193,11 @@ def measure_single_file(
         # iterate through each channel in the label image
         for label_chan in label_channels:
             # Remove 'Labels: ' prefix
-            chan_name = label_chan[8:] if label_chan.startswith('Labels: ') else label_chan
+            chan_name = (
+                label_chan[8:]
+                if label_chan.startswith('Labels: ')
+                else label_chan
+            )
             label_names.append(chan_name)
 
             lbl_C = lbl.channel_names.index(chan_name)
@@ -220,7 +219,7 @@ def measure_single_file(
                     if img is None:
                         raise ValueError(
                             f"Intensity channel '{channel}' requested but no "
-                            "intensity image directory was provided."
+                            'intensity image directory was provided.'
                         )
                     chan = channel[11:]
                     img_C = img.channel_names.index(chan)
@@ -230,7 +229,7 @@ def measure_single_file(
                     if reg is None:
                         raise ValueError(
                             f"Region channel '{channel}' requested but no "
-                            "region image directory was provided."
+                            'region image directory was provided.'
                         )
                     chan = channel[8:]
                     reg_C = reg.channel_names.index(chan)
@@ -266,6 +265,7 @@ def measure_single_file(
         scene_results.append(measure_props_df)
 
     return scene_results
+
 
 class MeasureContainer(Container):
     """
@@ -638,9 +638,7 @@ class MeasureContainer(Container):
         self._progress_bar.max = total
         self._progress_bar.label = f'Measuring {total} Images'
 
-    def _on_batch_item_complete(
-        self, result: list[pd.DataFrame], ctx
-    ) -> None:
+    def _on_batch_item_complete(self, result: list[pd.DataFrame], ctx) -> None:
         """Handle completion of a single file measurement.
 
         Collects DataFrames from each file and increments progress.
@@ -940,7 +938,9 @@ class MeasureContainer(Container):
 
     def _on_group_complete(self, save_loc: Path) -> None:
         """Handle completion of grouping measurements."""
-        self._progress_bar.label = f'Grouped measurements saved to {save_loc.name}'
+        self._progress_bar.label = (
+            f'Grouped measurements saved to {save_loc.name}'
+        )
         self._progress_bar.max = 1
         self._progress_bar.value = 1
 

@@ -903,8 +903,6 @@ class UtilitiesContainer(ScrollableContainer):
             The concatenated image data.
 
         """
-        from napari.layers import Image as ImageLayer
-        from napari.layers import Labels as LabelsLayer
         from napari.layers import Shapes as ShapesLayer
 
         if any(isinstance(layer, ShapesLayer) for layer in layers):
@@ -1086,8 +1084,7 @@ class UtilitiesContainer(ScrollableContainer):
 
         if not file_sets:
             self._results.value = (
-                'No complete file sets found.'
-                f'\nAt {time.strftime("%H:%M:%S")}'
+                f'No complete file sets found.\nAt {time.strftime("%H:%M:%S")}'
             )
             return
 
@@ -1197,8 +1194,7 @@ class UtilitiesContainer(ScrollableContainer):
         self._progress_bar.max = 1
         self._progress_bar.value = 0
         self._results.value = (
-            f'Error extracting scenes: {exc}'
-            f'\nAt {time.strftime("%H:%M:%S")}'
+            f'Error extracting scenes: {exc}\nAt {time.strftime("%H:%M:%S")}'
         )
 
     def canvas_export_figure(self) -> None:
@@ -1347,6 +1343,5 @@ class UtilitiesContainer(ScrollableContainer):
         self._progress_bar.max = 1
         self._progress_bar.value = 0
         self._results.value = (
-            f'Error saving layers: {exc}'
-            f'\nAt {time.strftime("%H:%M:%S")}'
+            f'Error saving layers: {exc}\nAt {time.strftime("%H:%M:%S")}'
         )

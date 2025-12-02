@@ -38,7 +38,7 @@ def __getattr__(name: str):
         module = importlib.import_module(f'.{name}', __name__)
         globals()[name] = module
         return module
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    raise AttributeError(f'module {__name__!r} has no attribute {name!r}')
 
 
 if TYPE_CHECKING:
