@@ -25,17 +25,6 @@ from magicgui.widgets import (
     TextEdit,
     TupleEdit,
 )
-from napari.layers import (
-    Image as ImageLayer,
-)
-from napari.layers import (
-    Labels as LabelsLayer,
-)
-from napari.layers import (
-    Shapes as ShapesLayer,
-)
-from nbatch import BatchRunner
-from ndevio import nImage
 
 from napari_ndev import get_settings, helpers
 
@@ -144,6 +133,8 @@ def concatenate_and_save_files(
     files, save_name = file_set
 
     # Concatenate files
+    from ndevio import nImage
+
     array_list = []
     for file in files:
         img = nImage(file)
@@ -217,6 +208,8 @@ def extract_and_save_scenes_ome_tiff(
         Tuple of (scene_index, scene_name) for each processed scene.
 
     """
+    from ndevio import nImage
+
     img = nImage(file_path)
 
     # Use all scenes if none specified or empty list provided
@@ -364,6 +357,8 @@ class UtilitiesContainer(ScrollableContainer):
 
     def _init_batch_runner(self):
         """Initialize the BatchRunner for batch operations."""
+        from nbatch import BatchRunner
+
         self._batch_runner = BatchRunner(
             on_start=self._on_batch_start,
             on_item_complete=self._on_batch_item_complete,
@@ -763,6 +758,8 @@ class UtilitiesContainer(ScrollableContainer):
 
     def update_metadata_on_file_select(self):
         """Update self._save_name.value and metadata if selected."""
+        from ndevio import nImage
+
         # TODO: get true stem of file, in case .ome.tiff
         self._save_name.value = str(self._files.value[0].stem)
         img = nImage(self._files.value[0])
@@ -791,6 +788,8 @@ class UtilitiesContainer(ScrollableContainer):
                 'Tried to append scene to name, but no layer selected.'
                 ' So the first scene from the first file will be appended.'
             )
+            from ndevio import nImage
+
             img = nImage(self._files.value[0])
             scene = re.sub(r'[^\w\s]', '-', img.current_scene)
             self._save_name.value = f'{self._save_name.value}_{scene}'
@@ -860,6 +859,8 @@ class UtilitiesContainer(ScrollableContainer):
             self._results.value = 'No more file sets to select.'
             return
         # set the nwe save names, and update the file value
+        from ndevio import nImage
+
         img = nImage(next_files[0])
 
         self._save_name.value = helpers.create_id_string(
@@ -902,6 +903,10 @@ class UtilitiesContainer(ScrollableContainer):
             The concatenated image data.
 
         """
+        from napari.layers import Image as ImageLayer
+        from napari.layers import Labels as LabelsLayer
+        from napari.layers import Shapes as ShapesLayer
+
         if any(isinstance(layer, ShapesLayer) for layer in layers):
             shape_to_label_dim = self._get_dims_for_shape_layer()
 
@@ -923,6 +928,9 @@ class UtilitiesContainer(ScrollableContainer):
         # use dimension of the current image file
         if self._squeezed_dims is not None:
             return self._squeezed_dims
+
+        from napari.layers import Image as ImageLayer
+        from napari.layers import Labels as LabelsLayer
 
         # if no dims available, get it from the first instance in the viewer
         dim_layer = next(
@@ -1052,6 +1060,8 @@ class UtilitiesContainer(ScrollableContainer):
         all_files = os_sorted(list(parent_dir.glob(f'*{suffix}')))
 
         # Build file sets
+        from ndevio import nImage
+
         file_sets = []
         for i in range(0, len(all_files), num_files):
             files = all_files[i : i + num_files]
@@ -1125,6 +1135,7 @@ class UtilitiesContainer(ScrollableContainer):
 
         """
         from napari.qt import create_worker
+        from ndevio import nImage
 
         file_path = self._files.value[0]
         img = nImage(file_path)

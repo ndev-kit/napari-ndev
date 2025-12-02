@@ -18,7 +18,6 @@ from magicgui.widgets import (
     TextEdit,
     TupleEdit,
 )
-from nbatch import BatchRunner
 from qtpy.QtWidgets import QTabWidget
 
 from napari_ndev import helpers
@@ -617,6 +616,8 @@ class MeasureContainer(Container):
 
     def _init_batch_runner(self) -> None:
         """Initialize the BatchRunner with callbacks."""
+        from nbatch import BatchRunner
+
         self._batch_runner = BatchRunner(
             on_start=self._on_batch_start,
             on_item_complete=self._on_batch_item_complete,

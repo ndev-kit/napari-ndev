@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
-from nbatch import BatchRunner
 from magicclass.widgets import TabbedContainer
 from magicgui.widgets import (
     CheckBox,
@@ -24,12 +23,12 @@ from magicgui.widgets import (
     SpinBox,
     Table,
 )
-from napari import layers
 
 from napari_ndev import helpers
 
 if TYPE_CHECKING:
     import napari
+    from napari import layers
 
 
 def get_channel_image(img, channel_index_list: list[int]) -> np.ndarray:
@@ -432,6 +431,8 @@ class ApocContainer(Container):
 
     def _init_batch_runner(self):
         """Initialize the BatchRunner for batch operations."""
+        from nbatch import BatchRunner
+
         self._batch_runner = BatchRunner(
             on_start=self._on_batch_start,
             on_item_complete=self._on_batch_item_complete,
@@ -508,6 +509,8 @@ class ApocContainer(Container):
 
 
     def _initialize_viewer_container(self):
+        from napari import layers
+
         self._image_layers = Select(
             choices=self._filter_layers(layers.Image),
             label='Image Layers',
@@ -607,6 +610,8 @@ class ApocContainer(Container):
             self.batch_predict()
 
     def _update_layer_choices(self):
+        from napari import layers
+
         self._label_layer.choices = self._filter_layers(layers.Labels)
         self._image_layers.choices = self._filter_layers(layers.Image)
 
