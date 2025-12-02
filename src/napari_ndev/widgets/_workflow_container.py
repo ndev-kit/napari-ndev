@@ -15,8 +15,7 @@ from magicgui.widgets import (
     PushButton,
     Select,
 )
-from nbatch import BatchRunner, batch
-from ndevio import nImage
+from nbatch import batch
 
 from napari_ndev import helpers
 
@@ -70,6 +69,7 @@ def process_workflow_file(
     from bioio.writers import OmeTiffWriter
     from bioio_base import transforms
     from napari_workflows._io_yaml_v1 import load_workflow
+    from ndevio import nImage
 
     # Load fresh workflow instance for thread safety
     workflow = load_workflow(str(workflow_file))
@@ -200,6 +200,8 @@ class WorkflowContainer(Container):
 
     def _init_batch_runner(self):
         """Initialize the BatchRunner for batch processing."""
+        from nbatch import BatchRunner
+
         self._batch_runner = BatchRunner(
             on_start=self._on_batch_start,
             on_item_complete=self._on_batch_item_complete,
@@ -341,6 +343,8 @@ class WorkflowContainer(Container):
 
     def _get_image_info(self):
         """Get channels and dims from first image in the directory."""
+        from ndevio import nImage
+
         self.image_dir, self.image_files = helpers.get_directory_and_files(
             self.image_directory.value,
         )

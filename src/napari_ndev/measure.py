@@ -15,12 +15,15 @@ group_and_agg_measurements : Count and aggregate measurements by grouping IDs fr
 from __future__ import annotations
 
 import re
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
-from bioio_base.types import ArrayLike, PathLike
 
 from napari_ndev._plate_mapper import PlateMapper
+
+if TYPE_CHECKING:
+    from bioio_base.types import ArrayLike, PathLike
 
 __all__ = ['group_and_agg_measurements', 'measure_regionprops']
 

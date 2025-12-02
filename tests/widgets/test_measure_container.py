@@ -240,7 +240,9 @@ def test_group_measurements_no_agg_defaults(qtbot, tmp_path):
         pass
 
     # Check the output file was created
-    expected_output = test_data_path.parent / 'measure_props_Labels_grouped.csv'
+    expected_output = (
+        test_data_path.parent / 'measure_props_Labels_grouped.csv'
+    )
     assert expected_output.exists()
 
     # With pivot_wider=True (default) and label_name in grouping,
@@ -276,7 +278,9 @@ def test_group_measurements_with_agg(qtbot, tmp_path):
         pass
 
     # Check the output file was created
-    expected_output = test_data_path.parent / 'measure_props_Labels_grouped.csv'
+    expected_output = (
+        test_data_path.parent / 'measure_props_Labels_grouped.csv'
+    )
     assert expected_output.exists()
 
     grouped_df = pd.read_csv(expected_output)

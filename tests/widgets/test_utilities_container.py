@@ -68,7 +68,9 @@ def test_save_shapes_as_labels(
     container.save_layers_as_ome_tiff()
 
     # Wait for the threaded worker to complete
-    with qtbot.waitSignal(container._layer_save_worker.finished, timeout=60000):
+    with qtbot.waitSignal(
+        container._layer_save_worker.finished, timeout=60000
+    ):
         pass
 
     expected_save_loc = tmp_path / 'Shapes' / 'test.tiff'
@@ -94,7 +96,9 @@ def test_save_labels(qtbot, make_napari_viewer, tmp_path: Path, test_data):
     container.save_layers_as_ome_tiff()
 
     # Wait for the threaded worker to complete
-    with qtbot.waitSignal(container._layer_save_worker.finished, timeout=60000):
+    with qtbot.waitSignal(
+        container._layer_save_worker.finished, timeout=60000
+    ):
         pass
 
     expected_save_loc = tmp_path / 'Labels' / 'test.tiff'
@@ -105,7 +109,9 @@ def test_save_labels(qtbot, make_napari_viewer, tmp_path: Path, test_data):
     assert saved_img.channel_names == ['Labels']
 
 
-def test_save_image_layer(qtbot, make_napari_viewer, test_data, tmp_path: Path):
+def test_save_image_layer(
+    qtbot, make_napari_viewer, test_data, tmp_path: Path
+):
     test_image, _, _, squeezed_dims = test_data
     viewer = make_napari_viewer()
     viewer.add_image(test_image)
@@ -119,7 +125,9 @@ def test_save_image_layer(qtbot, make_napari_viewer, test_data, tmp_path: Path):
     container.save_layers_as_ome_tiff()
 
     # Wait for the threaded worker to complete
-    with qtbot.waitSignal(container._layer_save_worker.finished, timeout=60000):
+    with qtbot.waitSignal(
+        container._layer_save_worker.finished, timeout=60000
+    ):
         pass
 
     expected_save_loc = tmp_path / 'Image' / 'test.tiff'
@@ -130,7 +138,9 @@ def test_save_image_layer(qtbot, make_napari_viewer, test_data, tmp_path: Path):
     assert saved_img.channel_names == ['0']
 
 
-def test_save_multi_layer(qtbot, make_napari_viewer, test_data, tmp_path: Path):
+def test_save_multi_layer(
+    qtbot, make_napari_viewer, test_data, tmp_path: Path
+):
     test_image, _, test_labels, squeezed_dims = test_data
     viewer = make_napari_viewer()
     viewer.add_image(test_image)
@@ -147,7 +157,9 @@ def test_save_multi_layer(qtbot, make_napari_viewer, test_data, tmp_path: Path):
     container.save_layers_as_ome_tiff()
 
     # Wait for the threaded worker to complete
-    with qtbot.waitSignal(container._layer_save_worker.finished, timeout=60000):
+    with qtbot.waitSignal(
+        container._layer_save_worker.finished, timeout=60000
+    ):
         pass
 
     expected_save_loc = tmp_path / 'Layers' / 'test.tiff'
