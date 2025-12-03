@@ -13,14 +13,14 @@ def test_ndev_settings_import():
 
 
 def test_ndev_settings_has_ndevio_reader_group():
-    """Test that ndevio_Reader settings group is available."""
+    """Test that ndevio_reader settings group is available."""
     from ndev_settings import get_settings
 
     settings = get_settings()
-    assert hasattr(settings, 'ndevio_Reader')
+    assert hasattr(settings, 'ndevio_reader')
 
     # Test expected settings exist
-    reader = settings.ndevio_Reader
+    reader = settings.ndevio_reader
     assert hasattr(reader, 'preferred_reader')
     assert hasattr(reader, 'scene_handling')
     assert hasattr(reader, 'clear_layers_on_new_scene')
@@ -28,14 +28,14 @@ def test_ndev_settings_has_ndevio_reader_group():
 
 
 def test_ndev_settings_has_ndevio_export_group():
-    """Test that ndevio_Export settings group is available."""
+    """Test that ndevio_export settings group is available."""
     from ndev_settings import get_settings
 
     settings = get_settings()
-    assert hasattr(settings, 'ndevio_Export')
+    assert hasattr(settings, 'ndevio_export')
 
     # Test expected settings exist
-    export = settings.ndevio_Export
+    export = settings.ndevio_export
     assert hasattr(export, 'canvas_scale')
     assert hasattr(export, 'override_canvas_size')
     assert hasattr(export, 'canvas_size')
