@@ -16,8 +16,7 @@ from magicgui.widgets import (
     Select,
 )
 from nbatch import batch
-
-from napari_ndev import helpers
+from ndevio import helpers
 
 if TYPE_CHECKING:
     import napari

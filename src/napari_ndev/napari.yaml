@@ -6,9 +6,6 @@ contributions:
     - id: napari-ndev.make_ndev_container
       python_name: napari_ndev.widgets._ndev_container:nDevContainer
       title: Make nDev App
-    - id: napari-ndev.make_utilities_container
-      python_name: napari_ndev.widgets._utilities_container:UtilitiesContainer
-      title: Make Image Utilities
     - id: napari-ndev.make_workflow_container
       python_name: napari_ndev.widgets._workflow_container:WorkflowContainer
       title: Make Batch Workflow
@@ -18,20 +15,13 @@ contributions:
     - id: napari-ndev.make_measure_container
       python_name: napari_ndev.widgets._measure_container:MeasureContainer
       title: Make Measure Container
-    - id: napari-ndev.make_settings_container
-      python_name: napari_ndev.widgets._settings_container:SettingsContainer
-      title: Make Settings Container
 
   widgets:
     - command: napari-ndev.make_ndev_container
       display_name: nDev App
-    - command: napari-ndev.make_utilities_container
-      display_name: Image Utilities
     - command: napari-ndev.make_workflow_container
       display_name: Workflow Widget
     - command: napari-ndev.make_apoc_container
       display_name: APOC Widget
     - command: napari-ndev.make_measure_container
       display_name: Measure Widget
-    - command: napari-ndev.make_settings_container
-      display_name: Settings Widget

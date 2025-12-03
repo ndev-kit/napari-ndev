@@ -4,8 +4,7 @@ import natsort
 import numpy as np
 import pytest
 from ndevio import nImage
-
-from napari_ndev.widgets._utilities_container import UtilitiesContainer
+from ndevio.widgets import UtilitiesContainer
 
 image_2d = np.asarray([[0, 0, 1, 1], [0, 0, 1, 1], [2, 2, 1, 1], [2, 2, 1, 1]])
 shapes_2d = np.array([[0.25, 0.25], [0.25, 2.75], [2.75, 2.75], [2.75, 0.25]])
@@ -372,7 +371,7 @@ def test_save_scenes_ome_tiff(test_czi_image, tmp_path: Path, qtbot):
 
 def test_extract_and_save_scenes_ome_tiff(test_czi_image, tmp_path: Path):
     """Test the pure function for extracting scenes directly."""
-    from napari_ndev.widgets._utilities_container import (
+    from ndevio.widgets._utilities_container import (
         extract_and_save_scenes_ome_tiff,
     )
 
@@ -394,7 +393,7 @@ def test_extract_and_save_scenes_ome_tiff_specific_scenes(
     test_czi_image, tmp_path: Path
 ):
     """Test extracting specific scenes only."""
-    from napari_ndev.widgets._utilities_container import (
+    from ndevio.widgets._utilities_container import (
         extract_and_save_scenes_ome_tiff,
     )
 

@@ -80,10 +80,11 @@ class nDevContainer(ScrollableContainer):
         self._init_callbacks()
 
     def _init_widget_containers(self):
+        from ndev_settings._settings_widget import SettingsContainer
+        from ndevio.widgets import UtilitiesContainer
+
         from napari_ndev.widgets._apoc_container import ApocContainer
         from napari_ndev.widgets._measure_container import MeasureContainer
-        from napari_ndev.widgets._settings_container import SettingsContainer
-        from napari_ndev.widgets._utilities_container import UtilitiesContainer
         from napari_ndev.widgets._workflow_container import WorkflowContainer
 
         """Initialize the widget containers."""
