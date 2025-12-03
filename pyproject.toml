@@ -44,9 +44,10 @@ dependencies = [
     "nbatch>=0.0.3",
     "stackview",
     "scikit-image>=0.18.0",
-    "ndevio>=0.4.0",  # for min pins on bioio for writers
+    "ndevio>=0.5.0",  # for min pins on bioio for writers
     "matplotlib-scalebar>=0.8.1",
     "ndev-sampledata",
+    "ndev-settings>=0.4.0",
     "ndev-themes",
 ]
 dynamic = ["version"]

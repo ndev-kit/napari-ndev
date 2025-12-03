@@ -41,7 +41,7 @@ def test_nImage_ome_reader(resources_dir: Path):
     assert fr['bioio-ome-tiff'].supported is True
 
     nimg = nImage(img_path)
-    assert nimg.settings.ndevio_Reader.preferred_reader == 'bioio-ome-tiff'
+    assert nimg.settings.ndevio_reader.preferred_reader == 'bioio-ome-tiff'
     # the below only exists if 'bioio-ome-tiff' is used
     assert hasattr(nimg, 'ome_metadata')
     assert nimg.channel_names == ['membrane', 'nuclei']
@@ -50,7 +50,7 @@ def test_nImage_ome_reader(resources_dir: Path):
 
     # check that despite preferred reader, the reader is still bioio_tifffile
     # because there is no ome_metadata
-    assert nimg.settings.ndevio_Reader.preferred_reader == 'bioio-ome-tiff'
+    assert nimg.settings.ndevio_reader.preferred_reader == 'bioio-ome-tiff'
     # check that calling nimg.ome_metadata raises NotImplementedError
     with pytest.raises(NotImplementedError):
         _ = nimg.ome_metadata

@@ -4,10 +4,15 @@ This package provides widgets for bioimage analysis workflows in napari.
 Widgets are discovered via the napari plugin system (napari.yaml).
 
 For programmatic use, the following modules are available:
-- helpers: Utility functions for file handling and image processing
 - measure: Functions for measuring label properties
 - morphology: Functions for label morphology operations
-- get_settings: Access to plugin settings
+
+For I/O utilities and helpers, use ndevio:
+    from ndevio import helpers
+    from ndevio.widgets import UtilitiesContainer
+
+Settings are managed by the ndev-settings package:
+    from ndev_settings import get_settings
 
 Modules are lazily imported to minimize startup time.
 """
@@ -20,13 +25,9 @@ try:
 except ImportError:
     __version__ = 'unknown'
 
-# Lazy import get_settings since it's lightweight
-from napari_ndev._settings import get_settings
 
 __all__ = [
     '__version__',
-    'get_settings',
-    'helpers',
     'measure',
     'morphology',
 ]
@@ -34,7 +35,7 @@ __all__ = [
 
 def __getattr__(name: str):
     """Lazily import modules to speed up package import."""
-    if name in ('helpers', 'measure', 'morphology'):
+    if name in ('measure', 'morphology'):
         module = importlib.import_module(f'.{name}', __name__)
         globals()[name] = module
         return module
@@ -42,4 +43,4 @@ def __getattr__(name: str):
 
 
 if TYPE_CHECKING:
-    from napari_ndev import helpers, measure, morphology
+    from napari_ndev import measure, morphology

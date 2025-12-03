@@ -18,9 +18,8 @@ from magicgui.widgets import (
     TextEdit,
     TupleEdit,
 )
+from ndevio import helpers
 from qtpy.QtWidgets import QTabWidget
-
-from napari_ndev import helpers
 
 if TYPE_CHECKING:
     import pathlib

@@ -23,8 +23,7 @@ from magicgui.widgets import (
     SpinBox,
     Table,
 )
-
-from napari_ndev import helpers
+from ndevio import helpers
 
 if TYPE_CHECKING:
     import napari
@@ -130,8 +129,6 @@ def predict_on_file(
     """
     from bioio.writers import OmeTiffWriter
     from ndevio import nImage
-
-    from napari_ndev import helpers
 
     img = nImage(image_file)
     channel_img = get_channel_image(img, channel_index_list)
