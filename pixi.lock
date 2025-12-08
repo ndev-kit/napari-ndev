@@ -166,13 +166,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/73/96/00df2a4760f10f5af0f45c4955573cae6189931f9a30265a35865f8c1031/notebook-7.5.0-py3-none-any.whl
@@ -445,13 +445,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/73/96/00df2a4760f10f5af0f45c4955573cae6189931f9a30265a35865f8c1031/notebook-7.5.0-py3-none-any.whl
@@ -725,13 +725,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/73/96/00df2a4760f10f5af0f45c4955573cae6189931f9a30265a35865f8c1031/notebook-7.5.0-py3-none-any.whl
@@ -1006,13 +1006,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/73/96/00df2a4760f10f5af0f45c4955573cae6189931f9a30265a35865f8c1031/notebook-7.5.0-py3-none-any.whl
@@ -1262,10 +1262,10 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/d0/ae/0eeb22806c4157a9199f65a93374e5ff5c4d2cc1411b5d25053bcd9e6b91/napari_svg-0.2.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/de/b3/e8b385661f8c768a9548e46993ddfab803aeeb5ef24513382b061eefb780/npe2-0.7.9-py3-none-any.whl
@@ -1475,10 +1475,10 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/d0/ae/0eeb22806c4157a9199f65a93374e5ff5c4d2cc1411b5d25053bcd9e6b91/napari_svg-0.2.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/de/b3/e8b385661f8c768a9548e46993ddfab803aeeb5ef24513382b061eefb780/npe2-0.7.9-py3-none-any.whl
@@ -1689,10 +1689,10 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/d0/ae/0eeb22806c4157a9199f65a93374e5ff5c4d2cc1411b5d25053bcd9e6b91/napari_svg-0.2.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/de/b3/e8b385661f8c768a9548e46993ddfab803aeeb5ef24513382b061eefb780/npe2-0.7.9-py3-none-any.whl
@@ -1904,10 +1904,10 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/d0/ae/0eeb22806c4157a9199f65a93374e5ff5c4d2cc1411b5d25053bcd9e6b91/napari_svg-0.2.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/de/b3/e8b385661f8c768a9548e46993ddfab803aeeb5ef24513382b061eefb780/npe2-0.7.9-py3-none-any.whl
@@ -2181,13 +2181,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d2/1d/1b658dbd2b9fa9c4c9f32accbfc0205d532c8c6194dc0f2a4c0428e7128a/nodeenv-1.9.1-py2.py3-none-any.whl
@@ -2480,13 +2480,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d2/1d/1b658dbd2b9fa9c4c9f32accbfc0205d532c8c6194dc0f2a4c0428e7128a/nodeenv-1.9.1-py2.py3-none-any.whl
@@ -2780,13 +2780,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d2/1d/1b658dbd2b9fa9c4c9f32accbfc0205d532c8c6194dc0f2a4c0428e7128a/nodeenv-1.9.1-py2.py3-none-any.whl
@@ -3081,13 +3081,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d2/1d/1b658dbd2b9fa9c4c9f32accbfc0205d532c8c6194dc0f2a4c0428e7128a/nodeenv-1.9.1-py2.py3-none-any.whl
@@ -3388,13 +3388,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/73/96/00df2a4760f10f5af0f45c4955573cae6189931f9a30265a35865f8c1031/notebook-7.5.0-py3-none-any.whl
@@ -3664,13 +3664,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/73/96/00df2a4760f10f5af0f45c4955573cae6189931f9a30265a35865f8c1031/notebook-7.5.0-py3-none-any.whl
@@ -3941,13 +3941,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/73/96/00df2a4760f10f5af0f45c4955573cae6189931f9a30265a35865f8c1031/notebook-7.5.0-py3-none-any.whl
@@ -4219,13 +4219,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/91/1a/6592e49b3eb7904ca4f4fd1f140841bff4133f8e02c01a4c57fdfcc7e2a4/napari_tools_menu-0.1.20-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/cc/9a/cd673b2f773a12c992f41309ef81b99da1690426bd2f96957a7ade0d3ed7/nbconvert-7.16.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/73/96/00df2a4760f10f5af0f45c4955573cae6189931f9a30265a35865f8c1031/notebook-7.5.0-py3-none-any.whl
@@ -4472,10 +4472,10 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/d0/ae/0eeb22806c4157a9199f65a93374e5ff5c4d2cc1411b5d25053bcd9e6b91/napari_svg-0.2.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/de/b3/e8b385661f8c768a9548e46993ddfab803aeeb5ef24513382b061eefb780/npe2-0.7.9-py3-none-any.whl
@@ -4685,10 +4685,10 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/d0/ae/0eeb22806c4157a9199f65a93374e5ff5c4d2cc1411b5d25053bcd9e6b91/napari_svg-0.2.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/de/b3/e8b385661f8c768a9548e46993ddfab803aeeb5ef24513382b061eefb780/npe2-0.7.9-py3-none-any.whl
@@ -4899,10 +4899,10 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/d0/ae/0eeb22806c4157a9199f65a93374e5ff5c4d2cc1411b5d25053bcd9e6b91/napari_svg-0.2.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/de/b3/e8b385661f8c768a9548e46993ddfab803aeeb5ef24513382b061eefb780/npe2-0.7.9-py3-none-any.whl
@@ -5114,10 +5114,10 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/d0/ae/0eeb22806c4157a9199f65a93374e5ff5c4d2cc1411b5d25053bcd9e6b91/napari_svg-0.2.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/a1/ee66126a7988374bf13d9148b90c5ea0d1801b7b8434b41d3075b1c45d4d/napari_workflows-0.2.11-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/07/c7/d64168da60332c17d24c0d2f08bdf3987e8d1ae9d84b5bbd0eec2eb26a55/networkx-3.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/de/b3/e8b385661f8c768a9548e46993ddfab803aeeb5ef24513382b061eefb780/npe2-0.7.9-py3-none-any.whl
@@ -8718,8 +8718,8 @@ packages:
   requires_python: '>=3.10'
 - pypi: ./
   name: napari-ndev
-  version: 0.12.0rc1.dev3+g0b374a792
-  sha256: 143ac036a200dc2b680c7d2aeac4d43c9eb8e684827d64b34368fd74b30716b9
+  version: 0.12.0rc1.dev15+ga801f9f6b.d20251208
+  sha256: 9f8427251ad1f2d19d1b28c7de412cd35d11be73913989b42df67ef86d5e2b6c
   requires_dist:
   - numpy>=1.26
   - magicgui>=0.8.3
@@ -8731,11 +8731,11 @@ packages:
   - dask
   - napari-workflows
   - natsort
+  - nbatch>=0.0.3
   - stackview
   - scikit-image>=0.18.0
-  - ndevio>=0.4.0
+  - ndevio>=0.6.0
   - matplotlib-scalebar>=0.8.1
-  - ndev-sampledata
   - ndev-themes
   - napari[pyqt6] ; extra == 'qtpy-backend'
   - napari[optional] ; extra == 'extras'
@@ -8883,6 +8883,17 @@ packages:
   - fastnumbers>=2.0.0 ; extra == 'fast'
   - pyicu>=1.0.0 ; extra == 'icu'
   requires_python: '>=3.7'
+- pypi: https://files.pythonhosted.org/packages/40/57/2aaba8ba1a918ccfb63a84424be99658f5bd33fdd5043c28446e91230bd7/nbatch-0.0.4-py3-none-any.whl
+  name: nbatch
+  version: 0.0.4
+  sha256: dbb97e7744a5bb3d6f36d14d5ed56fefcdfcf040cf8c35105801fc37c279f899
+  requires_dist:
+  - natsort
+  - napari ; extra == 'napari'
+  - pyqt6 ; extra == 'qtpy-backend'
+  - nbatch[napari] ; extra == 'all'
+  - nbatch[qtpy-backend] ; extra == 'all'
+  requires_python: '>=3.10'
 - pypi: https://files.pythonhosted.org/packages/34/6d/e7fa07f03a4a7b221d94b4d586edb754a9b0dc3c9e2c93353e9fa4e0d117/nbclient-0.10.2-py3-none-any.whl
   name: nbclient
   version: 0.10.2
@@ -9017,29 +9028,16 @@ packages:
   purls: []
   size: 797030
   timestamp: 1738196177597
-- pypi: https://files.pythonhosted.org/packages/2d/e0/5528ca0c74ae3e4c90fac1da842c1cca3b0ffbe3b67fe0f59bc37e97495a/ndev_sampledata-0.0.3-py3-none-any.whl
-  name: ndev-sampledata
-  version: 0.0.3
-  sha256: e9e30806bd154c3919cc1744e01124ad978fa974f72ddf5f7f0a0bd74d840355
-  requires_dist:
-  - bioio
-  - bioio-imageio
-  - bioio-ome-tiff
-  - napari[all] ; extra == 'all'
-  - napari ; extra == 'testing'
-  - tox ; extra == 'testing'
-  - pytest ; extra == 'testing'
-  - pytest-cov ; extra == 'testing'
-  requires_python: '>=3.10'
-- pypi: https://files.pythonhosted.org/packages/e1/fb/1ce8c15d70464bd9ef2c8710ac7a91589473c7f1d8955e26b39639a4cb17/ndev_settings-0.3.0-py3-none-any.whl
+- pypi: https://files.pythonhosted.org/packages/25/48/c0dc737329c050b696cf252239b68d03db07ff89ff98a0d8cbe48b144769/ndev_settings-0.4.0-py3-none-any.whl
   name: ndev-settings
-  version: 0.3.0
-  sha256: e1327d03e5bbd351a1ca6efa90c000e34da85b353f11337a93cd40ce922130e3
+  version: 0.4.0
+  sha256: c358e423e74725cd9a08e4b5bc8101f3421b5d45ce7354a5aeda5770d1c8a895
   requires_dist:
+  - appdirs
   - magicgui
   - magic-class
   - pyyaml
-  - napari[all] ; extra == 'all'
+  - napari[pyqt6] ; extra == 'all'
   requires_python: '>=3.10'
 - pypi: https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl
   name: ndev-themes
@@ -9052,10 +9050,10 @@ packages:
   - pytest ; extra == 'testing'
   - pytest-cov ; extra == 'testing'
   requires_python: '>=3.10'
-- pypi: https://files.pythonhosted.org/packages/1f/b8/f95927a53858e5fa8c2f01590ef17323f4dfb9128ba554b437b5f2eac605/ndevio-0.4.0-py3-none-any.whl
+- pypi: https://files.pythonhosted.org/packages/0a/3a/a70f6a2a5f629fbc14a7455fc09d5b2ed9d61d502baf9c1d08d61799cbcd/ndevio-0.6.0-py3-none-any.whl
   name: ndevio
-  version: 0.4.0
-  sha256: 37199925674dd963f61b1660f9341611f9dfefecf7eef012990d8a35befc5a40
+  version: 0.6.0
+  sha256: ed26cbab5b55a3776e6c8119071f79229eaf641e1622a707efbc413c79c25ed5
   requires_dist:
   - bioio-base
   - bioio-imageio
@@ -9063,8 +9061,14 @@ packages:
   - bioio-ome-zarr>=3
   - bioio-tifffile
   - bioio>=2
+  - magic-class
+  - magicgui
+  - napari
   - napari-plugin-manager>=0.1.7
-  - ndev-settings
+  - natsort
+  - nbatch>=0.0.4
+  - ndev-settings>=0.4.0
+  - pooch
   - xarray
   - zarr>=3.1.3
   - napari[all] ; extra == 'all'
