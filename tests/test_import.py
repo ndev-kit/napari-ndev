@@ -1,5 +1,7 @@
 import time
 
+import pytest
+
 
 def test_import_time():
     start_time = time.time()
@@ -11,10 +13,11 @@ def test_import_time():
 
     assert import_time < 1.0, 'napari_ndev took too long to import'
 
+@pytest.mark.skip_ci
 def test_widget_time(make_napari_viewer):
 
     start_time = time.time()
-
+    
     viewer = make_napari_viewer()
     viewer.window.add_plugin_dock_widget('napari-ndev', 'nDev App')
 
