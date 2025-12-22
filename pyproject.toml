@@ -39,7 +39,6 @@ dependencies = [
     "apoc",  # dependes on pyclesperanto_prototype still
     "pyclesperanto",
     "dask",
-    "napari-workflows",
     "natsort",
     "nbatch>=0.0.3",
     "stackview",
@@ -47,6 +46,7 @@ dependencies = [
     "ndevio>=0.6.0",
     "matplotlib-scalebar>=0.8.1",
     "ndev-themes",
+    "ndev-workflows",
 ]
 dynamic = ["version"]
 

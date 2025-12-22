@@ -1616,7 +1616,7 @@ name = "importlib-metadata"
 version = "8.7.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "zipp" },
+    { name = "zipp", marker = "python_full_version < '3.12'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/76/66/650a33bd90f786193e4de4b3ad86ea60b53c89b669a5c7be931fac31cdb0/importlib_metadata-8.7.0.tar.gz", hash = "sha256:d13b81ad223b890aa16c5471f2ac3056cf76c5f10f82d6f9292f0b415f389000", size = 56641, upload-time = "2025-04-27T15:29:01.736Z" }
 wheels = [
@@ -2887,10 +2887,10 @@ dependencies = [
     { name = "matplotlib" },
     { name = "matplotlib-scalebar" },
     { name = "napari" },
-    { name = "napari-workflows" },
     { name = "natsort" },
     { name = "nbatch" },
     { name = "ndev-themes" },
+    { name = "ndev-workflows" },
     { name = "ndevio" },
     { name = "numpy" },
     { name = "pyclesperanto" },
@@ -2942,10 +2942,10 @@ requires-dist = [
     { name = "napari-ndev", extras = ["qtpy-backend"], marker = "extra == 'all'" },
     { name = "napari-segment-blobs-and-things-with-membranes", marker = "extra == 'extras'" },
     { name = "napari-simpleitk-image-processing", marker = "extra == 'extras'" },
-    { name = "napari-workflows" },
     { name = "natsort" },
     { name = "nbatch", specifier = ">=0.0.3" },
     { name = "ndev-themes" },
+    { name = "ndev-workflows" },
     { name = "ndevio", specifier = ">=0.6.0" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "pyclesperanto" },
@@ -3210,6 +3210,25 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/77/28/0500b7d95db6529c31ee63892780fa3450f581a04a5e1e7a3a33749886d6/ndev_themes-0.1.0.tar.gz", hash = "sha256:b185fff6ee6316870945ea695b446b1578f1a217703bcc04ef16b36b49c29592", size = 657677, upload-time = "2025-08-29T17:00:55.825Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c2/59/9114c2132496c2e7c8f4b6d48a571aa416df98aba009ce554dab581cb382/ndev_themes-0.1.0-py3-none-any.whl", hash = "sha256:f0c3c5387b9665e74ae5679f923f0e285769936cda90cf788fae875ecd142a8c", size = 6256, upload-time = "2025-08-29T17:00:54.569Z" },
+]
+
+[[package]]
+name = "ndev-workflows"
+version = "0.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dask" },
+    { name = "magic-class" },
+    { name = "magicgui" },
+    { name = "napari" },
+    { name = "nbatch" },
+    { name = "ndevio" },
+    { name = "numpy" },
+    { name = "pyyaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/67/b8/409e20f1338a9a14db7e667c67628da9ce421c3b526d1678be63ba0cb7c6/ndev_workflows-0.0.1.tar.gz", hash = "sha256:5744e08e95bde60c7acda2082a3b7496647bc43c406564d85b18b93d5eb1a8cc", size = 1085927, upload-time = "2025-12-22T15:35:43.578Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b9/36/974b88b4b379e3ac03e3a8da2986223bce0007cedf8492742c6ebbdada74/ndev_workflows-0.0.1-py3-none-any.whl", hash = "sha256:bfc597666f5126760ad31dda062b3e76675cd7f75989a5f31882e67e4a0191d3", size = 27484, upload-time = "2025-12-22T15:35:41.75Z" },
 ]
 
 [[package]]

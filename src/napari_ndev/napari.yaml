@@ -6,9 +6,6 @@ contributions:
     - id: napari-ndev.make_ndev_container
       python_name: napari_ndev.widgets._ndev_container:nDevContainer
       title: Make nDev App
-    - id: napari-ndev.make_workflow_container
-      python_name: napari_ndev.widgets._workflow_container:WorkflowContainer
-      title: Make Batch Workflow
     - id: napari-ndev.make_apoc_container
       python_name: napari_ndev.widgets._apoc_container:ApocContainer
       title: Make Batch APOC
@@ -19,8 +16,6 @@ contributions:
   widgets:
     - command: napari-ndev.make_ndev_container
       display_name: nDev App
-    - command: napari-ndev.make_workflow_container
-      display_name: Workflow Widget
     - command: napari-ndev.make_apoc_container
       display_name: APOC Widget
     - command: napari-ndev.make_measure_container
