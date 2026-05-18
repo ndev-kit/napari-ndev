@@ -38,6 +38,7 @@ dependencies = [
     "matplotlib",
     "apoc",  # dependes on pyclesperanto_prototype still
     "pyclesperanto",
+    "pyclesperanto_prototype<0.24.5", # above pin tries bad import from pycelesperanto 
     "dask",
     "natsort",
     "nbatch>=0.0.3",
